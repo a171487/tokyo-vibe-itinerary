@@ -3,33 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TOKYO VIBE | UNIQLO極簡風儀表板</title>
+    <title>TOKYO VIBE | 鮮明配色儀表板</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        /* UNIQLO風格字體: 乾淨的Sans-serif */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
-        
+        /* 品牌配色定義 */
+        :root {
+            --color-dark-navy: #1D2A35;
+            --color-cream: #F7FCF5;
+            --color-teal: #2CBBAD;
+            --color-red: #D83D4F;
+        }
+
+        /* 全局樣式：深色基底，淺色字體 */
         body {
             font-family: 'Inter', 'Noto Sans TC', sans-serif;
-            background-color: #f9fafb; /* Light Gray/Off-White Background */
-            color: #1f2937; /* Dark Gray Text */
+            background-color: var(--color-dark-navy); 
+            color: var(--color-cream);
             min-height: 100vh;
         }
 
-        /* 卡片面板 - 乾淨、平面化 */
+        /* 主要卡片面板 - 使用淺色搭配深色邊框和陰影，實現高對比 */
         .flat-panel {
-            background-color: #ffffff; /* Pure White */
-            border: 1px solid #e5e7eb; /* Light Gray Border */
+            background-color: var(--color-cream); /* 淺色卡片 */
+            color: var(--color-dark-navy); /* 卡片內使用深色文字 */
+            border: 1px solid rgba(44, 187, 173, 0.2); /* 柔和的 Teal 邊框 */
             border-radius: 12px;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05); /* Very subtle shadow */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
 
-        /* 專家提示區塊 - 使用淺色背景與強調色邊框 */
+        /* 主要強調色 1：Teal (青色) */
+        .teal-accent {
+            color: var(--color-teal);
+        }
+        
+        /* 主要強調色 2：Red (紅色) */
+        .red-accent {
+            color: var(--color-red);
+        }
+
+        /* 按鈕基礎樣式 */
+        .modern-btn {
+             @apply transition-all duration-300 border text-left font-medium flex-shrink-0 min-w-[120px] rounded-lg p-3;
+        }
+
+        /* 專家提示區塊 - 使用深色背景搭配 Teal 邊條 */
         .expert-tip-box {
-            background-color: #f0f3ff; /* Very light blue/indigo background */
-            border-left: 3px solid #4f46e5; /* Indigo accent */
-            color: #1f2937;
+            background-color: #273746; /* 比主背景稍淺 */
+            border-left: 3px solid var(--color-teal);
+            color: var(--color-cream);
         }
 
         /* 固定側邊欄位 */
@@ -39,55 +61,51 @@
                 top: 1.5rem;
                 height: calc(100vh - 3rem);
                 overflow-y: auto;
-                /* 隱藏滾動條，保持簡潔 */
-                -ms-overflow-style: none; /* IE and Edge */
-                scrollbar-width: none; /* Firefox */
+                -ms-overflow-style: none;
+                scrollbar-width: none;
             }
             .sticky-col::-webkit-scrollbar { display: none; }
+        }
+
+        /* 覆寫 Tailwind 滾動條 (手機端導覽列) */
+        #nav-container-wrapper::-webkit-scrollbar {
+            height: 3px;
+        }
+        #nav-container-wrapper::-webkit-scrollbar-thumb {
+            background-color: #4A5568; 
+            border-radius: 1.5px;
         }
     </style>
 </head>
 <body class="p-3 lg:p-6 text-sm lg:text-base">
 
     <!-- 頂部 Header -->
-    <header class="max-w-[1400px] mx-auto mb-6 flat-panel p-6 shadow-lg border-t-4 border-indigo-600 flex items-center justify-between">
+    <header class="max-w-[1400px] mx-auto mb-6 p-6 border-b-2 border-opacity-30 flex items-center justify-between"
+            style="background-color: var(--color-dark-navy); border-color: var(--color-teal);">
         <div class="z-10">
-            <h1 class="text-2xl lg:text-3xl font-black tracking-tight text-indigo-700">
+            <h1 class="text-2xl lg:text-3xl font-black tracking-widest text-white">
                 TOKYO VIBE 2025
             </h1>
-            <p class="text-gray-500 text-xs lg:text-sm font-medium mt-1 flex gap-3">
-                <span><i data-lucide="calendar" class="w-3 h-3 inline mr-1"></i>12/26 - 12/31</span>
-                <span><i data-lucide="compass" class="w-3 h-3 inline mr-1"></i>極簡風格儀表板</span>
+            <p class="text-gray-400 text-xs lg:text-sm font-medium mt-1 flex gap-3">
+                <span class="teal-accent"><i data-lucide="calendar" class="w-3 h-3 inline mr-1"></i>12/26 - 12/31</span>
+                <span><i data-lucide="compass" class="w-3 h-3 inline mr-1"></i>鮮明配色儀表板</span>
             </p>
         </div>
         <div class="hidden lg:block">
-            <i data-lucide="map" class="w-8 h-8 text-gray-300"></i>
+            <i data-lucide="map" class="w-8 h-8 text-[#4A5568]"></i>
         </div>
     </header>
 
-    <!-- 主內容 Grid (兩欄佈局：導覽 Col-2 | 內容 Col-10) -->
+    <!-- 主內容 Grid -->
     <div class="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
         <!-- [左欄] Col-2: 導覽 (日期 + 工具切換按鈕) -->
-        <nav class="lg:col-span-2 flex flex-row lg:flex-col gap-2 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0 z-20 sticky-col h-auto lg:h-auto">
-            
-            <!-- 日期導覽區 -->
-            <div id="nav-container" class="flex flex-row lg:flex-col gap-2 w-full lg:flex-shrink">
-                <!-- JS 生成按鈕 -->
-            </div>
-
-            <div class="lg:h-px lg:bg-gray-200 my-2 lg:my-0"></div>
-
-            <!-- 工具專屬按鈕 -->
-            <div class="flex flex-row lg:flex-col gap-2 w-full flex-shrink-0">
-                <button onclick="setView('CURRENCY')" id="btn-currency" class="group flex items-center justify-center lg:justify-start p-3 rounded-lg transition-all duration-200 border bg-white border-gray-200 text-gray-600 hover:bg-gray-100">
-                    <i data-lucide="coins" class="w-5 h-5 mr-0 lg:mr-2"></i> 
-                    <span class="hidden lg:inline font-medium">日幣匯率試算</span>
-                </button>
-                <button onclick="setView('HOTEL')" id="btn-hotel" class="group flex items-center justify-center lg:justify-start p-3 rounded-lg transition-all duration-200 border bg-white border-gray-200 text-gray-600 hover:bg-gray-100">
-                    <i data-lucide="building-2" class="w-5 h-5 mr-0 lg:mr-2"></i> 
-                    <span class="hidden lg:inline font-medium">緊急聯絡/飯店卡</span>
-                </button>
+        <nav class="lg:col-span-2 pb-2 lg:pb-0 z-20 sticky-col h-auto lg:h-auto">
+            <div id="nav-container-wrapper" class="flex flex-row lg:flex-col gap-2 overflow-x-auto lg:overflow-visible">
+                <!-- 日期導覽區 + 工具按鈕 (全部在此容器內生成) -->
+                <div id="nav-container" class="flex flex-row lg:flex-col gap-2 w-full lg:flex-shrink">
+                    <!-- JS 動態生成所有按鈕 -->
+                </div>
             </div>
         </nav>
 
@@ -96,32 +114,34 @@
 
             <!-- 1. 行程內容區 (ITINERARY) - 預設顯示 -->
             <div id="itinerary-view" class="space-y-6">
-                <!-- 天氣看板 -->
-                <div id="weather-card" class="flat-panel rounded-xl p-5 relative overflow-hidden transition-all duration-500">
+                <!-- 天氣看板 (淺色卡片，高對比) -->
+                <div id="weather-card" class="flat-panel p-5 relative overflow-hidden transition-all duration-500 shadow-lg">
                     <div class="relative z-10 flex justify-between items-center">
                         <div class="flex items-center gap-4">
                             <div class="text-4xl" id="weather-icon"></div>
                             <div>
-                                <div class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-0.5">FORECAST</div>
-                                <div id="weather-condition" class="text-lg font-bold text-gray-800"></div>
-                                <div id="weather-note" class="text-xs text-gray-500 opacity-90"></div>
+                                <div class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-0.5">WEATHER</div>
+                                <div id="weather-condition" class="text-lg font-bold text-gray-900"></div>
+                                <div id="weather-note" class="text-xs text-gray-600 opacity-90"></div>
                             </div>
                         </div>
                         <div class="text-right">
-                            <div id="weather-location" class="text-xs font-bold text-indigo-600 uppercase tracking-widest mb-0.5">TOKYO</div>
-                            <div class="text-2xl font-black text-gray-800">
-                                <span id="weather-high" class="text-red-500"></span>
-                                <span class="text-gray-300 text-base mx-1">/</span>
-                                <span id="weather-low" class="text-blue-500"></span>
+                            <div id="weather-location" class="text-xs font-bold teal-accent uppercase tracking-widest mb-0.5">TOKYO</div>
+                            <div class="text-2xl font-black text-gray-900">
+                                <span id="weather-high" class="red-accent"></span>
+                                <span class="text-gray-400 text-base mx-1">/</span>
+                                <span id="weather-low" class="teal-accent"></span>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- 標題 -->
-                <div class="flex items-end gap-3 pb-2 border-b border-gray-300">
-                    <h2 id="day-number" class="text-4xl font-black text-gray-300 leading-none select-none">DAY 1</h2>
-                    <h3 id="day-title" class="text-xl lg:text-2xl font-bold text-gray-800 leading-tight mb-1"></h3>
+                <div class="flex items-end gap-3 pb-2 border-b border-opacity-50" style="border-color: var(--color-teal);">
+                    <!-- 日數使用深色，與背景色區分但不過於突兀 -->
+                    <h2 id="day-number" class="text-4xl font-black text-gray-600 leading-none select-none">DAY 1</h2>
+                    <!-- 標題使用紅色強調 -->
+                    <h3 id="day-title" class="text-xl lg:text-2xl font-bold red-accent leading-tight mb-1"></h3>
                 </div>
 
                 <!-- 行程列表容器 -->
@@ -133,41 +153,44 @@
 
             <!-- 2. 匯率試算區 (CURRENCY) - 預設隱藏 -->
             <div id="currency-view" class="hidden flat-panel rounded-xl p-8 lg:p-12 h-full min-h-[500px]">
-                <h3 class="text-3xl font-bold text-indigo-700 mb-8 pb-3 border-b border-gray-200 flex items-center">
+                <h3 class="text-3xl font-bold red-accent mb-8 pb-3 border-b border-gray-300 flex items-center">
                     <i data-lucide="coins" class="w-8 h-8 mr-3"></i> 日幣匯率試算中心
                 </h3>
                 
                 <div class="max-w-md mx-auto space-y-6">
-                    <div class="mb-6 flex items-center justify-between bg-gray-50 p-4 rounded-lg border border-gray-200">
-                        <span class="text-sm text-gray-500 font-medium">目前匯率 (1 TWD =)</span>
+                    <!-- 匯率輸入框 -->
+                    <div class="mb-6 flex items-center justify-between bg-gray-100 p-4 rounded-lg border" style="border-color: var(--color-teal);">
+                        <span class="text-sm text-gray-600 font-medium">目前匯率 (1 TWD =)</span>
                         <div class="flex items-center">
                             <input type="number" id="rateInput" value="4.80" step="0.01" oninput="convert('TWD')" 
-                                class="w-20 bg-transparent text-right font-mono font-bold text-indigo-600 text-xl focus:outline-none">
-                            <span class="text-sm text-gray-400 ml-2">JPY</span>
+                                class="w-20 bg-transparent text-right font-mono font-bold text-xl focus:outline-none red-accent">
+                            <span class="text-sm text-gray-500 ml-2">JPY</span>
                         </div>
                     </div>
 
+                    <!-- TWD 輸入 -->
                     <div class="relative group">
-                        <label class="absolute left-4 top-3 text-[10px] font-bold text-gray-400 group-focus-within:text-indigo-600">TWD (台幣)</label>
+                        <label class="absolute left-4 top-3 text-[10px] font-bold text-gray-500 group-focus-within:teal-accent">TWD (台幣)</label>
                         <input type="number" id="twdInput" placeholder="0" oninput="convert('TWD')"
-                            class="w-full bg-white border-2 border-gray-200 rounded-lg p-4 pt-8 text-2xl font-mono text-gray-800 focus:border-indigo-500 transition-all outline-none">
+                            class="w-full bg-gray-100 border border-gray-300 rounded-lg p-4 pt-8 text-2xl font-mono text-gray-900 focus:border-teal-accent transition-all outline-none">
                     </div>
                     
                     <div class="flex justify-center py-2">
-                        <div class="bg-gray-200 rounded-full p-2"><i data-lucide="arrow-down-up" class="w-5 h-5 text-gray-500"></i></div>
+                        <div class="rounded-full p-2" style="background-color: var(--color-teal);"><i data-lucide="arrow-down-up" class="w-5 h-5 text-white"></i></div>
                     </div>
                     
+                    <!-- JPY 輸入 -->
                     <div class="relative group">
-                        <label class="absolute left-4 top-3 text-[10px] font-bold text-gray-400 group-focus-within:text-red-600">JPY (日幣)</label>
+                        <label class="absolute left-4 top-3 text-[10px] font-bold text-gray-500 group-focus-within:red-accent">JPY (日幣)</label>
                         <input type="number" id="jpyInput" placeholder="0" oninput="convert('JPY')"
-                            class="w-full bg-white border-2 border-gray-200 rounded-lg p-4 pt-8 text-2xl font-mono text-red-600 focus:border-red-500 transition-all outline-none">
+                            class="w-full bg-gray-100 border border-gray-300 rounded-lg p-4 pt-8 text-2xl font-mono red-accent focus:border-red-accent transition-all outline-none">
                     </div>
                 </div>
             </div>
 
             <!-- 3. 飯店/緊急聯絡區 (HOTEL) - 預設隱藏 -->
             <div id="hotel-view-main" class="hidden flat-panel rounded-xl p-8 lg:p-12 h-full min-h-[500px]">
-                <h3 class="text-3xl font-bold text-red-700 mb-8 pb-3 border-b border-gray-200 flex items-center">
+                <h3 class="text-3xl font-bold red-accent mb-8 pb-3 border-b border-gray-300 flex items-center">
                     <i data-lucide="map-pin" class="w-8 h-8 mr-3"></i> 緊急聯絡/飯店地址卡
                 </h3>
                 
@@ -176,25 +199,28 @@
                     <div id="hotel-display-mode">
                         <div class="mb-4">
                             <div class="text-xs text-gray-500 uppercase tracking-widest mb-1">飯店名稱 (HOTEL NAME)</div>
-                            <div id="h-name" class="font-black text-gray-800 text-2xl leading-tight">未設定飯店</div>
+                            <div id="h-name" class="font-black text-gray-900 text-2xl leading-tight">未設定飯店</div>
                         </div>
 
-                        <div class="p-6 bg-red-50 rounded-lg border border-red-200 mb-6 relative group cursor-pointer shadow-sm" onclick="copyAddr()">
-                            <div class="text-xs text-red-600 uppercase mb-2 flex justify-between items-center font-medium">
-                                <span>地址 (ADDRESS - JP) <span class="text-red-400">(給司機或路人看)</span></span>
-                                <i data-lucide="copy" class="w-4 h-4 text-red-500 opacity-80 group-hover:opacity-100 transition-opacity"></i>
+                        <!-- 地址卡片，使用強調色邊框和背景 -->
+                        <div class="p-6 bg-gray-100 rounded-lg border-2 border-teal-accent mb-6 relative group cursor-pointer shadow-xl" 
+                             style="border-color: var(--color-teal);" onclick="copyAddr()">
+                            <div class="text-xs teal-accent uppercase mb-2 flex justify-between items-center font-medium">
+                                <span>地址 (ADDRESS - JP) <span class="text-gray-500">(給司機或路人看)</span></span>
+                                <i data-lucide="copy" class="w-4 h-4 teal-accent opacity-80 group-hover:opacity-100 transition-opacity"></i>
                             </div>
-                            <div id="h-addr" class="font-mono text-base text-red-900 break-all leading-relaxed">請點擊下方按鈕設定地址</div>
-                            <div class="text-xs text-gray-500 mt-3 border-t border-red-200 pt-2">
+                            <div id="h-addr" class="font-mono text-base text-gray-900 break-all leading-relaxed">請點擊下方按鈕設定地址</div>
+                            <div class="text-xs text-gray-500 mt-3 border-t border-gray-300 pt-2">
                                 電話: <span id="h-phone">無資料</span>
                             </div>
                         </div>
                         
                         <div class="grid grid-cols-2 gap-4">
-                            <button onclick="copyAddr()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-lg text-base transition-colors flex items-center justify-center shadow-md">
+                            <button onclick="copyAddr()" class="bg-teal-accent hover:bg-opacity-80 text-white font-bold py-3 rounded-lg text-base transition-colors flex items-center justify-center shadow-lg"
+                                    style="background-color: var(--color-teal);">
                                 <i data-lucide="clipboard-check" class="w-5 h-5 mr-2"></i> 複製日文地址
                             </button>
-                            <button onclick="toggleEdit()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium py-3 rounded-lg text-base transition-colors flex items-center justify-center">
+                            <button onclick="toggleEdit()" class="bg-gray-400 hover:bg-gray-500 text-gray-900 font-medium py-3 rounded-lg text-base transition-colors flex items-center justify-center">
                                 <i data-lucide="settings-2" class="w-5 h-5 mr-2"></i> 設定/修改資料
                             </button>
                         </div>
@@ -202,12 +228,13 @@
 
                     <!-- 編輯模式 (預設隱藏) -->
                     <div id="hotel-edit-mode" class="hidden space-y-4">
-                        <input type="text" id="in-name" placeholder="飯店名稱 (例如：The Prince Sakura Tower Tokyo)" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-3 text-sm text-gray-800 focus:border-indigo-500 outline-none">
-                        <textarea id="in-addr" rows="4" placeholder="日文地址 (最重要，例如：〒108-8610 東京都港区高輪 3-13-1)" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-3 text-sm text-gray-800 focus:border-indigo-500 outline-none"></textarea>
-                        <input type="text" id="in-phone" placeholder="飯店電話 (例如：+81 3-5488-1111)" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-3 text-sm text-gray-800 focus:border-indigo-500 outline-none">
+                        <input type="text" id="in-name" placeholder="飯店名稱" class="w-full bg-gray-100 border border-gray-300 rounded-lg p-3 text-sm text-gray-900 focus:border-teal-accent outline-none">
+                        <textarea id="in-addr" rows="4" placeholder="日文地址 (最重要)" class="w-full bg-gray-100 border border-gray-300 rounded-lg p-3 text-sm text-gray-900 focus:border-teal-accent outline-none"></textarea>
+                        <input type="text" id="in-phone" placeholder="飯店電話" class="w-full bg-gray-100 border border-gray-300 rounded-lg p-3 text-sm text-gray-900 focus:border-teal-accent outline-none">
                         <div class="grid grid-cols-2 gap-4 mt-4">
-                            <button onclick="saveHotel()" class="bg-indigo-600 text-white py-3 rounded-lg text-base font-bold shadow-md hover:bg-indigo-700">儲存</button>
-                            <button onclick="toggleEdit()" class="bg-gray-300 text-gray-700 py-3 rounded-lg text-base hover:bg-gray-400">取消</button>
+                            <button onclick="saveHotel()" class="bg-red-accent text-white py-3 rounded-lg text-base font-bold hover:bg-opacity-80 shadow-lg"
+                                    style="background-color: var(--color-red);">儲存</button>
+                            <button onclick="toggleEdit()" class="bg-gray-400 text-gray-900 py-3 rounded-lg text-base hover:bg-gray-500">取消</button>
                         </div>
                     </div>
                 </div>
@@ -218,9 +245,9 @@
 
     </div>
 
-    <!-- JavaScript 邏輯 (保持功能不變，只更新樣式類) -->
+    <!-- JavaScript 邏輯 (保持不變) -->
     <script>
-        // --- 1. 詳細行程資料 (與上次版本相同，包含專家介紹 & 營業時間) ---
+        // --- 1. 詳細行程資料 (與上次版本相同) ---
         const itineraryData = [
             {
                 day: 1, date: "12/26 (四)", title: "抵達與高輪新區",
@@ -435,54 +462,84 @@
         // 設置新的視圖模式
         function setView(mode) {
             viewMode = mode;
+            // 如果從工具頁面切回行程，則預設回到 DAY 1
+            if (mode === 'ITINERARY' && currentDay === 'TOOL') {
+                currentDay = 1;
+            }
             updateMainView();
         }
 
         // 渲染左側導覽列 (包含日期和工具按鈕的選中狀態)
         function renderNav() {
             const container = document.getElementById('nav-container');
-            const toolButtons = {
-                'CURRENCY': document.getElementById('btn-currency'),
-                'HOTEL': document.getElementById('btn-hotel')
-            };
-            
-            // 清除所有工具按鈕的選中樣式
-            Object.values(toolButtons).forEach(btn => {
-                btn.classList.remove('bg-indigo-600', 'border-indigo-600', 'text-white', 'shadow-md');
-                btn.classList.add('bg-white', 'border-gray-200', 'text-gray-600', 'hover:bg-gray-100');
-            });
-
-            // 渲染日期按鈕
             container.innerHTML = '';
+            
+            // 統一的按鈕樣式基礎 (從深藍變為淺色/紅色的高對比)
+            const baseClass = 'modern-btn group flex items-center justify-between';
+            // 活躍狀態: 紅色背景，深色文字 (使用紅色作為主要活躍/選中狀態)
+            const activeClass = 'bg-red-accent text-white font-extrabold shadow-lg border-transparent';
+            // 非活躍狀態: 深色背景，淺色文字，Teal 邊框
+            const inactiveClass = 'bg-dark-navy text-cream border-teal-500 hover:bg-opacity-90';
+
+
+            // --- A. 渲染日期按鈕 ---
             itineraryData.forEach(d => {
                 const btn = document.createElement('button');
                 const active = d.day === currentDay && viewMode === 'ITINERARY';
                 
-                // 【手機版面修正】: 加入 flex-shrink-0 和 min-w-[120px] 確保按鈕在手機上不會重疊
-                btn.className = `group flex items-center justify-between p-4 rounded-lg transition-all duration-200 border text-left font-medium flex-shrink-0 min-w-[120px]
-                    ${active 
-                        ? 'bg-indigo-600 border-indigo-700 text-white font-bold shadow-md' 
-                        : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300'}`;
+                // 應用動態顏色類
+                btn.className = `${baseClass} ${active ? activeClass : inactiveClass}`;
+                btn.style.backgroundColor = active ? 'var(--color-red)' : 'var(--color-dark-navy)';
+                btn.style.color = active ? 'var(--color-cream)' : 'var(--color-cream)';
+                btn.style.borderColor = 'var(--color-teal)';
                 
                 btn.innerHTML = `
                     <div>
-                        <span class="block text-[10px] font-bold uppercase opacity-60 tracking-wider ${active ? 'text-indigo-200' : 'text-gray-400'}">DAY ${d.day}</span>
+                        <span class="block text-[10px] font-bold uppercase tracking-wider text-gray-400">DAY ${d.day}</span>
                         <span class="font-bold text-sm lg:text-base">${d.date.split(' ')[0]}</span>
                     </div>
                     ${active ? '<i data-lucide="chevron-right" class="w-5 h-5 hidden lg:block text-white"></i>' : ''}
                 `;
-                btn.onclick = () => { currentDay = d.day; setView('ITINERARY'); }; // 點擊日期即切換為行程視圖
+                btn.onclick = () => { currentDay = d.day; setView('ITINERARY'); }; 
                 container.appendChild(btn);
             });
             
-            // 突出顯示被選中的工具按鈕
-            if (viewMode !== 'ITINERARY') {
-                const activeBtn = toolButtons[viewMode];
-                if (activeBtn) {
-                    activeBtn.classList.remove('bg-white', 'border-gray-200', 'text-gray-600', 'hover:bg-gray-100');
-                    activeBtn.classList.add('bg-indigo-600', 'border-indigo-600', 'text-white', 'font-bold', 'shadow-md');
-                }
-            }
+            // --- B. 渲染分隔線 (僅電腦上顯示) ---
+            const separator = document.createElement('div');
+            separator.className = "hidden lg:block h-px my-2";
+            separator.style.backgroundColor = 'rgba(44, 187, 173, 0.4)'; /* Teal 半透明分隔線 */
+            container.appendChild(separator);
+
+
+            // --- C. 渲染工具按鈕 (整合到導覽列末端) ---
+
+            // 1. 日幣匯率試算
+            const btnCurrency = document.createElement('button');
+            const activeCurrency = viewMode === 'CURRENCY';
+            btnCurrency.className = `${baseClass} flex items-center justify-center lg:justify-start ${activeCurrency ? activeClass : inactiveClass}`;
+            btnCurrency.style.backgroundColor = activeCurrency ? 'var(--color-red)' : 'var(--color-dark-navy)';
+            btnCurrency.style.color = activeCurrency ? 'var(--color-cream)' : 'var(--color-cream)';
+            btnCurrency.style.borderColor = 'var(--color-teal)';
+            
+            btnCurrency.innerHTML = `<i data-lucide="coins" class="w-5 h-5 mr-0 lg:mr-2"></i> 
+                                     <span class="hidden lg:inline font-medium">日幣試算</span>`;
+            btnCurrency.onclick = () => setView('CURRENCY');
+            container.appendChild(btnCurrency);
+
+            // 2. 緊急聯絡/飯店地址卡
+            const btnHotel = document.createElement('button');
+            const activeHotel = viewMode === 'HOTEL';
+            btnHotel.className = `${baseClass} flex items-center justify-center lg:justify-start ${activeHotel ? activeClass : inactiveClass}`;
+            btnHotel.style.backgroundColor = activeHotel ? 'var(--color-red)' : 'var(--color-dark-navy)';
+            btnHotel.style.color = activeHotel ? 'var(--color-cream)' : 'var(--color-cream)';
+            btnHotel.style.borderColor = 'var(--color-teal)';
+            
+            btnHotel.innerHTML = `<i data-lucide="map-pin" class="w-5 h-5 mr-0 lg:mr-2"></i> 
+                                  <span class="hidden lg:inline font-medium">緊急聯絡卡</span>`;
+            btnHotel.onclick = () => setView('HOTEL');
+            container.appendChild(btnHotel);
+
+            lucide.createIcons(); // 重新渲染新加入的 icon
         }
         
         // 渲染中間的行程內容 (只有在 viewMode = 'ITINERARY' 時被呼叫)
@@ -500,14 +557,16 @@
             document.getElementById('weather-high').textContent = high;
 
             const wCard = document.getElementById('weather-card');
-            // 警報狀態使用紅色邊框 (UNIQLO風格中，紅色用於警示)
+            // 警報狀態使用紅色邊框
             if(data.weather.alert) {
-                wCard.className = "flat-panel rounded-xl p-5 relative overflow-hidden transition-all duration-500 border-2 border-red-500 shadow-lg shadow-red-100";
+                wCard.className = "flat-panel rounded-lg p-5 relative overflow-hidden transition-all duration-500 border-2 shadow-lg";
+                wCard.style.borderColor = 'var(--color-red)';
             } else {
-                wCard.className = "flat-panel rounded-xl p-5 relative overflow-hidden transition-all duration-500";
+                wCard.className = "flat-panel rounded-lg p-5 relative overflow-hidden transition-all duration-500";
+                wCard.style.borderColor = 'rgba(44, 187, 173, 0.2)';
             }
 
-            // 2. 更新標題
+            // 2. 更新標題 (文字顏色已在 HTML 中使用 red-accent 和深灰色)
             document.getElementById('day-number').textContent = `DAY ${data.day}`;
             document.getElementById('day-title').textContent = data.title;
 
@@ -519,31 +578,38 @@
                 const el = document.createElement('div');
                 const isHigh = slot.highlight;
                 
+                // 圖標和邊框的顏色
+                const slotIconBg = isHigh ? 'var(--color-red)' : 'var(--color-teal)';
+                const slotIconColor = isHigh ? 'white' : 'white';
+                const slotBorderClass = isHigh ? 'border-2 border-red-accent shadow-lg' : 'border-gray-300';
+                
                 el.innerHTML = `
-                    <div class="flat-panel p-5 rounded-xl border ${isHigh ? 'border-indigo-500 shadow-md shadow-indigo-100' : 'border-gray-200'} hover:shadow-lg transition-shadow">
+                    <div class="flat-panel p-5 rounded-xl ${slotBorderClass} hover:border-teal-accent transition-colors duration-300">
                         <div class="flex gap-4 mb-4">
                             <div class="flex-shrink-0">
-                                <div class="w-12 h-12 rounded-full flex items-center justify-center ${isHigh ? 'bg-indigo-600 text-white shadow-lg' : 'bg-gray-100 text-gray-500'}">
+                                <div class="w-12 h-12 rounded-full flex items-center justify-center shadow-md" style="background-color: ${slotIconBg}; color: ${slotIconColor};">
                                     <i data-lucide="${slot.icon}" class="w-6 h-6"></i>
                                 </div>
                             </div>
                             <div class="flex-grow">
                                 <div class="flex flex-wrap justify-between items-start mb-1">
-                                    <span class="text-[10px] font-bold uppercase tracking-wider text-gray-500 bg-gray-100 px-2 py-0.5 rounded">${slot.time}</span>
-                                    <span class="text-[10px] text-gray-400 flex items-center bg-white border border-gray-200 px-2 py-0.5 rounded">
-                                        <i data-lucide="clock" class="w-3 h-3 mr-1"></i> ${slot.hours}
+                                    <span class="text-[10px] font-bold uppercase tracking-wider text-white px-2 py-0.5 rounded-sm" style="background-color: var(--color-teal);">
+                                        ${slot.time}
+                                    </span>
+                                    <span class="text-[10px] text-gray-600 flex items-center bg-gray-200 border border-gray-300 px-2 py-0.5 rounded-sm">
+                                        <i data-lucide="clock" class="w-3 h-3 mr-1 text-gray-500"></i> ${slot.hours}
                                     </span>
                                 </div>
-                                <h4 class="text-lg font-bold text-gray-800 mb-1">${slot.title}</h4>
-                                <p class="text-sm text-gray-600 leading-relaxed">${slot.desc}</p>
+                                <h4 class="text-lg font-bold text-gray-900 mb-1">${slot.title}</h4>
+                                <p class="text-sm text-gray-700 leading-relaxed">${slot.desc}</p>
                             </div>
                         </div>
                         
                         <!-- 專家/導遊提示區塊 -->
-                        <div class="expert-tip-box rounded-lg p-3 text-xs lg:text-sm text-gray-700 flex gap-3">
-                            <i data-lucide="lightbulb" class="w-4 h-4 text-indigo-500 flex-shrink-0 mt-0.5"></i>
+                        <div class="expert-tip-box rounded-lg p-3 text-xs lg:text-sm text-white flex gap-3 shadow-inner">
+                            <i data-lucide="lightbulb" class="w-4 h-4 teal-accent flex-shrink-0 mt-0.5"></i>
                             <div>
-                                <span class="font-bold text-indigo-600 block mb-0.5">TRAVEL EXPERT:</span>
+                                <span class="font-bold teal-accent block mb-0.5">VIBE TIP:</span>
                                 ${slot.expert}
                             </div>
                         </div>
@@ -607,6 +673,8 @@
                 view.classList.remove('hidden');
                 edit.classList.add('hidden');
             } else {
+                // 從顯示切換到編輯時，確保輸入框載入最新資料
+                loadHotel(); 
                 view.classList.add('hidden');
                 edit.classList.remove('hidden');
             }
@@ -616,13 +684,12 @@
         function copyAddr() {
             const text = document.getElementById('h-addr').textContent;
             if(!text || text === '請點擊下方按鈕設定地址') {
-                // 使用自定義的簡單提示，符合極簡風格
                 const originalText = document.getElementById('h-addr').textContent;
                 document.getElementById('h-addr').textContent = "⚠️ 請先設定地址！";
-                document.getElementById('h-addr').style.color = "#f87171"; // Red color
+                document.getElementById('h-addr').classList.add('red-accent');
                 setTimeout(() => {
                     document.getElementById('h-addr').textContent = originalText;
-                    document.getElementById('h-addr').style.color = "";
+                    document.getElementById('h-addr').classList.remove('red-accent');
                 }, 2000);
                 return;
             }
@@ -633,10 +700,10 @@
             // 提供視覺回饋
             const originalText = document.getElementById('h-addr').textContent;
             document.getElementById('h-addr').textContent = "✅ 已複製到剪貼簿！ (1.5秒後恢復)";
-            document.getElementById('h-addr').style.color = "#10b981"; // Green color
+            document.getElementById('h-addr').classList.add('teal-accent'); 
             setTimeout(() => {
                 document.getElementById('h-addr').textContent = originalText;
-                document.getElementById('h-addr').style.color = "";
+                document.getElementById('h-addr').classList.remove('teal-accent');
             }, 1500);
         }
 
