@@ -3,36 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TOKYO VIBE | 專業切換儀表板</title>
+    <title>TOKYO VIBE | UNIQLO極簡風儀表板</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
+        /* UNIQLO風格字體: 乾淨的Sans-serif */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
         
         body {
             font-family: 'Inter', 'Noto Sans TC', sans-serif;
-            background-color: #0f172a; /* Slate 900 */
-            background-image: 
-                radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
-                radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), 
-                radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%);
-            color: #e2e8f0;
+            background-color: #f9fafb; /* Light Gray/Off-White Background */
+            color: #1f2937; /* Dark Gray Text */
             min-height: 100vh;
         }
 
-        /* 玻璃擬態面板 */
-        .glass-panel {
-            background: rgba(30, 41, 59, 0.6);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        /* 卡片面板 - 乾淨、平面化 */
+        .flat-panel {
+            background-color: #ffffff; /* Pure White */
+            border: 1px solid #e5e7eb; /* Light Gray Border */
+            border-radius: 12px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05); /* Very subtle shadow */
         }
 
-        /* 專家提示區塊的特殊樣式 */
+        /* 專家提示區塊 - 使用淺色背景與強調色邊框 */
         .expert-tip-box {
-            background: linear-gradient(135deg, rgba(79, 70, 229, 0.1) 0%, rgba(124, 58, 237, 0.1) 100%);
-            border-left: 3px solid #818cf8;
+            background-color: #f0f3ff; /* Very light blue/indigo background */
+            border-left: 3px solid #4f46e5; /* Indigo accent */
+            color: #1f2937;
         }
 
         /* 固定側邊欄位 */
@@ -42,6 +39,9 @@
                 top: 1.5rem;
                 height: calc(100vh - 3rem);
                 overflow-y: auto;
+                /* 隱藏滾動條，保持簡潔 */
+                -ms-overflow-style: none; /* IE and Edge */
+                scrollbar-width: none; /* Firefox */
             }
             .sticky-col::-webkit-scrollbar { display: none; }
         }
@@ -50,18 +50,18 @@
 <body class="p-3 lg:p-6 text-sm lg:text-base">
 
     <!-- 頂部 Header -->
-    <header class="max-w-[1400px] mx-auto mb-6 glass-panel rounded-2xl p-6 relative overflow-hidden shadow-2xl flex items-center justify-between">
+    <header class="max-w-[1400px] mx-auto mb-6 flat-panel p-6 shadow-lg border-t-4 border-indigo-600 flex items-center justify-between">
         <div class="z-10">
-            <h1 class="text-2xl lg:text-3xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
+            <h1 class="text-2xl lg:text-3xl font-black tracking-tight text-indigo-700">
                 TOKYO VIBE 2025
             </h1>
-            <p class="text-slate-400 text-xs lg:text-sm font-medium mt-1 flex gap-3">
+            <p class="text-gray-500 text-xs lg:text-sm font-medium mt-1 flex gap-3">
                 <span><i data-lucide="calendar" class="w-3 h-3 inline mr-1"></i>12/26 - 12/31</span>
-                <span><i data-lucide="compass" class="w-3 h-3 inline mr-1"></i>專業儀表板模式</span>
+                <span><i data-lucide="compass" class="w-3 h-3 inline mr-1"></i>極簡風格儀表板</span>
             </p>
         </div>
-        <div class="hidden lg:block opacity-30">
-            <i data-lucide="map" class="w-10 h-10 text-white"></i>
+        <div class="hidden lg:block">
+            <i data-lucide="map" class="w-8 h-8 text-gray-300"></i>
         </div>
     </header>
 
@@ -69,24 +69,24 @@
     <div class="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
         <!-- [左欄] Col-2: 導覽 (日期 + 工具切換按鈕) -->
-        <nav class="lg:col-span-2 flex flex-row lg:flex-col gap-4 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0 z-20 sticky-col h-auto lg:h-auto">
+        <nav class="lg:col-span-2 flex flex-row lg:flex-col gap-2 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0 z-20 sticky-col h-auto lg:h-auto">
             
             <!-- 日期導覽區 -->
-            <div id="nav-container" class="flex flex-row lg:flex-col gap-2 w-full">
+            <div id="nav-container" class="flex flex-row lg:flex-col gap-2 w-full lg:flex-shrink">
                 <!-- JS 生成按鈕 -->
             </div>
 
-            <div class="lg:h-px lg:bg-slate-700/50 my-2 lg:my-0"></div>
+            <div class="lg:h-px lg:bg-gray-200 my-2 lg:my-0"></div>
 
             <!-- 工具專屬按鈕 -->
             <div class="flex flex-row lg:flex-col gap-2 w-full flex-shrink-0">
-                <button onclick="setView('CURRENCY')" id="btn-currency" class="group flex items-center justify-center lg:justify-start p-3 rounded-xl transition-colors duration-200 border bg-slate-800/40 border-slate-700/50 text-indigo-300 hover:bg-indigo-900/40 hover:text-white">
+                <button onclick="setView('CURRENCY')" id="btn-currency" class="group flex items-center justify-center lg:justify-start p-3 rounded-lg transition-all duration-200 border bg-white border-gray-200 text-gray-600 hover:bg-gray-100">
                     <i data-lucide="coins" class="w-5 h-5 mr-0 lg:mr-2"></i> 
-                    <span class="hidden lg:inline font-bold">日幣匯率試算</span>
+                    <span class="hidden lg:inline font-medium">日幣匯率試算</span>
                 </button>
-                <button onclick="setView('HOTEL')" id="btn-hotel" class="group flex items-center justify-center lg:justify-start p-3 rounded-xl transition-colors duration-200 border bg-slate-800/40 border-slate-700/50 text-yellow-300 hover:bg-yellow-900/40 hover:text-white">
+                <button onclick="setView('HOTEL')" id="btn-hotel" class="group flex items-center justify-center lg:justify-start p-3 rounded-lg transition-all duration-200 border bg-white border-gray-200 text-gray-600 hover:bg-gray-100">
                     <i data-lucide="building-2" class="w-5 h-5 mr-0 lg:mr-2"></i> 
-                    <span class="hidden lg:inline font-bold">緊急聯絡/飯店卡</span>
+                    <span class="hidden lg:inline font-medium">緊急聯絡/飯店卡</span>
                 </button>
             </div>
         </nav>
@@ -97,31 +97,31 @@
             <!-- 1. 行程內容區 (ITINERARY) - 預設顯示 -->
             <div id="itinerary-view" class="space-y-6">
                 <!-- 天氣看板 -->
-                <div id="weather-card" class="glass-panel rounded-2xl p-5 relative overflow-hidden transition-all duration-500">
+                <div id="weather-card" class="flat-panel rounded-xl p-5 relative overflow-hidden transition-all duration-500">
                     <div class="relative z-10 flex justify-between items-center">
                         <div class="flex items-center gap-4">
                             <div class="text-4xl" id="weather-icon"></div>
                             <div>
-                                <div class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-0.5">FORECAST</div>
-                                <div id="weather-condition" class="text-lg font-bold text-white"></div>
-                                <div id="weather-note" class="text-xs text-slate-300 opacity-80"></div>
+                                <div class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-0.5">FORECAST</div>
+                                <div id="weather-condition" class="text-lg font-bold text-gray-800"></div>
+                                <div id="weather-note" class="text-xs text-gray-500 opacity-90"></div>
                             </div>
                         </div>
                         <div class="text-right">
-                            <div id="weather-location" class="text-xs font-bold text-indigo-400 uppercase tracking-widest mb-0.5">TOKYO</div>
-                            <div class="text-2xl font-black text-white">
-                                <span id="weather-high" class="text-red-300"></span>
-                                <span class="text-slate-600 text-base mx-1">/</span>
-                                <span id="weather-low" class="text-blue-300"></span>
+                            <div id="weather-location" class="text-xs font-bold text-indigo-600 uppercase tracking-widest mb-0.5">TOKYO</div>
+                            <div class="text-2xl font-black text-gray-800">
+                                <span id="weather-high" class="text-red-500"></span>
+                                <span class="text-gray-300 text-base mx-1">/</span>
+                                <span id="weather-low" class="text-blue-500"></span>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- 標題 -->
-                <div class="flex items-end gap-3 pb-2 border-b border-slate-700/50">
-                    <h2 id="day-number" class="text-4xl font-black text-indigo-500/20 leading-none select-none">DAY 1</h2>
-                    <h3 id="day-title" class="text-xl lg:text-2xl font-bold text-white leading-tight mb-1"></h3>
+                <div class="flex items-end gap-3 pb-2 border-b border-gray-300">
+                    <h2 id="day-number" class="text-4xl font-black text-gray-300 leading-none select-none">DAY 1</h2>
+                    <h3 id="day-title" class="text-xl lg:text-2xl font-bold text-gray-800 leading-tight mb-1"></h3>
                 </div>
 
                 <!-- 行程列表容器 -->
@@ -132,41 +132,42 @@
 
 
             <!-- 2. 匯率試算區 (CURRENCY) - 預設隱藏 -->
-            <div id="currency-view" class="hidden glass-panel rounded-2xl p-8 lg:p-12 h-full min-h-[500px]">
-                <h3 class="text-3xl font-bold text-indigo-400 mb-6 flex items-center">
+            <div id="currency-view" class="hidden flat-panel rounded-xl p-8 lg:p-12 h-full min-h-[500px]">
+                <h3 class="text-3xl font-bold text-indigo-700 mb-8 pb-3 border-b border-gray-200 flex items-center">
                     <i data-lucide="coins" class="w-8 h-8 mr-3"></i> 日幣匯率試算中心
                 </h3>
                 
-                <div class="max-w-md mx-auto space-y-5">
-                    <div class="mb-6 flex items-center justify-between bg-slate-800/50 p-3 rounded-xl border border-slate-700">
-                        <span class="text-sm text-slate-400 font-medium">目前匯率 (1 TWD =)</span>
+                <div class="max-w-md mx-auto space-y-6">
+                    <div class="mb-6 flex items-center justify-between bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <span class="text-sm text-gray-500 font-medium">目前匯率 (1 TWD =)</span>
                         <div class="flex items-center">
-                            <input type="number" id="rateInput" value="4.80" step="0.01" oninput="convert('TWD')" class="w-20 bg-transparent text-right font-mono font-bold text-indigo-300 text-xl focus:outline-none">
-                            <span class="text-sm text-slate-500 ml-2">JPY</span>
+                            <input type="number" id="rateInput" value="4.80" step="0.01" oninput="convert('TWD')" 
+                                class="w-20 bg-transparent text-right font-mono font-bold text-indigo-600 text-xl focus:outline-none">
+                            <span class="text-sm text-gray-400 ml-2">JPY</span>
                         </div>
                     </div>
 
                     <div class="relative group">
-                        <label class="absolute left-4 top-3 text-[10px] font-bold text-slate-500 group-focus-within:text-indigo-400">TWD (台幣)</label>
+                        <label class="absolute left-4 top-3 text-[10px] font-bold text-gray-400 group-focus-within:text-indigo-600">TWD (台幣)</label>
                         <input type="number" id="twdInput" placeholder="0" oninput="convert('TWD')"
-                            class="w-full bg-slate-900/80 border-2 border-slate-700 rounded-xl p-4 pt-8 text-2xl font-mono text-white focus:border-indigo-500 transition-all outline-none">
+                            class="w-full bg-white border-2 border-gray-200 rounded-lg p-4 pt-8 text-2xl font-mono text-gray-800 focus:border-indigo-500 transition-all outline-none">
                     </div>
                     
                     <div class="flex justify-center py-2">
-                        <div class="bg-slate-700/50 rounded-full p-2"><i data-lucide="arrow-down-up" class="w-5 h-5 text-slate-300"></i></div>
+                        <div class="bg-gray-200 rounded-full p-2"><i data-lucide="arrow-down-up" class="w-5 h-5 text-gray-500"></i></div>
                     </div>
                     
                     <div class="relative group">
-                        <label class="absolute left-4 top-3 text-[10px] font-bold text-slate-500 group-focus-within:text-yellow-400">JPY (日幣)</label>
+                        <label class="absolute left-4 top-3 text-[10px] font-bold text-gray-400 group-focus-within:text-red-600">JPY (日幣)</label>
                         <input type="number" id="jpyInput" placeholder="0" oninput="convert('JPY')"
-                            class="w-full bg-slate-900/80 border-2 border-slate-700 rounded-xl p-4 pt-8 text-2xl font-mono text-yellow-400 focus:border-yellow-500 transition-all outline-none">
+                            class="w-full bg-white border-2 border-gray-200 rounded-lg p-4 pt-8 text-2xl font-mono text-red-600 focus:border-red-500 transition-all outline-none">
                     </div>
                 </div>
             </div>
 
             <!-- 3. 飯店/緊急聯絡區 (HOTEL) - 預設隱藏 -->
-            <div id="hotel-view-main" class="hidden glass-panel rounded-2xl p-8 lg:p-12 h-full min-h-[500px]">
-                <h3 class="text-3xl font-bold text-yellow-400 mb-6 flex items-center">
+            <div id="hotel-view-main" class="hidden flat-panel rounded-xl p-8 lg:p-12 h-full min-h-[500px]">
+                <h3 class="text-3xl font-bold text-red-700 mb-8 pb-3 border-b border-gray-200 flex items-center">
                     <i data-lucide="map-pin" class="w-8 h-8 mr-3"></i> 緊急聯絡/飯店地址卡
                 </h3>
                 
@@ -174,26 +175,26 @@
                     <!-- 顯示模式 -->
                     <div id="hotel-display-mode">
                         <div class="mb-4">
-                            <div class="text-xs text-slate-500 uppercase tracking-widest mb-1">飯店名稱 (HOTEL NAME)</div>
-                            <div id="h-name" class="font-black text-white text-2xl leading-tight">未設定飯店</div>
+                            <div class="text-xs text-gray-500 uppercase tracking-widest mb-1">飯店名稱 (HOTEL NAME)</div>
+                            <div id="h-name" class="font-black text-gray-800 text-2xl leading-tight">未設定飯店</div>
                         </div>
 
-                        <div class="p-5 bg-black/30 rounded-xl border border-yellow-500/20 mb-6 relative group cursor-pointer" onclick="copyAddr()">
-                            <div class="text-xs text-yellow-600 uppercase mb-2 flex justify-between items-center">
+                        <div class="p-6 bg-red-50 rounded-lg border border-red-200 mb-6 relative group cursor-pointer shadow-sm" onclick="copyAddr()">
+                            <div class="text-xs text-red-600 uppercase mb-2 flex justify-between items-center font-medium">
                                 <span>地址 (ADDRESS - JP) <span class="text-red-400">(給司機或路人看)</span></span>
-                                <i data-lucide="copy" class="w-4 h-4 text-yellow-500 opacity-60 group-hover:opacity-100 transition-opacity"></i>
+                                <i data-lucide="copy" class="w-4 h-4 text-red-500 opacity-80 group-hover:opacity-100 transition-opacity"></i>
                             </div>
-                            <div id="h-addr" class="font-mono text-base text-yellow-100/90 break-all leading-relaxed">請點擊下方按鈕設定地址</div>
-                            <div class="text-xs text-slate-400 mt-3">
+                            <div id="h-addr" class="font-mono text-base text-red-900 break-all leading-relaxed">請點擊下方按鈕設定地址</div>
+                            <div class="text-xs text-gray-500 mt-3 border-t border-red-200 pt-2">
                                 電話: <span id="h-phone">無資料</span>
                             </div>
                         </div>
                         
                         <div class="grid grid-cols-2 gap-4">
-                            <button onclick="copyAddr()" class="bg-yellow-600 hover:bg-yellow-500 text-slate-900 font-bold py-3 rounded-xl text-base transition-colors flex items-center justify-center">
+                            <button onclick="copyAddr()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-lg text-base transition-colors flex items-center justify-center shadow-md">
                                 <i data-lucide="clipboard-check" class="w-5 h-5 mr-2"></i> 複製日文地址
                             </button>
-                            <button onclick="toggleEdit()" class="bg-slate-700 hover:bg-slate-600 text-white font-medium py-3 rounded-xl text-base transition-colors flex items-center justify-center">
+                            <button onclick="toggleEdit()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium py-3 rounded-lg text-base transition-colors flex items-center justify-center">
                                 <i data-lucide="settings-2" class="w-5 h-5 mr-2"></i> 設定/修改資料
                             </button>
                         </div>
@@ -201,12 +202,12 @@
 
                     <!-- 編輯模式 (預設隱藏) -->
                     <div id="hotel-edit-mode" class="hidden space-y-4">
-                        <input type="text" id="in-name" placeholder="飯店名稱 (例如：The Prince Sakura Tower Tokyo)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm text-white focus:border-yellow-500 outline-none">
-                        <textarea id="in-addr" rows="4" placeholder="日文地址 (最重要，例如：〒108-8610 東京都港区高輪 3-13-1)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm text-white focus:border-yellow-500 outline-none"></textarea>
-                        <input type="text" id="in-phone" placeholder="飯店電話 (例如：+81 3-5488-1111)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm text-white focus:border-yellow-500 outline-none">
+                        <input type="text" id="in-name" placeholder="飯店名稱 (例如：The Prince Sakura Tower Tokyo)" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-3 text-sm text-gray-800 focus:border-indigo-500 outline-none">
+                        <textarea id="in-addr" rows="4" placeholder="日文地址 (最重要，例如：〒108-8610 東京都港区高輪 3-13-1)" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-3 text-sm text-gray-800 focus:border-indigo-500 outline-none"></textarea>
+                        <input type="text" id="in-phone" placeholder="飯店電話 (例如：+81 3-5488-1111)" class="w-full bg-gray-50 border border-gray-300 rounded-lg p-3 text-sm text-gray-800 focus:border-indigo-500 outline-none">
                         <div class="grid grid-cols-2 gap-4 mt-4">
-                            <button onclick="saveHotel()" class="bg-indigo-600 text-white py-3 rounded-xl text-base font-bold">儲存</button>
-                            <button onclick="toggleEdit()" class="bg-slate-700 text-white py-3 rounded-xl text-base">取消</button>
+                            <button onclick="saveHotel()" class="bg-indigo-600 text-white py-3 rounded-lg text-base font-bold shadow-md hover:bg-indigo-700">儲存</button>
+                            <button onclick="toggleEdit()" class="bg-gray-300 text-gray-700 py-3 rounded-lg text-base hover:bg-gray-400">取消</button>
                         </div>
                     </div>
                 </div>
@@ -217,7 +218,7 @@
 
     </div>
 
-    <!-- JavaScript 邏輯 -->
+    <!-- JavaScript 邏輯 (保持功能不變，只更新樣式類) -->
     <script>
         // --- 1. 詳細行程資料 (與上次版本相同，包含專家介紹 & 營業時間) ---
         const itineraryData = [
@@ -447,12 +448,8 @@
             
             // 清除所有工具按鈕的選中樣式
             Object.values(toolButtons).forEach(btn => {
-                btn.classList.remove('bg-indigo-600', 'border-indigo-500', 'text-white', 'scale-[1.02]');
-                if (btn.id === 'btn-currency') {
-                    btn.classList.add('bg-slate-800/40', 'border-slate-700/50', 'text-indigo-300');
-                } else if (btn.id === 'btn-hotel') {
-                    btn.classList.add('bg-slate-800/40', 'border-slate-700/50', 'text-yellow-300');
-                }
+                btn.classList.remove('bg-indigo-600', 'border-indigo-600', 'text-white', 'shadow-md');
+                btn.classList.add('bg-white', 'border-gray-200', 'text-gray-600', 'hover:bg-gray-100');
             });
 
             // 渲染日期按鈕
@@ -461,15 +458,15 @@
                 const btn = document.createElement('button');
                 const active = d.day === currentDay && viewMode === 'ITINERARY';
                 
-                // 樣式：選中時發光，未選中時半透明
-                btn.className = `group flex items-center justify-between p-4 rounded-xl transition-all duration-200 border text-left
+                // 【手機版面修正】: 加入 flex-shrink-0 和 min-w-[120px] 確保按鈕在手機上不會重疊
+                btn.className = `group flex items-center justify-between p-4 rounded-lg transition-all duration-200 border text-left font-medium flex-shrink-0 min-w-[120px]
                     ${active 
-                        ? 'bg-indigo-600 border-indigo-500 text-white shadow-lg shadow-indigo-900/50 scale-[1.02]' 
-                        : 'bg-slate-800/40 border-slate-700/50 text-slate-400 hover:bg-slate-800 hover:text-white hover:border-slate-600'}`;
+                        ? 'bg-indigo-600 border-indigo-700 text-white font-bold shadow-md' 
+                        : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300'}`;
                 
                 btn.innerHTML = `
                     <div>
-                        <span class="block text-[10px] font-bold uppercase opacity-60 tracking-wider">DAY ${d.day}</span>
+                        <span class="block text-[10px] font-bold uppercase opacity-60 tracking-wider ${active ? 'text-indigo-200' : 'text-gray-400'}">DAY ${d.day}</span>
                         <span class="font-bold text-sm lg:text-base">${d.date.split(' ')[0]}</span>
                     </div>
                     ${active ? '<i data-lucide="chevron-right" class="w-5 h-5 hidden lg:block text-white"></i>' : ''}
@@ -482,8 +479,8 @@
             if (viewMode !== 'ITINERARY') {
                 const activeBtn = toolButtons[viewMode];
                 if (activeBtn) {
-                    activeBtn.classList.remove('bg-slate-800/40', 'border-slate-700/50', 'text-indigo-300', 'text-yellow-300');
-                    activeBtn.classList.add('bg-indigo-600', 'border-indigo-500', 'text-white', 'scale-[1.02]');
+                    activeBtn.classList.remove('bg-white', 'border-gray-200', 'text-gray-600', 'hover:bg-gray-100');
+                    activeBtn.classList.add('bg-indigo-600', 'border-indigo-600', 'text-white', 'font-bold', 'shadow-md');
                 }
             }
         }
@@ -492,7 +489,7 @@
         function renderItinerary() {
             const data = itineraryData.find(d => d.day === currentDay);
             
-            // 1. 更新天氣卡片... (保持不變)
+            // 1. 更新天氣卡片... 
             document.getElementById('weather-icon').textContent = data.weather.icon;
             document.getElementById('weather-condition').textContent = data.weather.cond;
             document.getElementById('weather-note').textContent = data.weather.note || '';
@@ -503,17 +500,18 @@
             document.getElementById('weather-high').textContent = high;
 
             const wCard = document.getElementById('weather-card');
+            // 警報狀態使用紅色邊框 (UNIQLO風格中，紅色用於警示)
             if(data.weather.alert) {
-                wCard.className = "glass-panel rounded-2xl p-5 relative overflow-hidden transition-all duration-500 border border-red-500/50 shadow-red-900/20";
+                wCard.className = "flat-panel rounded-xl p-5 relative overflow-hidden transition-all duration-500 border-2 border-red-500 shadow-lg shadow-red-100";
             } else {
-                wCard.className = "glass-panel rounded-2xl p-5 relative overflow-hidden transition-all duration-500 border border-slate-700/50";
+                wCard.className = "flat-panel rounded-xl p-5 relative overflow-hidden transition-all duration-500";
             }
 
             // 2. 更新標題
             document.getElementById('day-number').textContent = `DAY ${data.day}`;
             document.getElementById('day-title').textContent = data.title;
 
-            // 3. 更新行程列表 (保持不變)
+            // 3. 更新行程列表 
             const list = document.getElementById('itinerary-list');
             list.innerHTML = '';
             
@@ -522,30 +520,30 @@
                 const isHigh = slot.highlight;
                 
                 el.innerHTML = `
-                    <div class="glass-panel p-5 rounded-2xl border ${isHigh ? 'border-indigo-500/50 shadow-indigo-900/20' : 'border-slate-700/30'} hover:border-indigo-500/30 transition-colors">
+                    <div class="flat-panel p-5 rounded-xl border ${isHigh ? 'border-indigo-500 shadow-md shadow-indigo-100' : 'border-gray-200'} hover:shadow-lg transition-shadow">
                         <div class="flex gap-4 mb-4">
                             <div class="flex-shrink-0">
-                                <div class="w-12 h-12 rounded-full flex items-center justify-center ${isHigh ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/30' : 'bg-slate-800 text-slate-400'}">
+                                <div class="w-12 h-12 rounded-full flex items-center justify-center ${isHigh ? 'bg-indigo-600 text-white shadow-lg' : 'bg-gray-100 text-gray-500'}">
                                     <i data-lucide="${slot.icon}" class="w-6 h-6"></i>
                                 </div>
                             </div>
                             <div class="flex-grow">
                                 <div class="flex flex-wrap justify-between items-start mb-1">
-                                    <span class="text-[10px] font-bold uppercase tracking-wider ${isHigh ? 'text-indigo-400' : 'text-slate-500'} bg-slate-900/50 px-2 py-0.5 rounded">${slot.time}</span>
-                                    <span class="text-[10px] text-slate-400 flex items-center bg-slate-800/50 px-2 py-0.5 rounded">
+                                    <span class="text-[10px] font-bold uppercase tracking-wider text-gray-500 bg-gray-100 px-2 py-0.5 rounded">${slot.time}</span>
+                                    <span class="text-[10px] text-gray-400 flex items-center bg-white border border-gray-200 px-2 py-0.5 rounded">
                                         <i data-lucide="clock" class="w-3 h-3 mr-1"></i> ${slot.hours}
                                     </span>
                                 </div>
-                                <h4 class="text-lg font-bold text-white mb-1">${slot.title}</h4>
-                                <p class="text-sm text-slate-300 leading-relaxed">${slot.desc}</p>
+                                <h4 class="text-lg font-bold text-gray-800 mb-1">${slot.title}</h4>
+                                <p class="text-sm text-gray-600 leading-relaxed">${slot.desc}</p>
                             </div>
                         </div>
                         
                         <!-- 專家/導遊提示區塊 -->
-                        <div class="expert-tip-box rounded-xl p-3 text-xs lg:text-sm text-slate-200 flex gap-3">
-                            <i data-lucide="lightbulb" class="w-4 h-4 text-yellow-400 flex-shrink-0 mt-0.5"></i>
+                        <div class="expert-tip-box rounded-lg p-3 text-xs lg:text-sm text-gray-700 flex gap-3">
+                            <i data-lucide="lightbulb" class="w-4 h-4 text-indigo-500 flex-shrink-0 mt-0.5"></i>
                             <div>
-                                <span class="font-bold text-indigo-300 block mb-0.5">TRAVEL EXPERT:</span>
+                                <span class="font-bold text-indigo-600 block mb-0.5">TRAVEL EXPERT:</span>
                                 ${slot.expert}
                             </div>
                         </div>
@@ -617,20 +615,29 @@
         // 複製地址功能 (已強化提示)
         function copyAddr() {
             const text = document.getElementById('h-addr').textContent;
-            if(!text || text === '請點擊下方按鈕設定地址') return alert('複製失敗：請先在「設定/修改資料」中輸入地址！');
-            
-            navigator.clipboard.writeText(text).then(() => {
+            if(!text || text === '請點擊下方按鈕設定地址') {
+                // 使用自定義的簡單提示，符合極簡風格
                 const originalText = document.getElementById('h-addr').textContent;
-                document.getElementById('h-addr').textContent = "✅ 已複製到剪貼簿！ (1.5秒後恢復)";
-                document.getElementById('h-addr').style.color = "#4ade80"; // Green color
+                document.getElementById('h-addr').textContent = "⚠️ 請先設定地址！";
+                document.getElementById('h-addr').style.color = "#f87171"; // Red color
                 setTimeout(() => {
                     document.getElementById('h-addr').textContent = originalText;
                     document.getElementById('h-addr').style.color = "";
-                }, 1500);
-            }).catch(err => {
-                console.error('複製失敗', err);
-                alert('複製失敗，請手動複製地址');
-            });
+                }, 2000);
+                return;
+            }
+            
+            // 複製到剪貼簿
+            document.execCommand('copy', false, text);
+
+            // 提供視覺回饋
+            const originalText = document.getElementById('h-addr').textContent;
+            document.getElementById('h-addr').textContent = "✅ 已複製到剪貼簿！ (1.5秒後恢復)";
+            document.getElementById('h-addr').style.color = "#10b981"; // Green color
+            setTimeout(() => {
+                document.getElementById('h-addr').textContent = originalText;
+                document.getElementById('h-addr').style.color = "";
+            }, 1500);
         }
 
         // 程式初始化
