@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TOKYO VIBE | 鮮明配色儀表板（完整版）</title>
+    <title>TOKYO VIBE | 鮮明配色儀表板（修正版）</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -854,38 +854,59 @@
             }
         }
 
-        // 複製地址功能 (已強化提示)
+        // 複製地址功能 (已強化提示與錯誤處理)
         function copyAddr() {
-            const text = document.getElementById('h-addr').textContent;
-            
-            if(!text || text === '請點擊下方按鈕設定地址') {
-                const originalText = document.getElementById('h-addr').textContent;
-                // 使用內聯樣式覆蓋顏色
-                document.getElementById('h-addr').textContent = "⚠️ 請先設定地址！";
-                document.getElementById('h-addr').style.color = 'var(--color-red)';
+            const hAddrEl = document.getElementById('h-addr');
+            const text = hAddrEl.textContent;
+            // 由於 h-addr 的顏色是寫在 inline style 上，必須先抓取原色
+            const originalColor = hAddrEl.style.color; 
+            const originalText = text;
+
+            if(!text || text === '請點擊下方按鈕設定地址' || text.includes('設定地址')) {
+                hAddrEl.textContent = "⚠️ 請先設定地址！";
+                hAddrEl.style.color = 'var(--color-red)'; // Error color
                 setTimeout(() => {
-                    document.getElementById('h-addr').textContent = originalText;
-                    document.getElementById('h-addr').style.color = 'var(--color-dark-navy)'; // 恢復默認顏色
+                    hAddrEl.textContent = originalText;
+                    hAddrEl.style.color = originalColor; // Restore original color
                 }, 2000);
                 return;
             }
             
-            // 複製到剪貼簿 (使用 execCommand 確保在 iFrame 中可用)
+            let success = false;
             const el = document.createElement('textarea');
             el.value = text;
+            // 將 textarea 隱藏並移出可視區域
+            el.style.position = 'absolute';
+            el.style.left = '-9999px';
             document.body.appendChild(el);
-            el.select();
-            document.execCommand('copy');
-            document.body.removeChild(el);
+
+            try {
+                // 確保 textarea 被選中，才能執行複製命令
+                el.select();
+                success = document.execCommand('copy');
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+            } finally {
+                // 無論成功與否，都要移除臨時元素
+                document.body.removeChild(el);
+            }
 
             // 提供視覺回饋
-            const originalText = document.getElementById('h-addr').textContent;
-            document.getElementById('h-addr').textContent = "✅ 已複製到剪貼簿！ (1.5秒後恢復)";
-            document.getElementById('h-addr').style.color = 'var(--color-teal)'; 
-            setTimeout(() => {
-                document.getElementById('h-addr').textContent = originalText;
-                document.getElementById('h-addr').style.color = 'var(--color-dark-navy)';
-            }, 1500);
+            if (success) {
+                hAddrEl.textContent = "✅ 已複製到剪貼簿！ (1.5秒後恢復)";
+                hAddrEl.style.color = 'var(--color-teal)'; // Success color
+                setTimeout(() => {
+                    hAddrEl.textContent = originalText;
+                    hAddrEl.style.color = originalColor; // Restore original color
+                }, 1500);
+            } else {
+                 hAddrEl.textContent = "❌ 複製失敗，請手動複製。 (2秒後恢復)";
+                 hAddrEl.style.color = 'var(--color-red)'; // Failure color
+                 setTimeout(() => {
+                    hAddrEl.textContent = originalText;
+                    hAddrEl.style.color = originalColor; // Restore original color
+                }, 2000);
+            }
         }
 
         // --- 4. 購物清單邏輯 (Shopping List Logic) ---
