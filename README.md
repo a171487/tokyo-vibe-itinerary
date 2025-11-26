@@ -14,8 +14,9 @@
         body {
             font-family: 'Inter', 'Noto Sans TC', sans-serif;
             /* 使用深色漸變背景，增加質感 */
-            background: linear-gradient(135deg, #1f2937 0%, #0f172a 100%);
+            background: linear-gradient(135deg, #111827 0%, #1e1b4b 100%);
             min-height: 100vh;
+            color: #e2e8f0;
         }
         .scrollable-content {
             /* 計算高度讓行程內容區可以捲動，但不影響其他區塊 */
@@ -28,11 +29,11 @@
             width: 8px;
         }
         .scrollable-content::-webkit-scrollbar-thumb {
-            background-color: #6366f1; /* 藍色捲軸，更有活力 */
+            background-color: #6366f1; /* 藍色捲軸 */
             border-radius: 4px;
         }
         .scrollable-content::-webkit-scrollbar-track {
-            background-color: #374151; 
+            background-color: #1f2937; 
         }
         /* 隱藏數字輸入框的上下箭頭 */
         input[type="number"] {
@@ -43,128 +44,148 @@
             -webkit-appearance: none; 
             margin: 0;
         }
+        /* 調整移動裝置上的導航列樣式 */
+        @media (max-width: 1023px) {
+            #day-navigation {
+                padding: 1rem 0;
+            }
+            .day-button {
+                flex-shrink: 0;
+            }
+        }
     </style>
 </head>
 <body class="min-h-screen p-4 sm:p-8">
 
     <!-- 主容器：採用更深的背景和更明顯的陰影 -->
-    <div class="max-w-4xl mx-auto bg-gray-900 rounded-3xl shadow-2xl shadow-gray-950/70 overflow-hidden border border-gray-700">
+    <div class="max-w-5xl mx-auto bg-gray-900 rounded-3xl shadow-2xl shadow-black/50 overflow-hidden border border-gray-700">
         
         <!-- 標題區 -->
-        <header class="p-6 bg-slate-950 text-white shadow-2xl border-b border-indigo-700/50">
-            <h1 class="text-3xl font-extrabold mb-1 text-indigo-400 tracking-wider">東京 VIBE 旅遊 App</h1>
-            <p class="text-slate-400 text-sm">出發日期：12月26日 | 避開排隊名店與觀光人潮</p>
+        <header class="p-6 bg-slate-950 text-white shadow-lg border-b border-indigo-500/30 relative overflow-hidden">
+            <div class="absolute top-0 right-0 p-4 opacity-10">
+                <i data-lucide="plane" class="w-24 h-24 text-white"></i>
+            </div>
+            <h1 class="text-3xl font-extrabold mb-1 text-indigo-400 tracking-wider flex items-center gap-3">
+                <i data-lucide="map" class="w-8 h-8"></i> 東京 VIBE 旅遊手冊
+            </h1>
+            <p class="text-slate-400 text-sm ml-11">出發日期：12月26日 | 避開排隊名店與觀光人潮</p>
         </header>
 
         <!-- 行程內容區 -->
-        <div class="flex flex-col lg:flex-row">
+        <div class="flex flex-col lg:flex-row h-full">
             
-            <!-- 左側：日期導覽列 (使用深色背景，按鈕對比更強) -->
-            <nav id="day-navigation" class="lg:w-1/4 p-4 lg:p-6 bg-gray-950 border-b lg:border-r border-gray-800 flex lg:flex-col overflow-x-auto lg:overflow-y-auto whitespace-nowrap lg:whitespace-normal">
+            <!-- 左側：日期導覽列 -->
+            <nav id="day-navigation" class="lg:w-1/4 p-4 lg:p-6 bg-gray-950/80 border-b lg:border-r border-gray-800 flex lg:flex-col overflow-x-auto lg:overflow-y-auto whitespace-nowrap lg:whitespace-normal">
                 <!-- 按鈕將由 JS 動態生成 -->
             </nav>
 
             <!-- 右側：詳細行程與功能 -->
-            <main class="lg:w-3/4 p-4 sm:p-6 lg:p-8 bg-gray-900">
+            <main class="lg:w-3/4 p-4 sm:p-6 lg:p-8 bg-gray-900 relative">
                 
-                <!-- 緊急聯絡與飯店地址卡 -->
-                <div id="emergency-card" class="p-5 bg-yellow-900/30 text-yellow-100 rounded-xl shadow-inner shadow-yellow-900 mb-6 border border-yellow-700/50">
-                    <h3 class="text-xl font-bold text-yellow-300 mb-3 flex items-center">
-                        <i data-lucide="map-pin" class="w-5 h-5 mr-2"></i> 緊急聯絡與飯店地址
-                    </h3>
-                    <div id="hotel-display-card">
-                        <!-- 靜態顯示區塊 -->
-                        <div class="mb-2">
-                            <p class="text-xs text-yellow-400 uppercase">飯店名稱:</p>
-                            <p id="hotel-name-display" class="text-lg font-semibold">（點擊下方設定）</p>
-                        </div>
-                        <div class="mb-4 p-3 bg-yellow-900 rounded-lg">
-                            <p class="text-xs text-yellow-400 uppercase mb-1">日文地址 (給計程車司機看):</p>
-                            <p id="hotel-address-display" class="text-xl font-mono">尚未設定</p>
-                        </div>
-                        <button onclick="copyAddress()" class="w-full py-2 bg-yellow-600 hover:bg-yellow-700 text-gray-900 font-bold rounded-lg transition-all duration-200 shadow-md">
-                            <i data-lucide="copy" class="w-4 h-4 mr-2 inline-block"></i>
-                            複製日文地址
-                        </button>
-                    </div>
-
-                    <div id="hotel-setup-form" class="mt-4 border-t border-yellow-800 pt-4 hidden">
-                         <p class="text-sm font-medium mb-2">設定您的住宿資訊：</p>
-                         <input type="text" id="setup-name" placeholder="飯店/民宿名稱" class="w-full p-2 mb-2 bg-gray-800 text-gray-200 rounded-lg border border-yellow-800">
-                         <input type="text" id="setup-address" placeholder="日文地址 (最重要！)" class="w-full p-2 mb-2 bg-gray-800 text-gray-200 rounded-lg border border-yellow-800">
-                         <input type="tel" id="setup-phone" placeholder="聯絡電話" class="w-full p-2 mb-2 bg-gray-800 text-gray-200 rounded-lg border border-yellow-800">
-                         <button onclick="saveHotelInfo()" class="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg transition-all duration-200 shadow-lg">
-                            儲存資訊
-                        </button>
-                    </div>
-
-                    <p class="mt-4 text-center text-sm cursor-pointer text-yellow-500 hover:text-yellow-300" onclick="toggleHotelSetup()">
-                        點擊此處設定/修改住宿資訊
-                    </p>
-                </div>
-                <!-- 緊急聯絡卡結束 -->
-
-
-                <!-- 日幣匯率換算器 (TWD ↔ JPY) -->
-                <div id="currency-converter" class="p-6 bg-gray-800 rounded-xl shadow-lg shadow-gray-950/50 mb-6 border border-gray-700">
-                    <h3 class="text-xl font-bold text-indigo-400 mb-4 flex items-center">
-                        <i data-lucide="coins" class="w-5 h-5 mr-2"></i>
-                        日幣匯率換算 (TWD ↔ JPY)
-                    </h3>
-                    <div class="mb-4 p-3 bg-gray-900 rounded-lg border border-gray-700">
-                        <label for="rateInput" class="block text-sm font-medium text-gray-400">手動設定當前匯率 (1 TWD 可換取 JPY)：</label>
-                        <div class="flex items-center mt-1">
-                            <input type="number" id="rateInput" value="4.80" step="0.01" min="0.01" 
-                                class="w-24 p-2 text-center bg-gray-700 text-yellow-400 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 border-none">
-                            <span class="ml-2 text-lg font-bold text-gray-300">JPY</span>
-                        </div>
-                    </div>
+                <!-- 功能區塊：兩欄佈局 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                     
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label for="twdInput" class="block text-sm font-medium text-gray-300">台幣 (TWD)</label>
-                            <input type="number" id="twdInput" placeholder="輸入台幣金額" 
-                                class="w-full p-3 mt-1 bg-gray-700 text-white rounded-lg focus:ring-indigo-500 focus:border-indigo-500 border-none shadow-inner" oninput="convertCurrency('TWD')">
+                    <!-- 1. 緊急聯絡與飯店地址卡 -->
+                    <div id="emergency-card" class="p-5 bg-gradient-to-br from-yellow-900/40 to-yellow-950/40 text-yellow-100 rounded-2xl shadow-lg border border-yellow-700/30 backdrop-blur-sm">
+                        <h3 class="text-lg font-bold text-yellow-400 mb-3 flex items-center">
+                            <i data-lucide="building-2" class="w-5 h-5 mr-2"></i> 飯店地址卡 (給司機看)
+                        </h3>
+                        <div id="hotel-display-card">
+                            <div class="mb-2">
+                                <p class="text-xs text-yellow-500/80 uppercase font-semibold">飯店名稱</p>
+                                <p id="hotel-name-display" class="text-base font-medium text-white">（載入中...）</p>
+                            </div>
+                            <div class="mb-4 p-3 bg-black/40 rounded-lg border border-yellow-500/20">
+                                <p class="text-xs text-yellow-500/80 uppercase mb-1 font-semibold">日文地址</p>
+                                <p id="hotel-address-display" class="text-lg font-mono text-yellow-50 break-words">尚未設定</p>
+                            </div>
+                            <button onclick="copyAddress()" class="w-full py-2 bg-yellow-600 hover:bg-yellow-500 text-gray-900 font-bold rounded-lg transition-all duration-200 shadow-md flex items-center justify-center gap-2">
+                                <i data-lucide="copy" class="w-4 h-4"></i>
+                                複製地址
+                            </button>
                         </div>
-                        <div>
-                            <label for="jpyInput" class="block text-sm font-medium text-gray-300">日圓 (JPY)</label>
-                            <input type="number" id="jpyInput" placeholder="輸入日圓金額" 
-                                class="w-full p-3 mt-1 bg-gray-700 text-white rounded-lg focus:ring-indigo-500 focus:border-indigo-500 border-none shadow-inner" oninput="convertCurrency('JPY')">
+
+                        <!-- 設定表單 (預設隱藏) -->
+                        <div id="hotel-setup-form" class="mt-4 border-t border-yellow-800/50 pt-4 hidden">
+                             <p class="text-sm font-medium mb-2 text-yellow-300">設定住宿資訊：</p>
+                             <input type="text" id="setup-name" placeholder="飯店名稱" class="w-full p-2 mb-2 bg-gray-900 text-gray-200 rounded-lg border border-gray-700 focus:border-yellow-500 outline-none text-sm">
+                             <input type="text" id="setup-address" placeholder="日文地址 (最重要!)" class="w-full p-2 mb-2 bg-gray-900 text-gray-200 rounded-lg border border-gray-700 focus:border-yellow-500 outline-none text-sm">
+                             <input type="tel" id="setup-phone" placeholder="聯絡電話" class="w-full p-2 mb-2 bg-gray-900 text-gray-200 rounded-lg border border-gray-700 focus:border-yellow-500 outline-none text-sm">
+                             <button onclick="saveHotelInfo()" class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg text-sm shadow-lg">
+                                儲存資訊
+                            </button>
+                        </div>
+
+                        <p class="mt-3 text-center text-xs cursor-pointer text-yellow-500/70 hover:text-yellow-400 underline decoration-dotted" onclick="toggleHotelSetup()">
+                            設定/修改
+                        </p>
+                    </div>
+
+                    <!-- 2. 日幣匯率換算器 -->
+                    <div id="currency-converter" class="p-5 bg-gradient-to-br from-slate-800/50 to-slate-900/50 rounded-2xl shadow-lg border border-slate-700/50 backdrop-blur-sm">
+                        <h3 class="text-lg font-bold text-indigo-400 mb-3 flex items-center">
+                            <i data-lucide="banknote" class="w-5 h-5 mr-2"></i> 匯率試算
+                        </h3>
+                        <div class="mb-3 flex items-center justify-between bg-black/20 p-2 rounded-lg">
+                            <label for="rateInput" class="text-xs text-gray-400 font-medium">匯率 (1 TWD = ? JPY)</label>
+                            <div class="flex items-center">
+                                <input type="number" id="rateInput" value="4.80" step="0.01" min="0.01" 
+                                    class="w-16 p-1 text-right bg-transparent text-yellow-400 font-bold border-b border-gray-600 focus:border-indigo-500 outline-none">
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div class="relative">
+                                <label for="twdInput" class="absolute left-3 top-2 text-xs text-gray-500 font-bold">TWD</label>
+                                <input type="number" id="twdInput" placeholder="0" 
+                                    class="w-full p-2 pt-6 bg-gray-900 text-white text-lg font-mono rounded-lg border border-gray-700 focus:border-indigo-500 outline-none transition-colors" oninput="convertCurrency('TWD')">
+                            </div>
+                            <div class="relative">
+                                <label for="jpyInput" class="absolute left-3 top-2 text-xs text-gray-500 font-bold">JPY</label>
+                                <input type="number" id="jpyInput" placeholder="0" 
+                                    class="w-full p-2 pt-6 bg-gray-900 text-yellow-300 text-lg font-mono rounded-lg border border-gray-700 focus:border-indigo-500 outline-none transition-colors" oninput="convertCurrency('JPY')">
+                            </div>
                         </div>
                     </div>
-                    <p class="mt-4 text-xs text-gray-500 italic">**小提醒：** 本 App 無法連線至即時匯率 API，請手動調整上方匯率後使用。</p>
                 </div>
 
-                <!-- 天氣預報卡片 -->
-                <div id="weather-card" class="rounded-xl p-4 mb-6 shadow-lg transition-all duration-300 border border-gray-700">
+                <!-- 天氣預報卡片 (依據日期變動) -->
+                <div id="weather-card" class="rounded-2xl p-4 mb-6 shadow-lg transition-all duration-300 border border-gray-700 bg-gray-800">
                     <div class="flex items-center justify-between mb-2">
-                        <h2 class="text-xl font-semibold flex items-center">
-                            <i data-lucide="cloud-sun" class="w-6 h-6 mr-2 text-indigo-400"></i>
-                            <span id="weather-icon" class="text-2xl mr-2"></span>
-                            <span id="weather-condition" class="text-gray-200"></span>
-                        </h2>
-                        <p id="weather-note" class="text-sm italic text-gray-400"></p>
-                    </div>
-                    <div class="flex justify-between text-gray-300">
-                        <p><span class="font-medium">最高溫:</span> <span id="weather-high" class="text-red-400 font-bold"></span></p>
-                        <p><span class="font-medium">最低溫:</span> <span id="weather-low" class="text-blue-400 font-bold"></span></p>
-                        <p><span class="font-medium">地點:</span> <span class="font-medium" id="weather-location"></span></p>
+                        <div class="flex items-center">
+                            <span id="weather-icon" class="text-3xl mr-3"></span>
+                            <div>
+                                <h2 id="weather-condition" class="text-lg font-bold text-gray-100"></h2>
+                                <p id="weather-note" class="text-sm text-gray-400"></p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-xs text-gray-500 uppercase font-bold tracking-wider">氣溫預測</p>
+                            <div class="flex items-end justify-end gap-2">
+                                <span id="weather-low" class="text-xl font-bold text-blue-400"></span>
+                                <span class="text-gray-600">/</span>
+                                <span id="weather-high" class="text-xl font-bold text-red-400"></span>
+                            </div>
+                            <p id="weather-location" class="text-xs text-gray-400 mt-1"></p>
+                        </div>
                     </div>
                 </div>
 
-                <h2 id="current-day-title" class="text-2xl font-bold text-gray-100 mb-6 border-b border-indigo-500/50 pb-2"></h2>
+                <!-- 每日標題 -->
+                <h2 id="current-day-title" class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400 mb-6 pb-2 border-b border-gray-800"></h2>
                 
-                <div id="itinerary-content" class="space-y-6 scrollable-content">
+                <!-- 行程列表 -->
+                <div id="itinerary-content" class="space-y-4 scrollable-content pb-20">
                     <!-- 詳細行程將由 JS 動態載入 -->
                 </div>
                 
                 <!-- 底部備註 -->
-                <footer class="mt-8 pt-4 border-t border-gray-700 text-sm text-gray-500">
-                    <p class="font-semibold text-gray-300 mb-2">💡 行程小提醒：</p>
-                    <ul class="list-disc list-inside space-y-1">
-                        <li>**鰻魚飯預約：** Sumiyaki Unafuji 是排隊名店，務必提前透過官網或電話預約。</li>
-                        <li>**富士山：** 12月底五合目極冷，請準備**防水防風**的極地保暖衣物和暖暖包。</li>
-                        <li>**年末休業：** 12/29-12/31 許多餐廳和私人小店可能開始公休，出發前請再次確認營業時間。</li>
+                <footer class="mt-8 pt-6 border-t border-gray-800 text-xs text-gray-500">
+                    <p class="font-bold text-gray-400 mb-2 flex items-center"><i data-lucide="info" class="w-3 h-3 mr-1"></i> 行程小提醒</p>
+                    <ul class="space-y-1 list-disc list-inside">
+                        <li><strong class="text-indigo-400">Sumiyaki Unafuji：</strong> 排隊名店，請務必提前預約。</li>
+                        <li><strong class="text-indigo-400">富士山 (Day 4)：</strong> 12月底極冷，請準備防風保暖衣物。</li>
+                        <li><strong class="text-indigo-400">年末營業：</strong> 12/29-12/31 部分店家可能公休，請事先確認。</li>
                     </ul>
                 </footer>
             </main>
@@ -173,18 +194,16 @@
     </div>
 
     <script>
-        // --- 行程數據 ---
+        // --- 1. 行程數據 (6天5夜) ---
         const itinerary = [
-            // Day 1: 12/26 (四) - 週五前人潮較少
             {
                 day: 1, date: "12月26日 (四)", title: "抵達與高輪新區探索",
                 weather: { location: "東京市區", high: "10°C", low: "3°C", condition: "晴朗", icon: "☀️", note: "天氣乾冷，能見度佳。" },
                 morning: { title: "抵達東京與入住", detail: "從機場前往酒店，在 Takanawa Gateway 站附近辦理入住。" },
                 lunch: { title: "NEWoMan高輪輕食 (避峰)", detail: "在 NEWoMan 或站內選擇咖啡廳/麵包店，享用流動率高的簡餐，避開正式餐廳人潮。" },
                 afternoon: { title: "高輪/KITTE採購", detail: "逛 NEWoMan 高輪商場，體驗新地標的設計感，之後搭車前往東京站。" },
-                dinner: { title: "品川/高輪居酒屋", detail: "選擇品川站**西口**或酒店附近巷弄的串燒店，體驗當地人下班後的氣氛，避免百貨排隊店。" }
+                dinner: { title: "品川/高輪居酒屋", detail: "選擇品川站西口或酒店附近巷弄的串燒店，體驗當地人下班後的氣氛，避免百貨排隊店。" }
             },
-            // Day 2: 12/27 (五) - 經典地標與排隊名店攻略
             {
                 day: 2, date: "12月27日 (五)", title: "丸之內與八重洲排隊名店攻略",
                 weather: { location: "東京市區", high: "11°C", low: "4°C", condition: "多雲轉晴", icon: "🌤️", note: "日夜溫差大，注意保暖。" },
@@ -193,7 +212,6 @@
                 afternoon: { title: "銀座/東京車站畫廊", detail: "在銀座逛逛設計商店，或參觀東京車站畫廊，感受藝術氣息。" },
                 dinner: { title: "Sumiyaki Unafuji (東京中城八重洲店)", detail: "**務必提前在線預約！** 這是名古屋的鰻魚飯名店。預約是唯一的避排隊方法。" }
             },
-            // Day 3: 12/28 (六) - 下町與文青區
             {
                 day: 3, date: "12月28日 (六)", title: "下町懷舊與清澄白河文青日",
                 weather: { location: "東京市區", high: "9°C", low: "2°C", condition: "晴朗", icon: "☀️", note: "週末市區人潮增加，建議早上前往郊區。" },
@@ -202,7 +220,6 @@
                 afternoon: { title: "清澄白河慢活", detail: "在清澄白河的文青咖啡街區漫步，參觀東京都現代美術館或清澄庭園。" },
                 dinner: { title: "門前仲町深川飯/燒肉", detail: "在門前仲町品嚐傳統的深川飯 (蛤蜊炊飯)，或在平價燒肉店結束一天。" }
             },
-            // Day 4: 12/29 (日) - 富士山一日遊 (最冷)
             {
                 day: 4, date: "12月29日 (日)", title: "富士山一日遊：五合目與忍野八海",
                 weather: { location: "富士山 (五合目/河口湖)", high: "1°C", low: "-5°C", condition: "晴朗且極度寒冷", icon: "❄️", note: "**極端寒冷！** 五合目體感溫度低於 -10°C，務必穿著專業防寒衣物。" },
@@ -211,7 +228,6 @@
                 afternoon: { title: "忍野八海 (冬季水景)", detail: "遊覽忍野八海，清澈的湧泉和白頭富士相映成趣。注意地面可能有結冰。" },
                 dinner: { title: "新宿西口/南口晚餐", detail: "回到新宿後，避開東口人潮，在西口或南口商業大樓內用餐，選擇多且相對不擁擠。" }
             },
-            // Day 5: 12/30 (一) - 時尚與設計
             {
                 day: 5, date: "12月30日 (一)", title: "代官山與裏原宿時尚探索",
                 weather: { location: "東京市區", high: "12°C", low: "5°C", condition: "晴朗", icon: "☀️", note: "年末購物潮，人潮較多，建議錯開主要購物區。" },
@@ -220,7 +236,6 @@
                 afternoon: { title: "表參道/貓街 (Cat Street)", detail: "逛表參道後，轉入「貓街」探索裏原宿的潮流小店，避開竹下通主街的擁擠人潮。" },
                 dinner: { title: "惠比壽橫丁體驗", detail: "前往熱鬧的惠比壽橫丁，體驗日本庶民居酒屋文化。雖然熱鬧，但翻桌率高，可錯峰前往。" }
             },
-            // Day 6: 12/31 (二) - 懷舊與返程
             {
                 day: 6, date: "12月31日 (二)", title: "谷中銀座與歸途",
                 weather: { location: "東京市區", high: "8°C", low: "1°C", condition: "晴時多雲", icon: "🌥️", note: "年末許多店家公休，早點出發前往機場。" },
@@ -231,82 +246,52 @@
             }
         ];
 
-        // --- 核心功能變數 ---
-
         let currentDay = 1;
-        // 確保元素存在，如果 HTML 載入後，腳本在運行時它們應該已經存在
-        const rateInput = document.getElementById('rateInput');
-        const twdInput = document.getElementById('twdInput');
-        const jpyInput = document.getElementById('jpyInput');
 
-
-        // --- 貨幣換算邏輯 ---
-        
+        // --- 2. 貨幣換算邏輯 ---
         function getExchangeRate() {
+            const rateInput = document.getElementById('rateInput');
             const rate = parseFloat(rateInput.value);
             return isNaN(rate) || rate <= 0 ? 4.80 : rate; 
         }
 
         function convertCurrency(source) {
             const rate = getExchangeRate();
+            const twdInput = document.getElementById('twdInput');
+            const jpyInput = document.getElementById('jpyInput');
+            
+            if (!twdInput || !jpyInput) return;
             
             if (source === 'TWD') {
                 const twd = parseFloat(twdInput.value);
-                if (isNaN(twd) || twd < 0) {
-                    jpyInput.value = '';
-                    return;
-                }
-                const jpy = (twd * rate).toFixed(0); 
-                jpyInput.value = jpy;
+                if (isNaN(twd) || twd < 0) { jpyInput.value = ''; return; }
+                jpyInput.value = (twd * rate).toFixed(0); 
             } else if (source === 'JPY') {
                 const jpy = parseFloat(jpyInput.value);
-                if (isNaN(jpy) || jpy < 0) {
-                    twdInput.value = '';
-                    return;
-                }
-                const twd = (jpy / rate).toFixed(2);
-                twdInput.value = twd;
+                if (isNaN(jpy) || jpy < 0) { twdInput.value = ''; return; }
+                twdInput.value = (jpy / rate).toFixed(2);
             }
         }
 
-        // 監聽匯率變動
-        if(rateInput) {
-            rateInput.addEventListener('input', () => {
-                if (rateInput.value === '') {
-                    rateInput.value = 4.80; 
-                }
-                // 任何一方有值時，重新換算
-                if (twdInput.value) {
-                    convertCurrency('TWD');
-                } else if (jpyInput.value) {
-                    convertCurrency('JPY');
-                }
-            });
-        }
-
-
-        // --- 緊急卡片邏輯 (使用 localStorage 模擬儲存) ---
-        
+        // --- 3. 飯店資訊卡邏輯 (使用 localStorage) ---
         function loadHotelInfo() {
-            // 從瀏覽器本地儲存載入資訊
             const name = localStorage.getItem('hotelName') || '您的飯店名稱';
             const address = localStorage.getItem('hotelAddress') || '尚未設定日文地址';
             const phone = localStorage.getItem('hotelPhone') || '';
 
-            // 更新顯示區塊
-            document.getElementById('hotel-name-display').textContent = name;
-            document.getElementById('hotel-address-display').textContent = address;
+            // 顯示文字
+            const nameEl = document.getElementById('hotel-name-display');
+            const addrEl = document.getElementById('hotel-address-display');
+            if(nameEl) nameEl.textContent = name;
+            if(addrEl) addrEl.textContent = address;
 
-            // 預填表單，讓使用者可以修改
-            const setupNameEl = document.getElementById('setup-name');
-            const setupAddressEl = document.getElementById('setup-address');
-            const setupPhoneEl = document.getElementById('setup-phone');
-
-            if (setupNameEl && setupAddressEl && setupPhoneEl) {
-                setupNameEl.value = name === '您的飯店名稱' ? '' : name;
-                setupAddressEl.value = address === '尚未設定日文地址' ? '' : address;
-                setupPhoneEl.value = phone;
-            }
+            // 預填表單
+            const sName = document.getElementById('setup-name');
+            const sAddr = document.getElementById('setup-address');
+            const sPhone = document.getElementById('setup-phone');
+            if(sName) sName.value = name === '您的飯店名稱' ? '' : name;
+            if(sAddr) sAddr.value = address === '尚未設定日文地址' ? '' : address;
+            if(sPhone) sPhone.value = phone;
         }
 
         function saveHotelInfo() {
@@ -314,160 +299,170 @@
             const address = document.getElementById('setup-address').value.trim() || '尚未設定日文地址';
             const phone = document.getElementById('setup-phone').value.trim() || '';
 
-            if (address === '尚未設定日文地址' || address === '') {
-                // 顯示錯誤訊息在地址顯示區
-                document.getElementById('hotel-address-display').textContent = '⚠️ 請輸入有效的日文地址！';
-            } else {
-                // 儲存資訊到本地
-                localStorage.setItem('hotelName', name);
-                localStorage.setItem('hotelAddress', address);
-                localStorage.setItem('hotelPhone', phone);
-                loadHotelInfo(); // 重新載入顯示
-                toggleHotelSetup(); // 隱藏設定表單
+            if (!address || address === '尚未設定日文地址') {
+                const display = document.getElementById('hotel-address-display');
+                if(display) display.textContent = '⚠️ 請輸入有效的日文地址！';
+                return;
             }
+
+            localStorage.setItem('hotelName', name);
+            localStorage.setItem('hotelAddress', address);
+            localStorage.setItem('hotelPhone', phone);
+            loadHotelInfo();
+            toggleHotelSetup();
         }
 
         function toggleHotelSetup() {
             const form = document.getElementById('hotel-setup-form');
-            form.classList.toggle('hidden');
+            if(form) form.classList.toggle('hidden');
         }
-        
+
         function copyAddress() {
-            const addressText = document.getElementById('hotel-address-display').textContent;
-            
-            if (addressText === '尚未設定日文地址' || addressText.includes('⚠️')) {
-                // 避免 alert，直接在介面顯示訊息
-                const display = document.getElementById('hotel-address-display');
-                display.textContent = '地址無效，請先設定！';
-                setTimeout(() => {
-                    loadHotelInfo(); // 幾秒後恢復原狀
-                }, 2000);
+            const text = document.getElementById('hotel-address-display').textContent;
+            if (!text || text.includes('⚠️') || text === '尚未設定日文地址') {
+                alert('請先設定有效的日文地址！');
                 return;
             }
-
-            // 使用 document.execCommand('copy') 進行複製
-            const tempInput = document.createElement('textarea');
-            tempInput.value = addressText;
-            document.body.appendChild(tempInput);
-            tempInput.select();
             
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
             try {
                 document.execCommand('copy');
-                const copyButton = document.querySelector('#emergency-card button');
-                const originalText = copyButton.innerHTML;
-                
-                // 視覺回饋：顯示複製成功
-                copyButton.innerHTML = '<i data-lucide="check" class="w-4 h-4 mr-2 inline-block"></i> 複製成功！';
-                copyButton.classList.remove('bg-yellow-600');
-                copyButton.classList.add('bg-green-600');
+                const btn = document.querySelector('#emergency-card button');
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = '<i data-lucide="check" class="w-4 h-4"></i> 已複製';
+                btn.classList.add('bg-green-600', 'text-white');
+                btn.classList.remove('bg-yellow-600');
                 
                 setTimeout(() => {
-                    // 恢復按鈕文字與顏色
-                    copyButton.innerHTML = originalText;
-                    copyButton.classList.remove('bg-green-600');
-                    copyButton.classList.add('bg-yellow-600');
-                    lucide.createIcons(); // 重新渲染圖標
-                }, 1500);
-
+                    btn.innerHTML = originalHTML;
+                    btn.classList.remove('bg-green-600', 'text-white');
+                    btn.classList.add('bg-yellow-600');
+                    if(typeof lucide !== 'undefined') lucide.createIcons();
+                }, 2000);
             } catch (err) {
-                console.error('無法複製文字:', err);
+                console.error('複製失敗', err);
             }
-            document.body.removeChild(tempInput);
+            document.body.removeChild(textArea);
         }
 
-        // --- UI 渲染邏輯 ---
-        
+        // --- 4. 介面渲染邏輯 ---
         function renderNavigation() {
             const nav = document.getElementById('day-navigation');
+            if(!nav) return;
             nav.innerHTML = '';
             itinerary.forEach(item => {
-                const button = document.createElement('button');
-                button.setAttribute('data-day', item.day);
-                // 更強烈的互動效果
-                button.className = `day-button block p-3 px-4 rounded-xl lg:w-full text-left font-medium transition-all duration-150 ease-in-out lg:mb-2 mr-2 lg:mr-0 
-                    ${item.day === currentDay 
-                        ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-500/40 border border-indigo-400' 
-                        : 'bg-gray-800 text-gray-200 hover:bg-gray-700 hover:text-indigo-300'}`;
-                button.innerHTML = `<span class="block text-sm">DAY ${item.day}</span><span class="block text-xs opacity-80">${item.date.split(' ')[0]}</span>`;
-                button.addEventListener('click', () => {
-                    currentDay = item.day;
-                    updateUI();
-                });
-                nav.appendChild(button);
+                const btn = document.createElement('button');
+                const isActive = item.day === currentDay;
+                btn.className = `day-button block p-4 rounded-xl text-left transition-all duration-200 lg:mb-3 mr-3 lg:mr-0 min-w-[120px] lg:w-full border
+                    ${isActive 
+                        ? 'bg-indigo-600 border-indigo-500 text-white shadow-lg shadow-indigo-900/50 scale-105' 
+                        : 'bg-gray-800 border-gray-700 text-gray-400 hover:bg-gray-700 hover:text-white'}`;
+                
+                btn.innerHTML = `
+                    <span class="block text-xs font-bold uppercase tracking-wider opacity-70">DAY ${item.day}</span>
+                    <span class="block text-sm font-semibold">${item.date.split(' ')[0]}</span>
+                `;
+                btn.onclick = () => { currentDay = item.day; updateUI(); };
+                nav.appendChild(btn);
             });
-            const activeBtn = nav.querySelector(`.day-button[data-day="${currentDay}"]`);
-            if (activeBtn) {
-                activeBtn.scrollIntoView({ behavior: 'smooth', inline: 'center' });
-            }
         }
 
-        function renderItinerary(dayData) {
-            document.getElementById('current-day-title').textContent = `${dayData.title}`;
-            
-            // 渲染天氣
-            document.getElementById('weather-icon').textContent = dayData.weather.icon;
-            document.getElementById('weather-condition').textContent = dayData.weather.condition;
-            document.getElementById('weather-high').textContent = dayData.weather.high;
-            document.getElementById('weather-low').textContent = dayData.weather.low;
-            document.getElementById('weather-location').textContent = dayData.weather.location;
-            document.getElementById('weather-note').textContent = dayData.weather.note;
+        function renderContent(data) {
+            // 標題
+            const titleEl = document.getElementById('current-day-title');
+            if(titleEl) titleEl.textContent = data.title;
 
-            // 調整天氣卡片的樣式 (更高級的材質感)
-            const weatherCard = document.getElementById('weather-card');
-            if (dayData.day === 4) {
-                // 富士山極冷警告 (使用深紅搭配淺紅邊框)
-                weatherCard.className = 'bg-red-900/40 border-l-4 border-red-500 rounded-xl p-4 mb-6 shadow-lg shadow-red-900/50 transition-all duration-300';
-            } else {
-                // 一般天氣 (使用深藍灰搭配靛藍邊框)
-                weatherCard.className = 'bg-gray-800 border-l-4 border-indigo-500 rounded-xl p-4 mb-6 shadow-lg shadow-gray-950/50 transition-all duration-300';
+            // 天氣
+            const wIcon = document.getElementById('weather-icon');
+            const wCond = document.getElementById('weather-condition');
+            const wHigh = document.getElementById('weather-high');
+            const wLow = document.getElementById('weather-low');
+            const wLoc = document.getElementById('weather-location');
+            const wNote = document.getElementById('weather-note');
+            const wCard = document.getElementById('weather-card');
+
+            if(wIcon) wIcon.textContent = data.weather.icon;
+            if(wCond) wCond.textContent = data.weather.condition;
+            if(wHigh) wHigh.textContent = data.weather.high;
+            if(wLow) wLow.textContent = data.weather.low;
+            if(wLoc) wLoc.textContent = data.weather.location;
+            if(wNote) wNote.textContent = data.weather.note;
+
+            // 富士山日特殊樣式
+            if(wCard) {
+                if (data.day === 4) {
+                    wCard.className = 'rounded-2xl p-4 mb-6 shadow-lg transition-all duration-300 border border-red-500/50 bg-gradient-to-r from-red-900/30 to-gray-800';
+                } else {
+                    wCard.className = 'rounded-2xl p-4 mb-6 shadow-lg transition-all duration-300 border border-gray-700 bg-gray-800';
+                }
             }
-            
-            // 渲染行程內容
+
+            // 行程區塊
             const contentDiv = document.getElementById('itinerary-content');
+            if(!contentDiv) return;
             contentDiv.innerHTML = '';
             
-            const timeSlots = ['morning', 'lunch', 'afternoon', 'dinner'];
-            
-            timeSlots.forEach((slot) => {
-                const slotData = dayData[slot];
-                if (slotData) {
-                    const block = document.createElement('div');
-                    // 行程塊調整為深色背景，帶有強烈陰影和邊框
-                    block.className = 'p-5 bg-gray-800 rounded-xl border border-gray-700 shadow-xl hover:shadow-2xl transition-shadow duration-300';
-                    block.innerHTML = `
-                        <h4 class="text-lg font-semibold text-indigo-400 mb-1">${getSlotTitle(slot, slotData.title)}</h4>
-                        <p class="text-gray-300 text-sm">${slotData.detail}</p>
+            const slots = [
+                { key: 'morning', label: '上午', icon: 'sun' },
+                { key: 'lunch', label: '午餐', icon: 'utensils' },
+                { key: 'afternoon', label: '下午', icon: 'shopping-bag' },
+                { key: 'dinner', label: '晚餐', icon: 'moon' }
+            ];
+
+            slots.forEach(slot => {
+                const info = data[slot.key];
+                if(info) {
+                    const div = document.createElement('div');
+                    div.className = 'group p-5 bg-gray-800/50 hover:bg-gray-800 rounded-xl border border-gray-700 hover:border-indigo-500/50 transition-all duration-300 shadow-md';
+                    div.innerHTML = `
+                        <div class="flex items-start gap-4">
+                            <div class="p-2 rounded-lg bg-gray-900 text-indigo-400 group-hover:text-indigo-300 group-hover:scale-110 transition-transform">
+                                <i data-lucide="${slot.icon}" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-bold text-gray-400 uppercase tracking-wide mb-1">${slot.label}</h4>
+                                <h3 class="text-lg font-bold text-white mb-1">${info.title}</h3>
+                                <p class="text-sm text-gray-400 leading-relaxed">${info.detail}</p>
+                            </div>
+                        </div>
                     `;
-                    contentDiv.appendChild(block);
+                    contentDiv.appendChild(div);
                 }
             });
         }
 
-        function getSlotTitle(slot, customTitle) {
-            const titles = {
-                morning: '🌄 上午',
-                lunch: '🍽️ 中午/午餐',
-                afternoon: '🛍️ 下午',
-                dinner: '🍜 晚餐/夜生活'
-            };
-            return `${titles[slot]}：${customTitle}`;
-        }
-
         function updateUI() {
             renderNavigation();
-            const selectedData = itinerary.find(item => item.day === currentDay);
-            if (selectedData) {
-                renderItinerary(selectedData);
-            }
-            loadHotelInfo(); // 載入飯店資訊
-            lucide.createIcons();
+            const data = itinerary.find(i => i.day === currentDay);
+            if(data) renderContent(data);
+            if(typeof lucide !== 'undefined') lucide.createIcons();
         }
 
-        // 頁面載入時初始化
+        // --- 5. 初始化 ---
         window.onload = function() {
-            updateUI();
-        };
+            loadHotelInfo(); // 1. 載入飯店資訊
+            
+            // 2. 初始化匯率計算 (預設 TWD 1000)
+            const twd = document.getElementById('twdInput');
+            if(twd) {
+                twd.value = 1000;
+                convertCurrency('TWD');
+            }
 
+            // 3. 渲染畫面
+            updateUI();
+            
+            // 監聽匯率輸入變化
+            const rateInput = document.getElementById('rateInput');
+            if(rateInput) {
+                rateInput.addEventListener('input', () => {
+                    if(document.getElementById('twdInput').value) convertCurrency('TWD');
+                });
+            }
+        };
     </script>
 </body>
 </html>
