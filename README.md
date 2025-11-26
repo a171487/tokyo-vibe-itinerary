@@ -18,11 +18,12 @@
             min-height: 100vh;
         }
         .scrollable-content {
+            /* 計算高度讓行程內容區可以捲動，但不影響其他區塊 */
             max-height: calc(100vh - 200px); 
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
         }
-        /* 自定義捲軸樣式 */
+        /* 自定義捲軸樣式 (美工優化) */
         .scrollable-content::-webkit-scrollbar {
             width: 8px;
         }
@@ -66,7 +67,7 @@
             <!-- 右側：詳細行程與功能 -->
             <main class="lg:w-3/4 p-4 sm:p-6 lg:p-8 bg-gray-900">
                 
-                <!-- 新增功能：緊急聯絡與飯店地址卡 -->
+                <!-- 緊急聯絡與飯店地址卡 -->
                 <div id="emergency-card" class="p-5 bg-yellow-900/30 text-yellow-100 rounded-xl shadow-inner shadow-yellow-900 mb-6 border border-yellow-700/50">
                     <h3 class="text-xl font-bold text-yellow-300 mb-3 flex items-center">
                         <i data-lucide="map-pin" class="w-5 h-5 mr-2"></i> 緊急聯絡與飯店地址
@@ -147,7 +148,7 @@
                     <div class="flex justify-between text-gray-300">
                         <p><span class="font-medium">最高溫:</span> <span id="weather-high" class="text-red-400 font-bold"></span></p>
                         <p><span class="font-medium">最低溫:</span> <span id="weather-low" class="text-blue-400 font-bold"></span></p>
-                        <p><span class="font-medium">地點:</span> <span id="weather-location" class="font-medium"></span></p>
+                        <p><span class="font-medium">地點:</span> <span class="font-medium" id="weather-location"></span></p>
                     </div>
                 </div>
 
@@ -172,7 +173,7 @@
     </div>
 
     <script>
-        // --- 行程數據 (保持不變) ---
+        // --- 行程數據 ---
         const itinerary = [
             // Day 1: 12/26 (四) - 週五前人潮較少
             {
@@ -287,18 +288,24 @@
         // --- 緊急卡片邏輯 (使用 localStorage 模擬儲存) ---
         
         function loadHotelInfo() {
+            // 從瀏覽器本地儲存載入資訊
             const name = localStorage.getItem('hotelName') || '您的飯店名稱';
             const address = localStorage.getItem('hotelAddress') || '尚未設定日文地址';
             const phone = localStorage.getItem('hotelPhone') || '';
 
+            // 更新顯示區塊
             document.getElementById('hotel-name-display').textContent = name;
             document.getElementById('hotel-address-display').textContent = address;
 
-            // 預填表單
-            if (document.getElementById('setup-name')) {
-                document.getElementById('setup-name').value = name === '您的飯店名稱' ? '' : name;
-                document.getElementById('setup-address').value = address === '尚未設定日文地址' ? '' : address;
-                document.getElementById('setup-phone').value = phone;
+            // 預填表單，讓使用者可以修改
+            const setupNameEl = document.getElementById('setup-name');
+            const setupAddressEl = document.getElementById('setup-address');
+            const setupPhoneEl = document.getElementById('setup-phone');
+
+            if (setupNameEl && setupAddressEl && setupPhoneEl) {
+                setupNameEl.value = name === '您的飯店名稱' ? '' : name;
+                setupAddressEl.value = address === '尚未設定日文地址' ? '' : address;
+                setupPhoneEl.value = phone;
             }
         }
 
@@ -308,9 +315,10 @@
             const phone = document.getElementById('setup-phone').value.trim() || '';
 
             if (address === '尚未設定日文地址' || address === '') {
-                // 這裡我們不使用 alert(), 而是讓使用者點擊複製時顯示錯誤
+                // 顯示錯誤訊息在地址顯示區
                 document.getElementById('hotel-address-display').textContent = '⚠️ 請輸入有效的日文地址！';
             } else {
+                // 儲存資訊到本地
                 localStorage.setItem('hotelName', name);
                 localStorage.setItem('hotelAddress', address);
                 localStorage.setItem('hotelPhone', phone);
@@ -332,13 +340,12 @@
                 const display = document.getElementById('hotel-address-display');
                 display.textContent = '地址無效，請先設定！';
                 setTimeout(() => {
-                    // 幾秒後恢復原狀
-                    loadHotelInfo();
+                    loadHotelInfo(); // 幾秒後恢復原狀
                 }, 2000);
                 return;
             }
 
-            // 使用 document.execCommand('copy') 來確保在 iFrame 環境下能正常運作
+            // 使用 document.execCommand('copy') 進行複製
             const tempInput = document.createElement('textarea');
             tempInput.value = addressText;
             document.body.appendChild(tempInput);
@@ -348,11 +355,14 @@
                 document.execCommand('copy');
                 const copyButton = document.querySelector('#emergency-card button');
                 const originalText = copyButton.innerHTML;
+                
+                // 視覺回饋：顯示複製成功
                 copyButton.innerHTML = '<i data-lucide="check" class="w-4 h-4 mr-2 inline-block"></i> 複製成功！';
                 copyButton.classList.remove('bg-yellow-600');
                 copyButton.classList.add('bg-green-600');
                 
                 setTimeout(() => {
+                    // 恢復按鈕文字與顏色
                     copyButton.innerHTML = originalText;
                     copyButton.classList.remove('bg-green-600');
                     copyButton.classList.add('bg-yellow-600');
@@ -418,4 +428,46 @@
             
             const timeSlots = ['morning', 'lunch', 'afternoon', 'dinner'];
             
-            timeSlots.forEach((slot
+            timeSlots.forEach((slot) => {
+                const slotData = dayData[slot];
+                if (slotData) {
+                    const block = document.createElement('div');
+                    // 行程塊調整為深色背景，帶有強烈陰影和邊框
+                    block.className = 'p-5 bg-gray-800 rounded-xl border border-gray-700 shadow-xl hover:shadow-2xl transition-shadow duration-300';
+                    block.innerHTML = `
+                        <h4 class="text-lg font-semibold text-indigo-400 mb-1">${getSlotTitle(slot, slotData.title)}</h4>
+                        <p class="text-gray-300 text-sm">${slotData.detail}</p>
+                    `;
+                    contentDiv.appendChild(block);
+                }
+            });
+        }
+
+        function getSlotTitle(slot, customTitle) {
+            const titles = {
+                morning: '🌄 上午',
+                lunch: '🍽️ 中午/午餐',
+                afternoon: '🛍️ 下午',
+                dinner: '🍜 晚餐/夜生活'
+            };
+            return `${titles[slot]}：${customTitle}`;
+        }
+
+        function updateUI() {
+            renderNavigation();
+            const selectedData = itinerary.find(item => item.day === currentDay);
+            if (selectedData) {
+                renderItinerary(selectedData);
+            }
+            loadHotelInfo(); // 載入飯店資訊
+            lucide.createIcons();
+        }
+
+        // 頁面載入時初始化
+        window.onload = function() {
+            updateUI();
+        };
+
+    </script>
+</body>
+</html>
