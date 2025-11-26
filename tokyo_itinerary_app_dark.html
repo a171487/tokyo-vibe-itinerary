@@ -27,998 +27,661 @@
         .flat-panel {
             background-color: var(--color-cream); /* 淺色卡片 */
             color: var(--color-dark-navy); /* 卡片內使用深色文字 */
-            border: 1px solid rgba(44, 187, 173, 0.2); /* 淡淡的邊框 */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08); /* 柔和陰影 */
-        }
-        
-        /* 品牌色按鈕 - 強調色 (Teal) */
-        .btn-primary {
-            background-color: var(--color-teal);
-            color: var(--color-cream);
-            transition: background-color 0.2s, transform 0.1s;
-        }
-        .btn-primary:hover {
-            background-color: #24A397; /* 稍微深一點的 Teal */
-            transform: translateY(-1px);
-        }
-        .btn-primary:active {
-            transform: translateY(0);
+            border: 1px solid rgba(44, 187, 173, 0.2); /* 柔和的 Teal 邊框 */
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
 
-        /* 警告/行動按鈕 - 強調色 (Red) */
-        .btn-danger {
-            background-color: var(--color-red);
-            color: var(--color-cream);
-            transition: background-color 0.2s, transform 0.1s;
-        }
-        .btn-danger:hover {
-            background-color: #C03544;
-            transform: translateY(-1px);
-        }
-
-        /* 導航按鈕 */
-        .nav-button {
-            transition: color 0.2s, background-color 0.2s;
-            cursor: pointer;
-        }
-        .nav-button:hover {
-            color: var(--color-teal);
-        }
-        .nav-button.active {
-            color: var(--color-teal);
-            border-bottom: 2px solid var(--color-teal);
-        }
-
-        /* 焦點樣式 */
+        /* 主要強調色 1：Teal (青色) */
         .teal-accent {
-            background-color: rgba(44, 187, 173, 0.2); /* 帶有透明度的 Teal 背景 */
             color: var(--color-teal);
-            font-weight: 600;
-        }
-        .red-accent {
-            background-color: rgba(216, 61, 79, 0.2); /* 帶有透明度的 Red 背景 */
-            color: var(--color-red);
-            font-weight: 600;
         }
         
-        /* 隱藏原生捲軸 */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
+        /* 主要強調色 2：Red (紅色) */
+        .red-accent {
+            color: var(--color-red);
         }
 
+        /* 按鈕基礎樣式 */
+        .modern-btn {
+             @apply transition-all duration-300 border text-left font-medium flex-shrink-0 min-w-[120px] rounded-lg p-3;
+        }
+
+        /* 專家提示區塊 - 使用深色背景搭配 Teal 邊條 */
+        .expert-tip-box {
+            background-color: #273746; /* 比主背景稍淺 */
+            border-left: 3px solid var(--color-teal);
+            color: var(--color-cream);
+        }
+
+        /* 固定側邊欄位 */
+        @media (min-width: 1024px) {
+            .sticky-col {
+                position: sticky;
+                top: 1.5rem;
+                height: calc(100vh - 3rem);
+                overflow-y: auto;
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+            .sticky-col::-webkit-scrollbar { display: none; }
+        }
+
+        /* 覆寫 Tailwind 滾動條 (手機端導覽列) */
+        #nav-container-wrapper::-webkit-scrollbar {
+            height: 3px;
+        }
+        #nav-container-wrapper::-webkit-scrollbar-thumb {
+            background-color: #4A5568; 
+            border-radius: 1.5px;
+        }
     </style>
 </head>
-<body class="p-4 md:p-8">
-    <div id="app" class="max-w-7xl mx-auto">
-        <!-- 頂部導航與標題 -->
-        <header class="mb-8">
-            <h1 class="text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-2">
-                TOKYO VIBE <span class="text-3xl font-medium text-teal-400">| 東京旅程儀表板</span>
+<body class="p-3 lg:p-6 text-sm lg:text-base">
+
+    <!-- 頂部 Header -->
+    <header class="max-w-[1400px] mx-auto mb-6 p-6 border-b-2 border-opacity-30 flex items-center justify-between"
+            style="background-color: var(--color-dark-navy); border-color: var(--color-teal);">
+        <div class="z-10">
+            <h1 class="text-2xl lg:text-3xl font-black tracking-widest text-white">
+                TOKYO VIBE 2025
             </h1>
-            <p id="h-addr" class="text-sm font-mono text-gray-400 cursor-pointer" onclick="copyAddress()">請點擊下方按鈕設定地址</p>
-        </header>
+            <p class="text-gray-400 text-xs lg:text-sm font-medium mt-1 flex gap-3">
+                <span class="teal-accent"><i data-lucide="calendar" class="w-3 h-3 inline mr-1"></i>12/26 - 12/31</span>
+                <span><i data-lucide="compass" class="w-3 h-3 inline mr-1"></i>鮮明配色儀表板</span>
+            </p>
+        </div>
+        <div class="hidden lg:block">
+            <i data-lucide="map" class="w-8 h-8 text-[#4A5568]"></i>
+        </div>
+    </header>
 
-        <!-- 主要佈局：兩欄 -->
-        <main class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            
-            <!-- 左側：控制面板 / 快速資訊 (佔 1/3) -->
-            <section class="lg:col-span-1 space-y-6">
-                
-                <!-- 飯店資訊與地址 -->
-                <div class="flat-panel p-6 rounded-xl shadow-lg">
-                    <h2 class="text-xl font-bold mb-3 flex items-center">
-                        <i data-lucide="building-2" class="w-5 h-5 mr-2"></i>
-                        飯店資訊
-                    </h2>
-                    <p id="h-name" class="text-xl font-extrabold mb-1">... 載入中 ...</p>
-                    <p id="h-dates" class="text-sm text-gray-500 mb-3">...</p>
-                    <button class="btn-primary w-full py-2 rounded-lg text-sm font-semibold shadow-md mt-2" onclick="showHotelModal()">
-                        <i data-lucide="settings" class="w-4 h-4 mr-2 inline-block"></i>
-                        設定飯店/地址
-                    </button>
-                    <!-- 地址複製按鈕，但主要複製邏輯在 h-addr 的 onclick -->
-                    <button class="btn-primary w-full py-2 rounded-lg text-sm font-semibold shadow-md mt-2 hidden" id="copy-addr-btn" onclick="copyAddress()">
-                        <i data-lucide="copy" class="w-4 h-4 mr-2 inline-block"></i>
-                        複製地址
-                    </button>
+    <!-- 主內容 Grid -->
+    <div class="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+        <!-- [左欄] Col-2: 導覽 (日期 + 工具切換按鈕) -->
+        <nav class="lg:col-span-2 pb-2 lg:pb-0 z-20 sticky-col h-auto lg:h-auto">
+            <div id="nav-container-wrapper" class="flex flex-row lg:flex-col gap-2 overflow-x-auto lg:overflow-visible">
+                <!-- 日期導覽區 + 工具按鈕 (全部在此容器內生成) -->
+                <div id="nav-container" class="flex flex-row lg:flex-col gap-2 w-full lg:flex-shrink">
+                    <!-- JS 動態生成所有按鈕 -->
                 </div>
+            </div>
+        </nav>
 
-                <!-- 匯率轉換器 -->
-                <div class="flat-panel p-6 rounded-xl shadow-lg">
-                    <h2 class="text-xl font-bold mb-3 flex items-center">
-                        <i data-lucide="trending-up" class="w-5 h-5 mr-2"></i>
-                        匯率轉換器 (TWD 兌 JPY)
-                    </h2>
-                    <div class="space-y-3">
-                        <div>
-                            <label for="twdInput" class="block text-xs font-medium text-gray-500">台幣 (TWD)</label>
-                            <input type="number" id="twdInput" oninput="convertCurrency(this.value, 'twd')" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-teal-500 focus:border-teal-500 transition duration-150">
+        <!-- [右欄] Col-10: 動態內容區 (行程 OR 工具) -->
+        <main class="lg:col-span-10 space-y-6">
+
+            <!-- 1. 行程內容區 (ITINERARY) - 預設顯示 -->
+            <div id="itinerary-view" class="space-y-6">
+                <!-- 天氣看板 (淺色卡片，高對比) -->
+                <div id="weather-card" class="flat-panel p-5 relative overflow-hidden transition-all duration-500 shadow-lg">
+                    <div class="relative z-10 flex justify-between items-center">
+                        <div class="flex items-center gap-4">
+                            <div class="text-4xl" id="weather-icon"></div>
+                            <div>
+                                <div class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-0.5">WEATHER</div>
+                                <div id="weather-condition" class="text-lg font-bold text-gray-900"></div>
+                                <div id="weather-note" class="text-xs text-gray-600 opacity-90"></div>
+                            </div>
                         </div>
-                        <div class="text-center font-bold text-gray-600">
-                            <i data-lucide="arrow-down-up" class="w-5 h-5 inline-block"></i>
-                        </div>
-                        <div>
-                            <label for="jpyInput" class="block text-xs font-medium text-gray-500">日圓 (JPY)</label>
-                            <input type="number" id="jpyInput" oninput="convertCurrency(this.value, 'jpy')" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-teal-500 focus:border-teal-500 transition duration-150">
+                        <div class="text-right">
+                            <div id="weather-location" class="text-xs font-bold teal-accent uppercase tracking-widest mb-0.5">TOKYO</div>
+                            <div class="text-2xl font-black text-gray-900">
+                                <span id="weather-high" class="red-accent"></span>
+                                <span class="text-gray-400 text-base mx-1">/</span>
+                                <span id="weather-low" class="teal-accent"></span>
+                            </div>
                         </div>
                     </div>
-                    <p id="rateInfo" class="text-sm text-gray-500 mt-3 text-center">當前匯率: 1 TWD = 4.60 JPY</p>
-                    <button class="btn-primary w-full py-2 rounded-lg text-sm font-semibold shadow-md mt-3" onclick="showRateModal()">
-                        <i data-lucide="calculator" class="w-4 h-4 mr-2 inline-block"></i>
-                        設定匯率
-                    </button>
                 </div>
 
-                <!-- 購物清單摘要 (快速入口) -->
-                <div class="flat-panel p-6 rounded-xl shadow-lg">
-                    <h2 class="text-xl font-bold mb-3 flex items-center">
-                        <i data-lucide="shopping-bag" class="w-5 h-5 mr-2"></i>
-                        待辦清單 (共 <span id="pending-count" class="font-extrabold text-teal-500 ml-1">0</span> 項)
-                    </h2>
-                    <ul id="shopping-list-summary" class="space-y-1 text-sm text-gray-700">
-                        <!-- 摘要項目將由 JS 填充 -->
-                        <li class="text-gray-500 text-center py-2">清單為空</li>
-                    </ul>
-                    <button class="btn-primary w-full py-2 rounded-lg text-sm font-semibold shadow-md mt-4" onclick="setView('SHOPPING')">
-                        <i data-lucide="list-checks" class="w-4 h-4 mr-2 inline-block"></i>
-                        管理完整清單
-                    </button>
+                <!-- 標題 -->
+                <div class="flex items-end gap-3 pb-2 border-b border-opacity-50" style="border-color: var(--color-teal);">
+                    <!-- 日數使用深色，與背景色區分但不過於突兀 -->
+                    <h2 id="day-number" class="text-4xl font-black text-gray-600 leading-none select-none">DAY 1</h2>
+                    <!-- 標題使用紅色強調 -->
+                    <h3 id="day-title" class="text-xl lg:text-2xl font-bold red-accent leading-tight mb-1"></h3>
                 </div>
 
-            </section>
+                <!-- 行程列表容器 -->
+                <div id="itinerary-list" class="space-y-5">
+                    <!-- JS 動態插入行程卡片 -->
+                </div>
+            </div>
 
-            <!-- 右側：主要內容區 (佔 2/3) -->
-            <section class="lg:col-span-2 space-y-6">
+
+            <!-- 2. 匯率試算區 (CURRENCY) - 預設隱藏 -->
+            <div id="currency-view" class="hidden flat-panel rounded-xl p-8 lg:p-12 h-full min-h-[500px]">
+                <h3 class="text-3xl font-bold red-accent mb-8 pb-3 border-b border-gray-300 flex items-center">
+                    <i data-lucide="coins" class="w-8 h-8 mr-3"></i> 日幣匯率試算中心
+                </h3>
                 
-                <!-- 導航列 -->
-                <nav class="flex space-x-4 border-b border-gray-700/50 text-gray-400">
-                    <button id="btnItinerary" class="nav-button pb-3 px-2 text-base font-semibold active" onclick="setView('ITINERARY')">
-                        <i data-lucide="calendar-check" class="w-5 h-5 mr-1 inline-block"></i> 行程總覽
-                    </button>
-                    <button id="btnShopping" class="nav-button pb-3 px-2 text-base font-semibold" onclick="setView('SHOPPING')">
-                        <i data-lucide="shopping-cart" class="w-5 h-5 mr-1 inline-block"></i> 購物清單
-                    </button>
-                    <button id="btnNotes" class="nav-button pb-3 px-2 text-base font-semibold" onclick="setView('NOTES')">
-                        <i data-lucide="sticky-note" class="w-5 h-5 mr-1 inline-block"></i> 旅遊筆記
-                    </button>
-                </nav>
+                <div class="max-w-md mx-auto space-y-6">
+                    <!-- 匯率輸入框 -->
+                    <div class="mb-6 flex items-center justify-between bg-gray-100 p-4 rounded-lg border" style="border-color: var(--color-teal);">
+                        <span class="text-sm text-gray-600 font-medium">目前匯率 (1 TWD =)</span>
+                        <div class="flex items-center">
+                            <input type="number" id="rateInput" value="4.80" step="0.01" oninput="convert('TWD')" 
+                                class="w-20 bg-transparent text-right font-mono font-bold text-xl focus:outline-none red-accent">
+                            <span class="text-sm text-gray-500 ml-2">JPY</span>
+                        </div>
+                    </div>
 
-                <!-- 內容容器 -->
-                <div id="main-content" class="min-h-[60vh] bg-gray-800/20 p-6 rounded-xl shadow-xl transition-all duration-300">
-                    <!-- 內容將由 JS 渲染 -->
-                    <p class="text-gray-500 text-center py-10">載入中...</p>
+                    <!-- TWD 輸入 -->
+                    <div class="relative group">
+                        <label class="absolute left-4 top-3 text-[10px] font-bold text-gray-500 group-focus-within:teal-accent">TWD (台幣)</label>
+                        <input type="number" id="twdInput" placeholder="0" oninput="convert('TWD')"
+                            class="w-full bg-gray-100 border border-gray-300 rounded-lg p-4 pt-8 text-2xl font-mono text-gray-900 focus:border-teal-accent transition-all outline-none">
+                    </div>
+                    
+                    <div class="flex justify-center py-2">
+                        <div class="rounded-full p-2" style="background-color: var(--color-teal);"><i data-lucide="arrow-down-up" class="w-5 h-5 text-white"></i></div>
+                    </div>
+                    
+                    <!-- JPY 輸入 -->
+                    <div class="relative group">
+                        <label class="absolute left-4 top-3 text-[10px] font-bold text-gray-500 group-focus-within:red-accent">JPY (日幣)</label>
+                        <input type="number" id="jpyInput" placeholder="0" oninput="convert('JPY')"
+                            class="w-full bg-gray-100 border border-gray-300 rounded-lg p-4 pt-8 text-2xl font-mono red-accent focus:border-red-accent transition-all outline-none">
+                    </div>
                 </div>
+            </div>
 
-            </section>
+            <!-- 3. 飯店/緊急聯絡區 (HOTEL) - 預設隱藏 -->
+            <div id="hotel-view-main" class="hidden flat-panel rounded-xl p-8 lg:p-12 h-full min-h-[500px]">
+                <h3 class="text-3xl font-bold red-accent mb-8 pb-3 border-b border-gray-300 flex items-center">
+                    <i data-lucide="map-pin" class="w-8 h-8 mr-3"></i> 緊急聯絡/飯店地址卡
+                </h3>
+                
+                <div class="max-w-xl mx-auto space-y-6">
+                    <!-- 顯示模式 -->
+                    <div id="hotel-display-mode">
+                        <div class="mb-4">
+                            <div class="text-xs text-gray-500 uppercase tracking-widest mb-1">飯店名稱 (HOTEL NAME)</div>
+                            <div id="h-name" class="font-black text-gray-900 text-2xl leading-tight">未設定飯店</div>
+                        </div>
+
+                        <!-- 地址卡片，使用強調色邊框和背景 -->
+                        <div class="p-6 bg-gray-100 rounded-lg border-2 border-teal-accent mb-6 relative group cursor-pointer shadow-xl" 
+                             style="border-color: var(--color-teal);" onclick="copyAddr()">
+                            <div class="text-xs teal-accent uppercase mb-2 flex justify-between items-center font-medium">
+                                <span>地址 (ADDRESS - JP) <span class="text-gray-500">(給司機或路人看)</span></span>
+                                <i data-lucide="copy" class="w-4 h-4 teal-accent opacity-80 group-hover:opacity-100 transition-opacity"></i>
+                            </div>
+                            <div id="h-addr" class="font-mono text-base text-gray-900 break-all leading-relaxed">請點擊下方按鈕設定地址</div>
+                            <div class="text-xs text-gray-500 mt-3 border-t border-gray-300 pt-2">
+                                電話: <span id="h-phone">無資料</span>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <button onclick="copyAddr()" class="bg-teal-accent hover:bg-opacity-80 text-white font-bold py-3 rounded-lg text-base transition-colors flex items-center justify-center shadow-lg"
+                                    style="background-color: var(--color-teal);">
+                                <i data-lucide="clipboard-check" class="w-5 h-5 mr-2"></i> 複製日文地址
+                            </button>
+                            <button onclick="toggleEdit()" class="bg-gray-400 hover:bg-gray-500 text-gray-900 font-medium py-3 rounded-lg text-base transition-colors flex items-center justify-center">
+                                <i data-lucide="settings-2" class="w-5 h-5 mr-2"></i> 設定/修改資料
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 編輯模式 (預設隱藏) -->
+                    <div id="hotel-edit-mode" class="hidden space-y-4">
+                        <input type="text" id="in-name" placeholder="飯店名稱" class="w-full bg-gray-100 border border-gray-300 rounded-lg p-3 text-sm text-gray-900 focus:border-teal-accent outline-none">
+                        <textarea id="in-addr" rows="4" placeholder="日文地址 (最重要)" class="w-full bg-gray-100 border border-gray-300 rounded-lg p-3 text-sm text-gray-900 focus:border-teal-accent outline-none"></textarea>
+                        <input type="text" id="in-phone" placeholder="飯店電話" class="w-full bg-gray-100 border border-gray-300 rounded-lg p-3 text-sm text-gray-900 focus:border-teal-accent outline-none">
+                        <div class="grid grid-cols-2 gap-4 mt-4">
+                            <button onclick="saveHotel()" class="bg-red-accent text-white py-3 rounded-lg text-base font-bold hover:bg-opacity-80 shadow-lg"
+                                    style="background-color: var(--color-red);">儲存</button>
+                            <button onclick="toggleEdit()" class="bg-gray-400 text-gray-900 py-3 rounded-lg text-base hover:bg-gray-500">取消</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="h-12"></div> <!-- 底部留白 -->
         </main>
+
     </div>
 
-    <!-- Modal 容器 -->
-    <div id="modal-container" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden transition-opacity duration-300 opacity-0">
-        <!-- Modal 內容將由 JS 填充 -->
-    </div>
-
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, query, orderBy, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // 設定 Firebase 登錄級別為 Debug
-        setLogLevel('Debug');
-
-        // 全局變數
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-tokyo-vibe-app-id';
-        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
-
-        let app;
-        let db;
-        let auth;
-        let userId = 'anonymous'; // 預設為匿名
-        let isAuthReady = false;
-
-        // 應用程式數據模型
-        let hotel = {
-            name: '請設定飯店名稱',
-            address: '請點擊下方按鈕設定地址',
-            dates: 'YYYY/MM/DD - YYYY/MM/DD',
-            rate: 4.60 // 1 TWD = 4.60 JPY
-        };
-        let itinerary = [
-            // 範例行程 (Day 1)
+    <!-- JavaScript 邏輯 (保持不變) -->
+    <script>
+        // --- 1. 詳細行程資料 (與上次版本相同) ---
+        const itineraryData = [
             {
-                day: 1,
-                date: '4/25 (四)',
-                activities: [
-                    { time: '10:00', description: '抵達東京成田/羽田機場' },
-                    { time: '13:00', description: '飯店Check-in' },
-                    { time: '15:00', description: '淺草寺、仲見世通 (雷門)' },
-                    { time: '18:00', description: '晚餐：一蘭拉麵 (上野店)' },
-                    { time: '20:00', description: '多慶屋購物' }
+                day: 1, date: "12/26 (四)", title: "抵達與高輪新區",
+                weather: { icon: "☀️", cond: "晴朗乾冷", temp: "3° / 10°", loc: "東京", alert: false },
+                slots: [
+                    { 
+                        time: "Morning", title: "抵達與入住 Takanawa Gateway", icon: "plane",
+                        desc: "前往飯店辦理入住或寄放行李。Takanawa Gateway 是隈研吾設計的新車站，以「折紙」為靈感的屋頂結構非常值得一看。",
+                        hours: "車站全日開放 / 飯店通常 15:00 入住",
+                        expert: "【建築迷必看】車站的挑高玻璃帷幕在早晨光影下非常美。如果行李不多，建議走去二樓的無人商店體驗一下高科技結帳。"
+                    },
+                    { 
+                        time: "Lunch", title: "NEWoMan 高輪/品川", icon: "coffee",
+                        desc: "為了避開人潮，建議在站內的麵包店或 NEWoMan 的輕食區用餐。",
+                        hours: "11:00 - 21:00 (餐廳區)",
+                        expert: "【避雷指南】品川站中午人潮非常恐怖，建議避開「品達麵達」拉麵街，改去 NEWoMan 的 Blue Bottle 或麵包名店，環境舒服很多。"
+                    },
+                    { 
+                        time: "Afternoon", title: "KITTE 丸之內", icon: "shopping-bag",
+                        desc: "由舊東京中央郵局改建的商場，保留了昭和時代的現代主義風格。",
+                        hours: "11:00 - 20:00",
+                        expert: "【攝影點】務必上 6F 的屋頂花園「KITTE Garden」。這裡是免費拍攝東京車站丸之內紅磚站舍「全景」的最佳位置，不用人擠人。"
+                    },
+                    { 
+                        time: "Dinner", title: "品川周邊在地居酒屋", icon: "beer",
+                        desc: "探索品川港南口巷弄內的傳統居酒屋，感受上班族下班後的氛圍。",
+                        hours: "17:00 - 23:00",
+                        expert: "【點餐攻略】找掛有紅燈籠的店準沒錯。推薦點「煮込み (內臟燉煮)」配生啤酒。如果不會日文，用 Google 翻譯圖片菜單通常沒問題。"
+                    }
                 ]
             },
-            // 範例行程 (Day 2)
             {
-                day: 2,
-                date: '4/26 (五)',
-                activities: [
-                    { time: '09:00', description: '築地市場' },
-                    { time: '13:00', description: '銀座購物 (UNIQLO旗艦店)' },
-                    { time: '18:00', description: '晚餐：燒肉放題' }
+                day: 2, date: "12/27 (五)", title: "丸之內與八重洲",
+                weather: { icon: "🌤️", cond: "多雲轉晴", temp: "4° / 11°", loc: "東京", alert: false },
+                slots: [
+                    { 
+                        time: "Morning", title: "皇居外苑散策", icon: "camera",
+                        desc: "清晨的皇居外苑空氣清新，是東京市中心的綠洲。",
+                        hours: "全日開放",
+                        expert: "【歷史小知識】必拍的「二重橋」其實平常是關閉的，只有新年或天皇即位等大典才會開放。清晨來可以看到最美的倒影。"
+                    },
+                    { 
+                        time: "Lunch", title: "KITTE 美食街", icon: "utensils",
+                        desc: "選擇 B1 的根室花丸迴轉壽司(需排隊) 或 5F 的特色餐廳。",
+                        hours: "11:00 - 22:00",
+                        expert: "【省時技巧】根室花丸通常要排 2 小時。若不想等，直接去 5F 的蕎麥麵店，視野好且翻桌快。記得選靠窗位可以看到東京站火車進出。"
+                    },
+                    { 
+                        time: "Afternoon", title: "東京車站畫廊 / 銀座", icon: "map",
+                        desc: "位於東京車站紅磚建築內的精緻美術館，保留了百年前的紅磚牆。",
+                        hours: "10:00 - 18:00 (週一休)",
+                        expert: "【文青推薦】這裡的展覽通常很有品味且人少。看完展覽沿著八重洲地下街走到銀座，一路上有很多日本各地的「物產館」(Antenna Shop) 可以買伴手禮。"
+                    },
+                    { 
+                        time: "Dinner", title: "Sumiyaki Unafuji (八重洲)", icon: "star", highlight: true,
+                        desc: "來自名古屋的特級鰻魚飯，炭火直烤，皮脆肉嫩。",
+                        hours: "11:00 - 22:00 (需預約)",
+                        expert: "【饕客吃法】這裡有名的是「Hitsumabushi (鰻魚三吃)」。第一碗吃原味，第二碗加蔥花芥末，第三碗加高湯變茶泡飯。這是名古屋流的正宗吃法！"
+                    }
+                ]
+            },
+            {
+                day: 3, date: "12/28 (六)", title: "下町懷舊日",
+                weather: { icon: "☀️", cond: "晴朗", temp: "2° / 9°", loc: "東京", alert: false },
+                slots: [
+                    { 
+                        time: "Morning", title: "築地場外市場", icon: "sun",
+                        desc: "雖然市場搬去豐洲，但場外的美食街依然熱鬧非凡。",
+                        hours: "05:00 - 14:00 (各店不同)",
+                        expert: "【行家指南】絕對要在 8:30 前到。必吃「玉子燒」串和「狐狸屋」的牛雜丼(Horumon Don)。牛雜丼味道很重，不喜歡內臟的可以改吃海鮮丼。"
+                    },
+                    { 
+                        time: "Lunch", title: "月島文字燒街", icon: "flame",
+                        desc: "整條街都是文字燒店，自己動手煎非常有樂趣。",
+                        hours: "11:00 - 22:00",
+                        expert: "【操作教學】如果不熟練，大膽請店員幫忙煎(Sumimasen, help!)。推薦點「明太子麻糬起司」口味，這是絕對不會失敗的經典組合。"
+                    },
+                    { 
+                        time: "Afternoon", title: "清澄白河", icon: "coffee",
+                        desc: "東京的咖啡激戰區，擁有Blue Bottle一號店和許多獨立烘豆所。",
+                        hours: "10:00 - 18:00",
+                        expert: "【散步路線】從東京都現代美術館開始，沿路逛 fukadaso (舊公寓改建的雜貨店)。氣氛非常悠閒，適合買咖啡豆當伴手禮。"
+                    },
+                    { 
+                        time: "Dinner", title: "門前仲町", icon: "utensils",
+                        desc: "充滿江戶風情的街區，是當地人下班喝酒的聖地。",
+                        hours: "17:00 - 深夜",
+                        expert: "【美食推薦】這裡的名物是「深川飯」(蛤蜊炊飯)。如果想吃肉，這裡也有很多高CP值的立食燒肉店，站著吃更便宜！"
+                    }
+                ]
+            },
+            {
+                day: 4, date: "12/29 (日)", title: "富士山一日遊",
+                weather: { icon: "🗻", cond: "極凍晴天", temp: "-5° / 1°", loc: "富士山", alert: true, note: "體感極低，務必穿著防風外套" },
+                slots: [
+                    { 
+                        time: "Morning", title: "富士山五合目", icon: "mountain",
+                        desc: "巴士直達富士山半山腰，最近距離感受神山的魄力。",
+                        hours: "道路視天候開放",
+                        expert: "【重要提醒】12月底五合目可能因積雪道路封閉，若無法上山，巴士通常會改去「富士山世界遺產中心」。記得去神社買「富士山御守」，很靈驗。"
+                    },
+                    { 
+                        time: "Lunch", title: "河口湖鄉土料理", icon: "soup",
+                        desc: "品嚐山梨縣名物「餺飥麵 (Houtou)」，蔬菜味噌湯底配寬麵。",
+                        hours: "11:00 - 15:00",
+                        expert: "【名店推薦】「不動茶屋 (Houtou Fudo)」很有名。如果不喜歡排隊，隨便一家家庭料理店的餺飥麵其實都很好吃，重點是加一點店家特製的辣醬。"
+                    },
+                    { 
+                        time: "Afternoon", title: "忍野八海", icon: "snowflake",
+                        desc: "富士山融雪形成的八個池塘，水質清澈見底。",
+                        hours: "全日開放",
+                        expert: "【冬季限定】冬天人稍微少一點，空氣乾燥讓富士山看起來更清晰。小心池邊木棧道結冰會滑。這裡的水豆腐和烤草餅是必吃小點心。"
+                    },
+                    { 
+                        time: "Dinner", title: "新宿西口晚餐", icon: "utensils",
+                        desc: "一日遊巴士回到新宿後，直接在西口大樓內用餐。",
+                        hours: "11:00 - 23:00",
+                        expert: "【避人潮】不要去歌舞伎町(東口)，人多又雜。西口的 Odakyu 或 Keio 百貨樓上餐廳街品質穩定，而且通常不用排太久。"
+                    }
+                ]
+            },
+            {
+                day: 5, date: "12/30 (一)", title: "代官山時尚",
+                weather: { icon: "☀️", cond: "晴朗", temp: "5° / 12°", loc: "東京", alert: false },
+                slots: [
+                    { 
+                        time: "Morning", title: "代官山 蔦屋書店", icon: "book",
+                        desc: "被譽為世界最美書店之一，在此享受高品質的閱讀時光。",
+                        hours: "09:00 - 22:00",
+                        expert: "【氛圍體驗】二樓的 Anjin Lounge 可以邊喝調酒邊看珍稀古書。早上去人最少，是拍照打卡的最佳時機，光線最好。"
+                    },
+                    { 
+                        time: "Lunch", title: "惠比壽巷弄午餐", icon: "utensils",
+                        desc: "這一帶有很多隱藏版的義式或法式小餐館。",
+                        hours: "11:30 - 14:30",
+                        expert: "【高CP值】尋找門口有寫「Lunch Menu 1000 yen」的小黑板。東京的午間套餐通常非常超值，能用便宜價格吃到精緻料理。"
+                    },
+                    { 
+                        time: "Afternoon", title: "裏原宿 / 貓街", icon: "shopping-bag",
+                        desc: "連接澀谷與原宿的步行街，充滿個性潮牌與古著店。",
+                        hours: "11:00 - 20:00",
+                        expert: "【逛街攻略】不要走竹下通(人太多)。走貓街(Cat Street)可以逛到很多限量球鞋店和設計師品牌。推薦去「RAGTAG」挖寶二手名牌。"
+                    },
+                    { 
+                        time: "Dinner", title: "惠比壽橫丁", icon: "beer",
+                        desc: "室內屋台街，集合了多家不同風格的居酒屋。",
+                        hours: "17:00 - 04:00",
+                        expert: "【社交聖地】這裡氣氛非常High，日本人很喜歡來這聯誼。如果想體驗熱鬧氣氛來這準沒錯，但記得要早點到，不然一位難求。"
+                    }
+                ]
+            },
+            {
+                day: 6, date: "12/31 (二)", title: "谷中銀座與返程",
+                weather: { icon: "🌥️", cond: "晴時多雲", temp: "1° / 8°", loc: "東京", alert: false },
+                slots: [
+                    { 
+                        time: "Morning", title: "谷中銀座商店街", icon: "shopping-bag",
+                        desc: "倖存於二戰空襲的老街，保有昭和時代的懷舊感。",
+                        hours: "10:00 - 18:00",
+                        expert: "【貓奴必去】這裡被稱為「貓町」，雖然真貓不一定多，但有很多貓咪造型的甜點和雜貨。必吃「肉之鈴木」的元氣炸肉餅 (Menchi Katsu)。"
+                    },
+                    { 
+                        time: "Lunch", title: "谷中蕎麥麵", icon: "utensils",
+                        desc: "在老宅改建的麵店享用最後的日式午餐。",
+                        hours: "11:00 - 15:00",
+                        expert: "【過年習俗】12/31 日本人有吃「年越蕎麥麵」的習慣，象徵斬斷今年的厄運。所以今天的蕎麥麵店可能會大排長龍，建議提早用餐！"
+                    },
+                    { 
+                        time: "Afternoon", title: "前往機場", icon: "plane",
+                        desc: "搭乘 Skyliner (從日暮里) 或 NEX 前往機場。",
+                        hours: "-",
+                        expert: "【最後採購】如果還沒買夠，機場免稅店的「Tokyo Banana」和「白色戀人」雖然老套但絕對受歡迎。記得預留至少 3 小時到機場。"
+                    },
+                    { 
+                        time: "Dinner", title: "機上/機場晚餐", icon: "home",
+                        desc: "結束美好的旅程。",
+                        hours: "-",
+                        expert: "【回家小心】檢查護照、錢包。期待下次再來日本！"
+                    }
                 ]
             }
         ];
-        // 購物清單 (public data)
-        let shoppingList = [];
-        // 旅遊筆記 (private data)
-        let notes = '';
 
-        let appView = 'ITINERARY'; // 當前視圖: ITINERARY, SHOPPING, NOTES
-        let itineraryDay = 1; // 當前行程頁面，預設 Day 1
+        let currentDay = 1;
+        // 追蹤目前的顯示模式: 'ITINERARY', 'CURRENCY', 'HOTEL'
+        let viewMode = 'ITINERARY'; 
 
-        // ===== Firebase 初始化與身份驗證 =====
 
-        const initializeFirebase = async () => {
-            try {
-                if (!firebaseConfig || Object.keys(firebaseConfig).length === 0) {
-                    console.warn("Firebase config is missing or empty. Running as local mode.");
-                    return;
-                }
-                
-                app = initializeApp(firebaseConfig);
-                db = getFirestore(app);
-                auth = getAuth(app);
-                
-                // 嘗試使用自定義 token 登入
-                const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-                if (initialAuthToken) {
-                    await signInWithCustomToken(auth, initialAuthToken);
-                } else {
-                    await signInAnonymously(auth);
-                }
-
-                onAuthStateChanged(auth, (user) => {
-                    if (user) {
-                        userId = user.uid;
-                        console.log("Firebase 認證成功，User ID:", userId);
-                    } else {
-                        userId = 'anonymous';
-                        console.log("Firebase 處於匿名/未登入狀態。");
-                    }
-                    isAuthReady = true;
-                    // 在認證就緒後載入所有資料並啟動監聽
-                    loadDataListeners(); 
-                });
-
-            } catch (error) {
-                console.error("Firebase 初始化失敗:", error);
-            }
-        };
-
-        // ===== 資料庫操作與即時監聽 (Snapshot Listeners) =====
-
-        // 構建公開資料路徑: /artifacts/{appId}/public/data/{collectionName}
-        const getPublicCollectionPath = (collectionName) => {
-            return `artifacts/${appId}/public/data/${collectionName}`;
-        }
-
-        // 構建私人資料路徑: /artifacts/{appId}/users/{userId}/{collectionName}
-        const getPrivateDocPath = (docId) => {
-            return `artifacts/${appId}/users/${userId}/config/${docId}`;
-        }
+        // --- 2. 介面渲染及切換邏輯 (Render and View Switching Logic) ---
         
-        // 載入所有資料的即時監聽器
-        const loadDataListeners = () => {
-            if (!isAuthReady) return;
-
-            // 1. Hotel & Rate (私人資料 - doc)
-            const hotelDocRef = doc(db, getPrivateDocPath('hotel'));
-            onSnapshot(hotelDocRef, (docSnap) => {
-                if (docSnap.exists()) {
-                    hotel = docSnap.data();
-                } else {
-                    console.log("飯店/匯率配置不存在，使用預設值。");
-                    // 確保預設值被存入以供後續編輯
-                    saveHotel(false); 
-                }
-                updateHotelUI();
-                convertCurrency(document.getElementById('twdInput')?.value || 0, 'twd', false); // 重新計算匯率
-            }, (error) => {
-                console.error("監聽飯店/匯率配置失敗:", error);
-            });
-            
-            // 2. Shopping List (公開資料 - collection)
-            // 由於 firestore orderBy 可能需要索引，我們將在客戶端進行排序
-            const shoppingColRef = collection(db, getPublicCollectionPath('shoppingList'));
-            onSnapshot(shoppingColRef, (snapshot) => {
-                shoppingList = [];
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    // 避免 orderBy 導致的錯誤，從 data 中讀取 'timestamp' 或使用 createdAt
-                    shoppingList.push({ id: doc.id, ...data });
-                });
-                
-                // 在客戶端進行排序 (例如：未購買的在前，然後按名稱排序)
-                shoppingList.sort((a, b) => {
-                    if (a.purchased !== b.purchased) {
-                        return a.purchased ? 1 : -1; // false (未購買) 在前
-                    }
-                    // 其次按名稱排序 (中文/英文)
-                    return a.name.localeCompare(b.name, 'zh-TW');
-                });
-
-                renderShoppingList();
-                updateShoppingSummary();
-            }, (error) => {
-                console.error("監聽購物清單失敗:", error);
-            });
-
-            // 3. Notes (私人資料 - doc)
-            const notesDocRef = doc(db, getPrivateDocPath('notes'));
-            onSnapshot(notesDocRef, (docSnap) => {
-                if (docSnap.exists()) {
-                    notes = docSnap.data().content || '';
-                } else {
-                    notes = ''; // 預設值
-                }
-                if (appView === 'NOTES') {
-                    renderNotes();
-                }
-            }, (error) => {
-                console.error("監聽旅遊筆記失敗:", error);
-            });
-        };
-
-        // 儲存飯店/匯率資訊
-        const saveHotel = async (showFeedback = true) => {
-            if (!isAuthReady || userId === 'anonymous') {
-                console.warn("認證未就緒或匿名用戶，無法儲存。");
-                return;
-            }
-            try {
-                const hotelDocRef = doc(db, getPrivateDocPath('hotel'));
-                await setDoc(hotelDocRef, hotel, { merge: true });
-                if (showFeedback) {
-                    showModal('飯店/匯率資訊已成功儲存！', 'success');
-                }
-            } catch (e) {
-                console.error("儲存飯店/匯率失敗:", e);
-                showModal('儲存飯店/匯率失敗，請檢查連線。', 'error');
-            }
-        };
-
-        // 新增購物清單項目
-        const addShoppingItem = async (name) => {
-            if (!isAuthReady || userId === 'anonymous') {
-                showModal('請先登入或等待初始化完成。', 'warning');
-                return;
-            }
-            if (!name.trim()) return;
-            try {
-                const shoppingColRef = collection(db, getPublicCollectionPath('shoppingList'));
-                // 使用 addDoc 讓 Firestore 自動生成 ID
-                await setDoc(doc(shoppingColRef), {
-                    name: name.trim(),
-                    purchased: false,
-                    // 不使用伺服器時間戳，避免潛在的索引問題
-                    createdAt: Date.now(), 
-                    userId: userId 
-                });
-                
-            } catch (e) {
-                console.error("新增購物項目失敗:", e);
-                showModal('新增項目失敗，請檢查連線。', 'error');
-            }
-        };
-
-        // 切換購物清單項目狀態
-        window.toggleShoppingItem = async (index) => {
-            if (!isAuthReady || userId === 'anonymous') {
-                showModal('請先登入或等待初始化完成。', 'warning');
-                return;
-            }
-            if (!shoppingList[index]) return;
-            
-            try {
-                const item = shoppingList[index];
-                const shoppingColRef = collection(db, getPublicCollectionPath('shoppingList'));
-                const itemDocRef = doc(shoppingColRef, item.id);
-                
-                await setDoc(itemDocRef, { purchased: !item.purchased }, { merge: true });
-            } catch (e) {
-                console.error("切換購物項目狀態失敗:", e);
-                showModal('切換狀態失敗，請檢查連線。', 'error');
-            }
-        };
-
-        // 刪除購物清單項目
-        window.deleteShoppingItem = async (index) => {
-            if (!isAuthReady || userId === 'anonymous') {
-                showModal('請先登入或等待初始化完成。', 'warning');
-                return;
-            }
-            if (!shoppingList[index]) return;
-
-            // 替代 alert/confirm 的 UI 提示
-            const confirmDelete = await showConfirmModal('確定要刪除此購物項目嗎？');
-            if (!confirmDelete) return;
-            
-            try {
-                const item = shoppingList[index];
-                const shoppingColRef = collection(db, getPublicCollectionPath('shoppingList'));
-                const itemDocRef = doc(shoppingColRef, item.id);
-                await deleteDoc(itemDocRef);
-            } catch (e) {
-                console.error("刪除購物項目失敗:", e);
-                showModal('刪除項目失敗，請檢查連線。', 'error');
-            }
-        };
-
-        // 清空購物清單
-        const clearShoppingList = async () => {
-            if (!isAuthReady || userId === 'anonymous') {
-                showModal('請先登入或等待初始化完成。', 'warning');
-                return;
-            }
-            if (shoppingList.length === 0) return;
-
-            const confirmClear = await showConfirmModal('確定要清除所有購物清單項目嗎？');
-            if (!confirmClear) return;
-
-            try {
-                const shoppingColRef = collection(db, getPublicCollectionPath('shoppingList'));
-                // 逐一刪除清單中的所有文件
-                const batchPromises = shoppingList.map(item => {
-                    return deleteDoc(doc(shoppingColRef, item.id));
-                });
-                await Promise.all(batchPromises);
-                showModal('購物清單已清空。', 'success');
-            } catch (e) {
-                console.error("清空購物清單失敗:", e);
-                showModal('清空清單失敗，請檢查連線。', 'error');
-            }
-        };
-
-        // 儲存旅遊筆記
-        const saveNotes = async (content) => {
-            if (!isAuthReady || userId === 'anonymous') {
-                console.warn("認證未就緒或匿名用戶，無法儲存筆記。");
-                return;
-            }
-            try {
-                const notesDocRef = doc(db, getPrivateDocPath('notes'));
-                await setDoc(notesDocRef, { content: content }, { merge: true });
-                // 不顯示 modal 提示，以避免頻繁打擾用戶
-            } catch (e) {
-                console.error("儲存筆記失敗:", e);
-            }
-        };
-
-
-        // ===== UI 更新函式 =====
-
-        // 更新飯店資訊區塊
-        const updateHotelUI = () => {
-            const hName = document.getElementById('h-name');
-            const hDates = document.getElementById('h-dates');
-            const hAddr = document.getElementById('h-addr');
-            const copyBtn = document.getElementById('copy-addr-btn');
-            
-            if (hName) hName.textContent = hotel.name;
-            if (hDates) hDates.textContent = hotel.dates;
-            if (hAddr) hAddr.textContent = hotel.address;
-
-            // 根據地址內容決定是否顯示複製按鈕
-            if (copyBtn) {
-                if (hotel.address && hotel.address !== '請點擊下方按鈕設定地址') {
-                    copyBtn.classList.remove('hidden');
-                } else {
-                    copyBtn.classList.add('hidden');
-                }
-            }
-            
-            // 更新行程視圖中的 Day 1 資訊 (如果 Day 1 資訊存在)
-            if (itinerary.length > 0) {
-                itinerary[0].activities[1].description = `${hotel.name} Check-in`;
-                if (appView === 'ITINERARY') {
-                    renderItinerary();
-                }
-            }
-        };
-
-        // 更新購物清單摘要
-        const updateShoppingSummary = () => {
-            const pendingCount = shoppingList.filter(item => !item.purchased).length;
-            const pendingCountEl = document.getElementById('pending-count');
-            const summaryListEl = document.getElementById('shopping-list-summary');
-
-            if (pendingCountEl) pendingCountEl.textContent = pendingCount;
-
-            if (summaryListEl) {
-                if (pendingCount === 0) {
-                    summaryListEl.innerHTML = '<li class="text-gray-500 text-center py-2">清單為空</li>';
-                } else {
-                    const topItems = shoppingList
-                        .filter(item => !item.purchased)
-                        .slice(0, 3) // 只顯示前 3 項
-                        .map(item => `<li class="truncate"><i data-lucide="dot" class="w-4 h-4 inline-block text-teal-500"></i>${item.name}</li>`)
-                        .join('');
-                    
-                    const moreText = pendingCount > 3 ? `<li class="text-xs text-gray-500 mt-1">... 還有 ${pendingCount - 3} 項未完成</li>` : '';
-                    
-                    summaryListEl.innerHTML = topItems + moreText;
-
-                    // 重新解析 lucide 圖標
-                    lucide.createIcons();
-                }
-            }
-        };
-
-        // 匯率轉換器邏輯
-        window.convertCurrency = (value, type, updateInput = true) => {
-            const twdInput = document.getElementById('twdInput');
-            const jpyInput = document.getElementById('jpyInput');
-            const rateInfo = document.getElementById('rateInfo');
-
-            // 確保輸入值是有效數字
-            const num = parseFloat(value);
-            if (isNaN(num)) return;
-
-            if (type === 'twd') {
-                const jpy = (num * hotel.rate).toFixed(2);
-                if (updateInput && jpyInput) jpyInput.value = jpy;
-            } else if (type === 'jpy') {
-                const twd = (num / hotel.rate).toFixed(2);
-                if (updateInput && twdInput) twdInput.value = twd;
-            }
-
-            if (rateInfo) rateInfo.textContent = `當前匯率: 1 TWD = ${hotel.rate.toFixed(2)} JPY`;
-        };
-
-        // ===== 視圖渲染函式 =====
-
-        // 渲染行程總覽視圖
-        function renderItinerary() {
-            const container = document.getElementById('main-content');
-            if (!container) return;
-
-            // Day 導航
-            const dayNav = itinerary.map(dayData => `
-                <button 
-                    class="px-4 py-2 rounded-full text-sm font-semibold transition duration-150 ${dayData.day === itineraryDay ? 'bg-teal-500 text-white shadow-lg' : 'bg-gray-700/50 text-gray-300 hover:bg-gray-700'}"
-                    onclick="setItineraryDay(${dayData.day})"
-                >
-                    Day ${dayData.day}
-                </button>
-            `).join('');
-
-            // 當前 Day 的內容
-            const currentDayData = itinerary.find(d => d.day === itineraryDay);
-            let dayContent = '';
-            
-            if (currentDayData) {
-                const activities = currentDayData.activities.map(act => `
-                    <div class="flex border-b border-gray-600/30 py-3 last:border-b-0">
-                        <p class="font-mono text-sm text-teal-400 w-1/4 min-w-[70px]">${act.time}</p>
-                        <p class="text-gray-200 font-medium w-3/4">${act.description}</p>
-                    </div>
-                `).join('');
-
-                dayContent = `
-                    <div class="p-4 bg-gray-700/20 rounded-xl mb-4 shadow-inner">
-                        <h3 class="text-2xl font-extrabold text-teal-300 mb-1">Day ${currentDayData.day}</h3>
-                        <p class="text-sm font-medium text-gray-400">${currentDayData.date}</p>
-                    </div>
-                    <div class="space-y-1">
-                        ${activities}
-                    </div>
-                `;
-            } else {
-                 dayContent = '<p class="text-gray-500 text-center py-10">找不到該天的行程資料。</p>';
-            }
-
-            // 組合最終 HTML
-            container.innerHTML = `
-                <div class="flex space-x-3 mb-6 no-scrollbar overflow-x-auto pb-2">
-                    ${dayNav}
-                </div>
-                <div>
-                    ${dayContent}
-                </div>
-            `;
-        }
-        
-        // 切換行程 Day
-        window.setItineraryDay = (day) => {
-            itineraryDay = day;
-            renderItinerary();
-        };
-
-        // 渲染購物清單
-        function renderShoppingList() {
-            const container = document.getElementById('main-content');
-            if (!container) return;
-
-            const pendingCount = shoppingList.filter(item => !item.purchased).length;
-            const completedCount = shoppingList.length - pendingCount;
-
-            container.innerHTML = `
-                <h3 class="text-2xl font-bold text-teal-300 mb-4">
-                    購物清單總覽 
-                    <span class="text-lg font-normal text-gray-400">
-                        (${pendingCount} 待辦 / ${completedCount} 已完成)
-                    </span>
-                </h3>
-                
-                <!-- 輸入區塊 -->
-                <div id="shopping-input-container" class="bg-gray-700/30 p-4 rounded-xl mb-4 flex space-x-3 shadow-inner">
-                    <input type="text" id="new-shopping-item" placeholder="新增購物項目名稱..." class="flex-grow p-3 rounded-lg border-2 border-gray-600/50 bg-gray-800 text-white focus:border-teal-500 transition duration-150" onkeyup="if(event.key === 'Enter') { document.getElementById('add-shopping-btn').click(); }">
-                    <button id="add-shopping-btn" onclick="addNewShoppingItem()" class="btn-primary flex-shrink-0 px-6 py-3 rounded-lg font-semibold text-sm shadow-md">
-                        新增
-                    </button>
-                </div>
-                
-                <!-- 清單本體 -->
-                <ul id="shopping-list-container" class="max-h-[50vh] overflow-y-auto pr-2 no-scrollbar">
-                    <!-- 項目由 JS 填充 -->
-                </ul>
-
-                <!-- 底部控制按鈕 -->
-                <div class="mt-6 pt-4 border-t border-gray-700/50 flex justify-between space-x-3">
-                    <button id="show-hide-shopping-input-btn" onclick="toggleShoppingInput()" class="bg-gray-600 hover:bg-gray-500 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-md transition duration-150">
-                        隱藏輸入框
-                    </button>
-                    <button id="clear-shopping-list-btn" onclick="clearShoppingList()" class="btn-danger px-4 py-2 rounded-lg text-sm font-semibold shadow-md transition duration-150 hidden">
-                        清除所有項目
-                    </button>
-                </div>
-            `;
-
-            // 渲染購物清單項目
-            const listContainer = document.getElementById('shopping-list-container');
-            if (!listContainer) return; // 安全檢查
-
-            // 渲染購物清單項目
-            let listHTML = '';
-            shoppingList.forEach((item, index) => {
-                // 使用唯一 ID 確保 Lucide 圖標正確渲染
-                const iconId = `icon-${item.id || index}`;
-                listHTML += `
-                    <li class="flex justify-between items-center p-3 my-2 rounded-xl ${item.purchased ? 'bg-green-100/10 text-gray-400 line-through' : 'bg-gray-700/50'} transition duration-300 shadow-md">
-                        <div class="flex items-center space-x-3">
-                            <button onclick="toggleShoppingItem(${index})" class="text-xl p-1 rounded-full ${item.purchased ? 'text-teal-400' : 'text-gray-500 hover:text-teal-300'}">
-                                <i data-lucide="${item.purchased ? 'check-circle' : 'circle'}" class="w-5 h-5"></i>
-                            </button>
-                            <span class="text-base font-medium">${item.name}</span>
-                        </div>
-                        <button onclick="deleteShoppingItem(${index})" class="text-red-400 hover:text-red-300 p-1 rounded-full">
-                            <i data-lucide="trash-2" class="w-4 h-4"></i>
-                        </button>
-                    </li>
-                `;
-            });
-
-            listContainer.innerHTML = listHTML || '<p class="text-gray-500 text-center py-4">購物清單是空的！</p>';
-            
-            // 重新解析 lucide 圖標
-            lucide.createIcons();
-            
-            // 處理底部按鈕的顯示/隱藏
-            const shoppingInput = document.getElementById('new-shopping-item');
-            const clearBtn = document.getElementById('clear-shopping-list-btn');
-            const showBtn = document.getElementById('show-hide-shopping-input-btn');
-            const inputContainer = document.getElementById('shopping-input-container');
-
-            // 安全性檢查：如果任何一個控制元素不存在，則提前退出，避免 TypeError
-            if (!shoppingInput || !clearBtn || !showBtn || !inputContainer) {
-                console.error('購物清單控制元素遺失，無法設定按鈕狀態。');
-                return;
-            }
-
-            if (shoppingList.length === 0) {
-                // 清單為空：隱藏清除按鈕，隱藏輸入框，重置顯示/隱藏按鈕文字
-                clearBtn.classList.add('hidden');
-                inputContainer.classList.add('hidden');
-                showBtn.textContent = '新增購物項目';
-                shoppingInput.value = '';
-            } else {
-                // 清單非空：顯示清除按鈕
-                clearBtn.classList.remove('hidden');
-
-                // 根據輸入框的當前狀態設定顯示/隱藏按鈕的文字
-                // 修正：如果輸入框是 hidden，按鈕文字應為 '顯示輸入框'
-                if (inputContainer.classList.contains('hidden')) {
-                    showBtn.textContent = '顯示輸入框';
-                } else {
-                    showBtn.textContent = '隱藏輸入框';
-                }
-            }
-        }
-        
-        // 渲染旅遊筆記
-        function renderNotes() {
-            const container = document.getElementById('main-content');
-            if (!container) return;
-
-            container.innerHTML = `
-                <h3 class="text-2xl font-bold text-teal-300 mb-4">我的旅遊筆記</h3>
-                <p class="text-sm text-gray-400 mb-3">您的筆記會自動儲存。</p>
-                <textarea 
-                    id="notes-textarea" 
-                    class="w-full h-[65vh] p-4 rounded-xl border-2 border-gray-600/50 bg-gray-800 text-white focus:border-teal-500 transition duration-150 resize-none" 
-                    placeholder="在這裡寫下您的旅遊心得、注意事項或重要資訊..."
-                >${notes}</textarea>
-            `;
-
-            // 設定事件監聽器，即時儲存筆記
-            const notesTextarea = document.getElementById('notes-textarea');
-            if (notesTextarea) {
-                notesTextarea.addEventListener('input', (e) => {
-                    notes = e.target.value;
-                    saveNotes(notes);
-                });
-            }
-        }
-
-        // 切換主視圖
+        // 切換主內容區塊的顯示
         function updateMainView() {
-            // 重置導航按鈕的 active 狀態
-            document.getElementById('btnItinerary')?.classList.remove('active');
-            document.getElementById('btnShopping')?.classList.remove('active');
-            document.getElementById('btnNotes')?.classList.remove('active');
-            
-            const mainContent = document.getElementById('main-content');
-            if (mainContent) {
-                // 清空內容，準備渲染新視圖
-                mainContent.innerHTML = '';
-            }
+            // 隱藏所有內容區塊
+            document.getElementById('itinerary-view').classList.add('hidden');
+            document.getElementById('currency-view').classList.add('hidden');
+            document.getElementById('hotel-view-main').classList.add('hidden');
 
-            switch (appView) {
-                case 'ITINERARY':
-                    document.getElementById('btnItinerary')?.classList.add('active');
-                    renderItinerary();
-                    break;
-                case 'SHOPPING':
-                    document.getElementById('btnShopping')?.classList.add('active');
-                    renderShoppingList();
-                    break;
-                case 'NOTES':
-                    document.getElementById('btnNotes')?.classList.add('active');
-                    renderNotes();
-                    break;
-                default:
-                    renderItinerary();
+            // 顯示當前的區塊
+            if (viewMode === 'ITINERARY') {
+                document.getElementById('itinerary-view').classList.remove('hidden');
+                renderItinerary();
+            } else if (viewMode === 'CURRENCY') {
+                document.getElementById('currency-view').classList.remove('hidden');
+            } else if (viewMode === 'HOTEL') {
+                document.getElementById('hotel-view-main').classList.remove('hidden');
             }
+            
+            // 更新導覽按鈕狀態
+            renderNav();
         }
 
-        // 設定並切換視圖
-        window.setView = (view) => {
-            appView = view;
+        // 設置新的視圖模式
+        function setView(mode) {
+            viewMode = mode;
+            // 如果從工具頁面切回行程，則預設回到 DAY 1
+            if (mode === 'ITINERARY' && currentDay === 'TOOL') {
+                currentDay = 1;
+            }
             updateMainView();
-        };
-
-        // 新增購物項目
-        window.addNewShoppingItem = () => {
-            const input = document.getElementById('new-shopping-item');
-            if (input && input.value.trim()) {
-                addShoppingItem(input.value);
-                input.value = ''; // 清空輸入框
-                
-                // 確保輸入框在新增後仍然顯示（如果它原本是被隱藏的）
-                const inputContainer = document.getElementById('shopping-input-container');
-                if (inputContainer && inputContainer.classList.contains('hidden')) {
-                    toggleShoppingInput(true); // 強制顯示
-                }
-            }
-        };
-
-        // 切換購物清單輸入框顯示/隱藏
-        window.toggleShoppingInput = (forceShow = false) => {
-            const inputContainer = document.getElementById('shopping-input-container');
-            const showBtn = document.getElementById('show-hide-shopping-input-btn');
-            
-            if (!inputContainer || !showBtn) return;
-            
-            if (forceShow || inputContainer.classList.contains('hidden')) {
-                // 顯示輸入框
-                inputContainer.classList.remove('hidden');
-                showBtn.textContent = '隱藏輸入框';
-                document.getElementById('new-shopping-item')?.focus();
-            } else {
-                // 隱藏輸入框
-                inputContainer.classList.add('hidden');
-                showBtn.textContent = '顯示輸入框';
-            }
-        };
-
-
-        // ===== Modal 相關函式 =====
-
-        // 顯示通用 Modal
-        function showModal(message, type = 'info') {
-            const modalContainer = document.getElementById('modal-container');
-            if (!modalContainer) return;
-
-            let bgColor, icon;
-            if (type === 'success') {
-                bgColor = 'bg-teal-500';
-                icon = '<i data-lucide="check-circle" class="w-6 h-6 mr-2"></i>';
-            } else if (type === 'error') {
-                bgColor = 'bg-red-500';
-                icon = '<i data-lucide="x-circle" class="w-6 h-6 mr-2"></i>';
-            } else if (type === 'warning') {
-                bgColor = 'bg-amber-500';
-                icon = '<i data-lucide="alert-triangle" class="w-6 h-6 mr-2"></i>';
-            } else {
-                bgColor = 'bg-gray-700';
-                icon = '<i data-lucide="info" class="w-6 h-6 mr-2"></i>';
-            }
-            
-            modalContainer.innerHTML = `
-                <div class="flat-panel ${bgColor} text-white p-6 rounded-xl w-full max-w-sm shadow-2xl transform scale-95 transition-transform duration-300">
-                    <div class="flex items-center mb-4">
-                        ${icon}
-                        <h4 class="text-xl font-bold">系統提示</h4>
-                    </div>
-                    <p class="mb-6">${message}</p>
-                    <button onclick="closeModal()" class="w-full bg-white bg-opacity-30 hover:bg-opacity-50 font-semibold py-2 rounded-lg transition duration-150">
-                        確定
-                    </button>
-                </div>
-            `;
-            modalContainer.classList.remove('hidden');
-            setTimeout(() => modalContainer.classList.add('opacity-100', 'scale-100'), 10);
-            lucide.createIcons();
         }
 
-        // 顯示確認 Modal (返回 Promise)
-        function showConfirmModal(message) {
-            return new Promise(resolve => {
-                const modalContainer = document.getElementById('modal-container');
-                if (!modalContainer) return resolve(false);
+        // 渲染左側導覽列 (包含日期和工具按鈕的選中狀態)
+        function renderNav() {
+            const container = document.getElementById('nav-container');
+            container.innerHTML = '';
+            
+            // 統一的按鈕樣式基礎 (從深藍變為淺色/紅色的高對比)
+            const baseClass = 'modern-btn group flex items-center justify-between';
+            // 活躍狀態: 紅色背景，深色文字 (使用紅色作為主要活躍/選中狀態)
+            const activeClass = 'bg-red-accent text-white font-extrabold shadow-lg border-transparent';
+            // 非活躍狀態: 深色背景，淺色文字，Teal 邊框
+            const inactiveClass = 'bg-dark-navy text-cream border-teal-500 hover:bg-opacity-90';
 
-                const confirmAction = (result) => {
-                    closeModal();
-                    resolve(result);
-                };
 
-                modalContainer.innerHTML = `
-                    <div class="flat-panel bg-gray-800 text-white p-6 rounded-xl w-full max-w-sm shadow-2xl transform scale-95 transition-transform duration-300">
-                        <div class="flex items-center mb-4 text-amber-400">
-                            <i data-lucide="alert-circle" class="w-6 h-6 mr-2"></i>
-                            <h4 class="text-xl font-bold">請確認</h4>
+            // --- A. 渲染日期按鈕 ---
+            itineraryData.forEach(d => {
+                const btn = document.createElement('button');
+                const active = d.day === currentDay && viewMode === 'ITINERARY';
+                
+                // 應用動態顏色類
+                btn.className = `${baseClass} ${active ? activeClass : inactiveClass}`;
+                btn.style.backgroundColor = active ? 'var(--color-red)' : 'var(--color-dark-navy)';
+                btn.style.color = active ? 'var(--color-cream)' : 'var(--color-cream)';
+                btn.style.borderColor = 'var(--color-teal)';
+                
+                btn.innerHTML = `
+                    <div>
+                        <span class="block text-[10px] font-bold uppercase tracking-wider text-gray-400">DAY ${d.day}</span>
+                        <span class="font-bold text-sm lg:text-base">${d.date.split(' ')[0]}</span>
+                    </div>
+                    ${active ? '<i data-lucide="chevron-right" class="w-5 h-5 hidden lg:block text-white"></i>' : ''}
+                `;
+                btn.onclick = () => { currentDay = d.day; setView('ITINERARY'); }; 
+                container.appendChild(btn);
+            });
+            
+            // --- B. 渲染分隔線 (僅電腦上顯示) ---
+            const separator = document.createElement('div');
+            separator.className = "hidden lg:block h-px my-2";
+            separator.style.backgroundColor = 'rgba(44, 187, 173, 0.4)'; /* Teal 半透明分隔線 */
+            container.appendChild(separator);
+
+
+            // --- C. 渲染工具按鈕 (整合到導覽列末端) ---
+
+            // 1. 日幣匯率試算
+            const btnCurrency = document.createElement('button');
+            const activeCurrency = viewMode === 'CURRENCY';
+            btnCurrency.className = `${baseClass} flex items-center justify-center lg:justify-start ${activeCurrency ? activeClass : inactiveClass}`;
+            btnCurrency.style.backgroundColor = activeCurrency ? 'var(--color-red)' : 'var(--color-dark-navy)';
+            btnCurrency.style.color = activeCurrency ? 'var(--color-cream)' : 'var(--color-cream)';
+            btnCurrency.style.borderColor = 'var(--color-teal)';
+            
+            btnCurrency.innerHTML = `<i data-lucide="coins" class="w-5 h-5 mr-0 lg:mr-2"></i> 
+                                     <span class="hidden lg:inline font-medium">日幣試算</span>`;
+            btnCurrency.onclick = () => setView('CURRENCY');
+            container.appendChild(btnCurrency);
+
+            // 2. 緊急聯絡/飯店地址卡
+            const btnHotel = document.createElement('button');
+            const activeHotel = viewMode === 'HOTEL';
+            btnHotel.className = `${baseClass} flex items-center justify-center lg:justify-start ${activeHotel ? activeClass : inactiveClass}`;
+            btnHotel.style.backgroundColor = activeHotel ? 'var(--color-red)' : 'var(--color-dark-navy)';
+            btnHotel.style.color = activeHotel ? 'var(--color-cream)' : 'var(--color-cream)';
+            btnHotel.style.borderColor = 'var(--color-teal)';
+            
+            btnHotel.innerHTML = `<i data-lucide="map-pin" class="w-5 h-5 mr-0 lg:mr-2"></i> 
+                                  <span class="hidden lg:inline font-medium">緊急聯絡卡</span>`;
+            btnHotel.onclick = () => setView('HOTEL');
+            container.appendChild(btnHotel);
+
+            lucide.createIcons(); // 重新渲染新加入的 icon
+        }
+        
+        // 渲染中間的行程內容 (只有在 viewMode = 'ITINERARY' 時被呼叫)
+        function renderItinerary() {
+            const data = itineraryData.find(d => d.day === currentDay);
+            
+            // 1. 更新天氣卡片... 
+            document.getElementById('weather-icon').textContent = data.weather.icon;
+            document.getElementById('weather-condition').textContent = data.weather.cond;
+            document.getElementById('weather-note').textContent = data.weather.note || '';
+            document.getElementById('weather-location').textContent = data.weather.loc;
+            
+            const [low, high] = data.weather.temp.split(' / ');
+            document.getElementById('weather-low').textContent = low;
+            document.getElementById('weather-high').textContent = high;
+
+            const wCard = document.getElementById('weather-card');
+            // 警報狀態使用紅色邊框
+            if(data.weather.alert) {
+                wCard.className = "flat-panel rounded-lg p-5 relative overflow-hidden transition-all duration-500 border-2 shadow-lg";
+                wCard.style.borderColor = 'var(--color-red)';
+            } else {
+                wCard.className = "flat-panel rounded-lg p-5 relative overflow-hidden transition-all duration-500";
+                wCard.style.borderColor = 'rgba(44, 187, 173, 0.2)';
+            }
+
+            // 2. 更新標題 (文字顏色已在 HTML 中使用 red-accent 和深灰色)
+            document.getElementById('day-number').textContent = `DAY ${data.day}`;
+            document.getElementById('day-title').textContent = data.title;
+
+            // 3. 更新行程列表 
+            const list = document.getElementById('itinerary-list');
+            list.innerHTML = '';
+            
+            data.slots.forEach(slot => {
+                const el = document.createElement('div');
+                const isHigh = slot.highlight;
+                
+                // 圖標和邊框的顏色
+                const slotIconBg = isHigh ? 'var(--color-red)' : 'var(--color-teal)';
+                const slotIconColor = isHigh ? 'white' : 'white';
+                const slotBorderClass = isHigh ? 'border-2 border-red-accent shadow-lg' : 'border-gray-300';
+                
+                el.innerHTML = `
+                    <div class="flat-panel p-5 rounded-xl ${slotBorderClass} hover:border-teal-accent transition-colors duration-300">
+                        <div class="flex gap-4 mb-4">
+                            <div class="flex-shrink-0">
+                                <div class="w-12 h-12 rounded-full flex items-center justify-center shadow-md" style="background-color: ${slotIconBg}; color: ${slotIconColor};">
+                                    <i data-lucide="${slot.icon}" class="w-6 h-6"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow">
+                                <div class="flex flex-wrap justify-between items-start mb-1">
+                                    <span class="text-[10px] font-bold uppercase tracking-wider text-white px-2 py-0.5 rounded-sm" style="background-color: var(--color-teal);">
+                                        ${slot.time}
+                                    </span>
+                                    <span class="text-[10px] text-gray-600 flex items-center bg-gray-200 border border-gray-300 px-2 py-0.5 rounded-sm">
+                                        <i data-lucide="clock" class="w-3 h-3 mr-1 text-gray-500"></i> ${slot.hours}
+                                    </span>
+                                </div>
+                                <h4 class="text-lg font-bold text-gray-900 mb-1">${slot.title}</h4>
+                                <p class="text-sm text-gray-700 leading-relaxed">${slot.desc}</p>
+                            </div>
                         </div>
-                        <p class="mb-6 text-gray-300">${message}</p>
-                        <div class="flex justify-end space-x-3">
-                            <button onclick="confirmAction(false)" class="bg-gray-600 hover:bg-gray-500 text-white px-4 py-2 rounded-lg font-semibold transition duration-150">
-                                取消
-                            </button>
-                            <button onclick="confirmAction(true)" class="btn-danger px-4 py-2 rounded-lg font-semibold transition duration-150">
-                                確定
-                            </button>
+                        
+                        <!-- 專家/導遊提示區塊 -->
+                        <div class="expert-tip-box rounded-lg p-3 text-xs lg:text-sm text-white flex gap-3 shadow-inner">
+                            <i data-lucide="lightbulb" class="w-4 h-4 teal-accent flex-shrink-0 mt-0.5"></i>
+                            <div>
+                                <span class="font-bold teal-accent block mb-0.5">VIBE TIP:</span>
+                                ${slot.expert}
+                            </div>
                         </div>
                     </div>
                 `;
-                window.confirmAction = confirmAction; // 暴露給全局，讓 Modal 內部的點擊事件能呼叫
-                modalContainer.classList.remove('hidden');
-                setTimeout(() => modalContainer.classList.add('opacity-100', 'scale-100'), 10);
-                lucide.createIcons();
+                list.appendChild(el);
             });
+
+            lucide.createIcons();
         }
 
-        // 關閉 Modal
-        window.closeModal = () => {
-            const modalContainer = document.getElementById('modal-container');
-            if (modalContainer) {
-                modalContainer.classList.remove('opacity-100', 'scale-100');
-                setTimeout(() => modalContainer.classList.add('hidden'), 300);
+        // --- 3. 工具箱邏輯 (Tools Logic) ---
+        
+        // 匯率換算
+        function convert(source) {
+            const rate = parseFloat(document.getElementById('rateInput').value) || 4.8;
+            const twdEl = document.getElementById('twdInput');
+            const jpyEl = document.getElementById('jpyInput');
+
+            if (source === 'TWD') {
+                const val = parseFloat(twdEl.value);
+                jpyEl.value = isNaN(val) ? '' : (val * rate).toFixed(0);
+            } else {
+                const val = parseFloat(jpyEl.value);
+                twdEl.value = isNaN(val) ? '' : (val / rate).toFixed(2);
             }
-        };
+        }
 
-        // 顯示飯店設定 Modal
-        window.showHotelModal = () => {
-            const modalContainer = document.getElementById('modal-container');
-            if (!modalContainer) return;
+        // 飯店卡資料讀取 (LocalStorage)
+        function loadHotel() {
+            const name = localStorage.getItem('trip_h_name') || '未設定飯店';
+            const addr = localStorage.getItem('trip_h_addr') || '請點擊下方按鈕設定地址';
+            const phone = localStorage.getItem('trip_h_phone') || '無資料';
+            
+            document.getElementById('h-name').textContent = name;
+            document.getElementById('h-addr').textContent = addr;
+            document.getElementById('h-phone').textContent = phone;
+            
+            // 同步填入編輯框
+            document.getElementById('in-name').value = name === '未設定飯店' ? '' : name;
+            document.getElementById('in-addr').value = addr === '請點擊下方按鈕設定地址' ? '' : addr;
+            document.getElementById('in-phone').value = phone === '無資料' ? '' : phone;
+        }
 
-            modalContainer.innerHTML = `
-                <div class="flat-panel bg-gray-800 text-white p-6 rounded-xl w-full max-w-lg shadow-2xl">
-                    <h4 class="text-2xl font-bold text-teal-300 mb-4">設定飯店與日期</h4>
-                    <div class="space-y-4">
-                        <div>
-                            <label for="modal-h-name" class="block text-sm font-medium mb-1 text-gray-300">飯店名稱</label>
-                            <input type="text" id="modal-h-name" class="w-full p-3 rounded-lg border-2 border-gray-600/50 bg-gray-700 text-white focus:border-teal-500" value="${hotel.name === '請設定飯店名稱' ? '' : hotel.name}">
-                        </div>
-                        <div>
-                            <label for="modal-h-addr" class="block text-sm font-medium mb-1 text-gray-300">飯店地址 (可複製用)</label>
-                            <textarea id="modal-h-addr" class="w-full p-3 h-20 rounded-lg border-2 border-gray-600/50 bg-gray-700 text-white focus:border-teal-500">${hotel.address === '請點擊下方按鈕設定地址' ? '' : hotel.address}</textarea>
-                        </div>
-                        <div>
-                            <label for="modal-h-dates" class="block text-sm font-medium mb-1 text-gray-300">旅遊日期 (e.g. 4/25 - 5/1)</label>
-                            <input type="text" id="modal-h-dates" class="w-full p-3 rounded-lg border-2 border-gray-600/50 bg-gray-700 text-white focus:border-teal-500" value="${hotel.dates}">
-                        </div>
-                    </div>
-                    <div class="flex justify-end space-x-3 mt-6">
-                        <button onclick="closeModal()" class="bg-gray-600 hover:bg-gray-500 text-white px-4 py-2 rounded-lg font-semibold transition duration-150">
-                            取消
-                        </button>
-                        <button onclick="saveHotelSettings()" class="btn-primary px-4 py-2 rounded-lg font-semibold shadow-md">
-                            儲存設定
-                        </button>
-                    </div>
-                </div>
-            `;
-            modalContainer.classList.remove('hidden');
-            setTimeout(() => modalContainer.classList.add('opacity-100'), 10);
-        };
+        // 飯店卡資料儲存
+        function saveHotel() {
+            localStorage.setItem('trip_h_name', document.getElementById('in-name').value || '未設定飯店');
+            localStorage.setItem('trip_h_addr', document.getElementById('in-addr').value || '請點擊下方按鈕設定地址');
+            localStorage.setItem('trip_h_phone', document.getElementById('in-phone').value || '無資料');
+            toggleEdit();
+            loadHotel();
+            // 在儲存後停留在飯店卡頁面
+            setView('HOTEL');
+        }
 
-        // 儲存飯店設定
-        window.saveHotelSettings = () => {
-            const name = document.getElementById('modal-h-name').value.trim() || '請設定飯店名稱';
-            const address = document.getElementById('modal-h-addr').value.trim() || '請點擊下方按鈕設定地址';
-            const dates = document.getElementById('modal-h-dates').value.trim() || 'YYYY/MM/DD - YYYY/MM/DD';
-
-            hotel.name = name;
-            hotel.address = address;
-            hotel.dates = dates;
-
-            closeModal();
-            updateHotelUI();
-            saveHotel();
-        };
-
-        // 顯示匯率設定 Modal
-        window.showRateModal = () => {
-            const modalContainer = document.getElementById('modal-container');
-            if (!modalContainer) return;
-
-            modalContainer.innerHTML = `
-                <div class="flat-panel bg-gray-800 text-white p-6 rounded-xl w-full max-w-sm shadow-2xl">
-                    <h4 class="text-2xl font-bold text-teal-300 mb-4">設定 TWD 兌 JPY 匯率</h4>
-                    <p class="text-sm text-gray-400 mb-3">設定 1 TWD 可以兌換多少 JPY。</p>
-                    <div class="flex items-center space-x-2">
-                        <span class="text-lg font-medium">1 TWD =</span>
-                        <input type="number" step="0.01" id="modal-rate-input" class="flex-grow p-3 rounded-lg border-2 border-gray-600/50 bg-gray-700 text-white focus:border-teal-500" value="${hotel.rate}">
-                        <span class="text-lg font-medium">JPY</span>
-                    </div>
-                    
-                    <div class="flex justify-end space-x-3 mt-6">
-                        <button onclick="closeModal()" class="bg-gray-600 hover:bg-gray-500 text-white px-4 py-2 rounded-lg font-semibold transition duration-150">
-                            取消
-                        </button>
-                        <button onclick="saveRateSettings()" class="btn-primary px-4 py-2 rounded-lg font-semibold shadow-md">
-                            儲存設定
-                        </button>
-                    </div>
-                </div>
-            `;
-            modalContainer.classList.remove('hidden');
-            setTimeout(() => modalContainer.classList.add('opacity-100'), 10);
-        };
-
-        // 儲存匯率設定
-        window.saveRateSettings = () => {
-            const rateInput = document.getElementById('modal-rate-input');
-            const newRate = parseFloat(rateInput.value);
-
-            if (isNaN(newRate) || newRate <= 0) {
-                showModal('請輸入有效的正數匯率。', 'error');
-                return;
+        // 切換飯店卡編輯/顯示模式
+        function toggleEdit() {
+            const view = document.getElementById('hotel-display-mode');
+            const edit = document.getElementById('hotel-edit-mode');
+            if (view.classList.contains('hidden')) {
+                view.classList.remove('hidden');
+                edit.classList.add('hidden');
+            } else {
+                // 從顯示切換到編輯時，確保輸入框載入最新資料
+                loadHotel(); 
+                view.classList.add('hidden');
+                edit.classList.remove('hidden');
             }
+        }
 
-            hotel.rate = newRate;
-
-            closeModal();
-            convertCurrency(document.getElementById('twdInput')?.value || 0, 'twd'); // 更新轉換器顯示
-            saveHotel();
-        };
-
-        // 複製地址到剪貼簿
-        window.copyAddress = () => {
+        // 複製地址功能 (已強化提示)
+        function copyAddr() {
             const text = document.getElementById('h-addr').textContent;
             if(!text || text === '請點擊下方按鈕設定地址') {
                 const originalText = document.getElementById('h-addr').textContent;
@@ -1046,14 +709,12 @@
 
         // 程式初始化
         window.onload = () => {
-            initializeFirebase(); // 初始化 Firebase，並在認證後啟動監聽器
-            
-            // 由於資料載入是異步的，這裡先顯示預設視圖，資料會透過 onSnapshot 更新
+            loadHotel(); // 初始化載入飯店資料
             updateMainView(); // 顯示預設的 ITINERARY 視圖 (DAY 1)
             
             // 設定匯率輸入框預設值
             document.getElementById('twdInput').value = 1000;
-            convertCurrency(1000, 'twd', true); // 初始化轉換 1000 TWD
+            convert('TWD');
         };
 
     </script>
