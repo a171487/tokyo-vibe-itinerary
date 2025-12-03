@@ -165,7 +165,21 @@
             opacity: 0.6;
             font-style: italic;
         }
-    </style>
+    
+/* ============================== */
+/* 📱 iPhone 17 Pro Max RWD 調整   */
+/* ============================== */
+@media (max-width: 480px) {
+    .pass-body { padding: 1rem !important; grid-template-columns: 1fr !important; gap: 1rem !important; }
+    .airport-code { font-size: 2.6rem !important; letter-spacing:-1px; }
+    .pass-body .grid { grid-template-columns: 1fr !important; gap:0.75rem !important; }
+    .ticket-container { max-width:100% !important; padding:0 8px; }
+    .boarding-pass { margin-bottom:1.5rem !important; border-width:1.5px !important; }
+    .pass-header { padding:0.75rem 1rem !important; }
+    .pass-header div { font-size:0.9rem; }
+}
+
+</style>
 </head>
 <body class="p-4 md:p-8">
     <div id="app" class="max-w-7xl mx-auto">
