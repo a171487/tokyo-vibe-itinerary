@@ -88,9 +88,21 @@
         }
 
         /* ------------------- 混合風格機票樣式 (手繪 x 科技 x 日式) ------------------- */
-        .ticket-container { font-family: 'Patrick Hand', 'Noto Sans TC', cursive; max-width: 1100px; margin: 0 auto; }
+        .ticket-container {
+            font-family: 'Patrick Hand', 'Noto Sans TC', cursive; /* 手繪字體 */
+            max-width: 800px;
+            margin: 0 auto;
+        }
 
-        .boarding-pass { background-color: #FAF9F6; border-radius: 12px; position: relative; box-shadow: 10px 10px 0px rgba(0,0,0,0.15); overflow: hidden; border: 2px dashed #333; margin-bottom: 2rem; width: 100%; }
+        .boarding-pass {
+            background-color: #FAF9F6; /* 和紙白 */
+            border-radius: 12px;
+            position: relative;
+            box-shadow: 10px 10px 0px rgba(0,0,0,0.15); /* 硬陰影手繪感 */
+            overflow: hidden;
+            border: 2px dashed #333; /* 手繪感虛線邊框 */
+            margin-bottom: 2rem;
+        }
 
         /* 科技感裝飾線條 */
         .tech-line {
@@ -113,7 +125,12 @@
             align-items: center;
         }
 
-        .pass-body { padding: 1.5rem; display: grid; grid-template-columns: 3fr 2fr; gap: 2rem; }
+        .pass-body {
+            padding: 1.5rem;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
 
         /* 機場代碼大字 */
         .airport-code {
@@ -155,7 +172,7 @@
         }
 
         @media (max-width: 640px) {
-            .pass-body { padding: 1.5rem; display: grid; grid-template-columns: 3fr 2fr; gap: 2rem; }
+            .pass-body { grid-template-columns: 1fr; }
         }
         
         /* 購物清單項目樣式 */
@@ -166,18 +183,12 @@
             font-style: italic;
         }
     
-/* ============================== */
-/* 📱 iPhone 17 Pro Max RWD 調整   */
-/* ============================== */
-@media (max-width: 480px) {
-    .pass-body { padding: 1rem !important; grid-template-columns: 1fr !important; gap: 1rem !important; }
-    .airport-code { font-size: 2.6rem !important; letter-spacing:-1px; }
-    .pass-body .grid { grid-template-columns: 1fr !important; gap:0.75rem !important; }
-    .ticket-container { max-width:100% !important; padding:0 8px; }
-    .boarding-pass { margin-bottom:1.5rem !important; border-width:1.5px !important; }
-    .pass-header { padding:0.75rem 1rem !important; }
-    .pass-header div { font-size:0.9rem; }
-}
+/* ====== Global width expansion ====== */
+#main-content { max-width: 1100px !important; margin: 0 auto !important; }
+.flat-panel { max-width: 1100px !important; margin-left: auto !important; margin-right: auto !important; }
+/* Center Japanese cards */
+.flat-panel .grid { max-width: 1100px !important; margin: 0 auto !important; }
+/* Notes add-button inside panel */
 
 </style>
 </head>
