@@ -1,697 +1,569 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TOKYO VIBE | 鮮明配色儀表板</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- 引入手寫風字體 (Google Fonts) -->
-    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        /* 品牌配色定義 */
-        :root {
-            --color-dark-navy: #1D2A35;
-            --color-cream: #F7FCF5;
-            --color-teal: #2CBBAD;
-            --color-red: #D83D4F;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>東京旅遊助理 Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0ea5e9',
+            accent: '#22c55e'
+          }
         }
-
-        /* 全局樣式 */
-        body {
-            font-family: 'Inter', 'Noto Sans TC', sans-serif;
-            background-color: var(--color-dark-navy); 
-            color: var(--color-cream);
-            min-height: 100vh;
-        }
-
-        /* ------------------- 組件樣式 ------------------- */
-
-        /* 卡片面板 */
-        .flat-panel {
-            background-color: var(--color-cream);
-            color: var(--color-dark-navy);
-            border: 1px solid rgba(44, 187, 173, 0.2);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        
-        /* 按鈕 */
-        .nav-button {
-            transition: all 0.2s;
-            cursor: pointer;
-        }
-        .nav-button.active {
-            color: var(--color-teal);
-            border-bottom: 3px solid var(--color-teal);
-        }
-        .btn-primary {
-            background-color: var(--color-teal);
-            color: var(--color-cream);
-            transition: 0.2s;
-        }
-        .btn-primary:hover { background-color: #24A397; transform: translateY(-1px); }
-        .btn-danger {
-            background-color: var(--color-red);
-            color: var(--color-cream);
-            transition: 0.2s;
-        }
-        .btn-danger:hover { background-color: #C03544; transform: translateY(-1px); }
-
-
-        /* 顏色強調 */
-        .teal-accent { background-color: rgba(44, 187, 173, 0.1); color: var(--color-teal); }
-        .red-accent-text { color: var(--color-red); }
-
-        /* 捲軸隱藏 */
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-        /* ------------------- SKYLINER 時刻表樣式 ------------------- */
-        .timetable-header {
-            background-color: #1D2A35;
-            color: #fff;
-            font-weight: 700;
-        }
-        .timetable-row {
-            border-bottom: 1px solid #e5e7eb;
-        }
-        /* 用戶指定的紅框班次 */
-        .highlight-train {
-            background-color: #FEF2F2; /* 淺紅背景 */
-            border: 2px solid #D83D4F; /* 紅框 */
-            position: relative;
-            z-index: 10;
-        }
-        .highlight-train td {
-            color: #D83D4F;
-            font-weight: 800;
-        }
-
-        /* ------------------- 混合風格機票樣式 (手繪 x 科技 x 日式) ------------------- */
-        .ticket-container {
-            font-family: 'Patrick Hand', 'Noto Sans TC', cursive; /* 手繪字體 */
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .boarding-pass {
-            background-color: #FAF9F6; /* 和紙白 */
-            border-radius: 12px;
-            position: relative;
-            box-shadow: 10px 10px 0px rgba(0,0,0,0.15); /* 硬陰影手繪感 */
-            overflow: hidden;
-            border: 2px dashed #333; /* 手繪感虛線邊框 */
-            margin-bottom: 2rem;
-        }
-
-        /* 科技感裝飾線條 */
-        .tech-line {
-            height: 4px;
-            background: repeating-linear-gradient(
-                45deg,
-                #D4AF37,
-                #D4AF37 10px,
-                #1D2A35 10px,
-                #1D2A35 20px
-            );
-        }
-
-        .pass-header {
-            background-color: #1D2A35; /* 深藍/星宇風 */
-            color: #D4AF37; /* 土金/玫瑰金 */
-            padding: 1rem 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .pass-body {
-            padding: 1.5rem;
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 2rem;
-        }
-
-        /* 機場代碼大字 */
-        .airport-code {
-            font-size: 3.5rem;
-            font-weight: 900;
-            line-height: 1;
-            color: #1D2A35;
-            font-family: 'Inter', sans-serif; /* 科技感字體 */
-            letter-spacing: -2px;
-        }
-
-        .flight-info-box {
-            border: 2px solid #1D2A35;
-            border-radius: 8px;
-            padding: 0.5rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .label {
-            font-size: 0.75rem;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        
-        .value {
-            font-size: 1.25rem;
-            font-weight: bold;
-            color: #D83D4F;
-        }
-
-        /* 飛機圖示 */
-        .plane-icon-path {
-            stroke-dasharray: 10;
-            animation: dash 30s linear infinite;
-        }
-        @keyframes dash {
-            to { stroke-dashoffset: -1000; }
-        }
-
-        @media (max-width: 640px) {
-            .pass-body { grid-template-columns: 1fr; }
-        }
-        
-        /* 購物清單項目樣式 */
-        .list-item-purchased {
-            text-decoration: line-through;
-            color: #718096 !important; /* 灰色文字 */
-            opacity: 0.6;
-            font-style: italic;
-        }
-    </style>
+      }
+    };
+  </script>
+  <style>
+    body { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Noto Sans TC", sans-serif; }
+    .tab-active {
+      background-color: #0ea5e9;
+      color: white;
+    }
+  </style>
 </head>
-<body class="p-4 md:p-8">
-    <div id="app" class="max-w-7xl mx-auto">
-        <!-- 頂部導航與標題 -->
-        <header class="mb-8">
-            <h1 class="text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-2">
-                TOKYO VIBE <span class="text-3xl font-medium text-teal-400">| 東京旅程儀表板</span>
-            </h1>
-            <p id="h-addr" class="text-sm font-mono text-gray-400 cursor-pointer" onclick="copyAddress()">請點擊下方按鈕設定地址</p>
-        </header>
+<body class="bg-slate-100 text-slate-900">
+  <div class="min-h-screen flex flex-col items-stretch">
+    <header class="w-full max-w-4xl mx-auto px-4 pt-4 pb-2 flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-bold">東京旅遊助理</h1>
+        <p class="text-xs text-slate-500">行程 / 匯率 / 天氣 / 富士山 / 記帳 / 清單 一次搞定</p>
+      </div>
+    </header>
 
-        <!-- 主要佈局：兩欄 -->
-        <main class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            
-            <!-- 左側：控制面板 / 快速資訊 (佔 1/3) -->
-            <section class="lg:col-span-1 space-y-6">
-                
-                <!-- 飯店資訊與地址 -->
-                <div class="flat-panel p-6 rounded-xl shadow-lg">
-                    <h2 class="text-xl font-bold mb-3 flex items-center">
-                        <i data-lucide="building-2" class="w-5 h-5 mr-2"></i>
-                        飯店資訊
-                    </h2>
-                    <p id="h-name" class="text-xl font-extrabold mb-1">... 載入中 ...</p>
-                    <p id="h-dates" class="text-sm text-gray-500 mb-3">...</p>
-                    <button class="btn-primary w-full py-2 rounded-lg text-sm font-semibold shadow-md mt-2" onclick="showHotelModal()">
-                        <i data-lucide="settings" class="w-4 h-4 mr-2 inline-block"></i>
-                        設定飯店/地址
-                    </button>
-                    <button class="btn-primary w-full py-2 rounded-lg text-sm font-semibold shadow-md mt-2 hidden" id="copy-addr-btn" onclick="copyAddress()">
-                        <i data-lucide="copy" class="w-4 h-4 mr-2 inline-block"></i>
-                        複製地址
-                    </button>
-                </div>
+    <!-- Tabs -->
+    <nav class="w-full max-w-4xl mx-auto px-3 mt-1">
+      <div class="flex bg-white rounded-full shadow text-xs font-semibold overflow-hidden">
+        <button class="flex-1 py-2 tab-btn tab-active" data-tab="home">首頁</button>
+        <button class="flex-1 py-2 tab-btn" data-tab="itinerary">行程</button>
+        <button class="flex-1 py-2 tab-btn" data-tab="account">記帳</button>
+        <button class="flex-1 py-2 tab-btn" data-tab="checklist">旅遊檢查清單</button>
+        <button class="flex-1 py-2 tab-btn" data-tab="hotel">飯店</button>
+        <button class="flex-1 py-2 tab-btn" data-tab="shopping">購物清單</button>
+      </div>
+    </nav>
 
-                <!-- 匯率轉換器 -->
-                <div class="flat-panel p-6 rounded-xl shadow-lg">
-                    <h2 class="text-xl font-bold mb-3 flex items-center">
-                        <i data-lucide="trending-up" class="w-5 h-5 mr-2"></i>
-                        匯率轉換器 (TWD 兌 JPY)
-                    </h2>
-                    <div class="space-y-3">
-                        <div>
-                            <label for="twdInput" class="block text-xs font-medium text-gray-500">台幣 (TWD)</label>
-                            <input type="number" id="twdInput" oninput="convertCurrency(this.value, 'twd')" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-teal-500 focus:border-teal-500 transition duration-150">
-                        </div>
-                        <div class="text-center font-bold text-gray-600">
-                            <i data-lucide="arrow-down-up" class="w-5 h-5 inline-block"></i>
-                        </div>
-                        <div>
-                            <label for="jpyInput" class="block text-xs font-medium text-gray-500">日圓 (JPY)</label>
-                            <input type="number" id="jpyInput" oninput="convertCurrency(this.value, 'jpy')" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-teal-500 focus:border-teal-500 transition duration-150">
-                        </div>
-                    </div>
-                    <p id="rateInfo" class="text-sm text-gray-500 mt-3 text-center">當前匯率: 1 TWD = 4.60 JPY</p>
-                    <button class="btn-primary w-full py-2 rounded-lg text-sm font-semibold shadow-md mt-3" onclick="showRateModal()">
-                        <i data-lucide="calculator" class="w-4 h-4 mr-2 inline-block"></i>
-                        設定匯率
-                    </button>
-                </div>
-                
-                <!-- 緊急聯絡卡 -->
-                <div class="flat-panel p-6 rounded-xl shadow-lg">
-                    <h2 class="text-xl font-bold mb-3 flex items-center red-accent-text">
-                        <i data-lucide="alert-triangle" class="w-5 h-5 mr-2 text-red-500"></i>
-                        緊急聯絡卡
-                    </h2>
-                    <div class="space-y-2 text-sm">
-                        <p class="font-bold text-red-500">日本緊急電話</p>
-                        <p class="text-gray-600"><i data-lucide="ambulance" class="w-4 h-4 mr-1 inline-block"></i> 救護車/火警: 119</p>
-                        <p class="text-gray-600"><i data-lucide="phone-call" class="w-4 h-4 mr-1 inline-block"></i> 警察: 110</p>
-                        <p class="font-bold text-red-500 mt-3">台灣駐日代表處</p>
-                        <p class="text-gray-600"><i data-lucide="building" class="w-4 h-4 mr-1 inline-block"></i> 03-3280-7811</p>
-                        <p class="text-xs text-gray-500 mt-2">請妥善保存旅遊保險資料。</p>
-                    </div>
-                </div>
+    <!-- Main swipe area -->
+    <main id="main" class="flex-1 w-full max-w-4xl mx-auto px-3 pt-4 pb-20 overflow-x-hidden"></main>
 
-                <!-- 購物清單摘要 (快速入口) -->
-                <div class="flat-panel p-6 rounded-xl shadow-lg">
-                    <h2 class="text-xl font-bold mb-3 flex items-center">
-                        <i data-lucide="shopping-bag" class="w-5 h-5 mr-2"></i>
-                        待辦清單 (共 <span id="pending-count" class="font-extrabold text-teal-500 ml-1">0</span> 項)
-                    </h2>
-                    <ul id="shopping-list-summary" class="space-y-1 text-sm text-gray-700">
-                        <li class="text-gray-500 text-center py-2">清單為空</li>
-                    </ul>
-                    <button class="btn-primary w-full py-2 rounded-lg text-sm font-semibold shadow-md mt-4" onclick="setView('SHOPPING')">
-                        <i data-lucide="list-checks" class="w-4 h-4 mr-2 inline-block"></i>
-                        管理完整清單
-                    </button>
-                </div>
+    <footer class="w-full fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200">
+      <div class="max-w-4xl mx-auto px-4 py-2 flex justify-between text-[11px] text-slate-500">
+        <span>⬅️ 右滑 / 左滑切換頁面</span>
+        <span>這是單一 HTML 檔，適合放在 GitHub</span>
+      </div>
+    </footer>
+  </div>
 
-            </section>
+  <script>
+    const tabs = ['home','itinerary','account','checklist','hotel','shopping'];
+    let currentTabIndex = 0;
+    let touchStartX = null;
 
-            <!-- 右側：主要內容區 (佔 2/3) -->
-            <section class="lg:col-span-2 space-y-6">
-                
-                <!-- 導航列 -->
-                <nav class="flex space-x-4 border-b border-gray-700/50 text-gray-400 overflow-x-auto pb-1 no-scrollbar">
-                    <button id="btnFlight" class="nav-button pb-3 px-2 text-base font-semibold active" onclick="setView('FLIGHT')">
-                        <i data-lucide="plane" class="w-5 h-5 mr-1 inline-block"></i> 班機時間
-                    </button>
-                    <button id="btnSkyliner" class="nav-button pb-3 px-2 text-base font-semibold" onclick="setView('SKYLINER')">
-                        <i data-lucide="train-front" class="w-5 h-5 mr-1 inline-block"></i> SKYLINER
-                    </button>
-                    <button id="btnItinerary" class="nav-button pb-3 px-2 text-base font-semibold" onclick="setView('ITINERARY')">
-                        <i data-lucide="calendar-check" class="w-5 h-5 mr-1 inline-block"></i> 行程總覽
-                    </button>
-                    <button id="btnJapanese" class="nav-button pb-3 px-2 text-base font-semibold" onclick="setView('JAPANESE')">
-                        <i data-lucide="message-square-text" class="w-5 h-5 mr-1 inline-block"></i> 常用日語
-                    </button>
-                    <button id="btnShopping" class="nav-button pb-3 px-2 text-base font-semibold" onclick="setView('SHOPPING')">
-                        <i data-lucide="shopping-cart" class="w-5 h-5 mr-1 inline-block"></i> 購物清單
-                    </button>
-                    <button id="btnNotes" class="nav-button pb-3 px-2 text-base font-semibold" onclick="setView('NOTES')">
-                        <i data-lucide="sticky-note" class="w-5 h-5 mr-1 inline-block"></i> 旅遊筆記
-                    </button>
-                </nav>
+    function setTabByIndex(idx) {
+      if (idx < 0 || idx >= tabs.length) return;
+      currentTabIndex = idx;
+      const tab = tabs[idx];
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('tab-active'));
+      const activeBtn = document.querySelector('.tab-btn[data-tab="' + tab + '"]');
+      if (activeBtn) activeBtn.classList.add('tab-active');
+      renderTab(tab);
+    }
 
-                <!-- 內容容器 -->
-                <div id="main-content" class="min-h-[60vh] bg-gray-800/20 p-6 rounded-xl shadow-xl transition-all duration-300">
-                    <!-- 內容將由 JS 渲染 -->
-                    <p class="text-gray-500 text-center py-10">載入中...</p>
-                </div>
+    function renderTab(name) {
+      if (name === 'home') renderHome();
+      else if (name === 'itinerary') renderItinerary();
+      else if (name === 'account') renderAccount();
+      else if (name === 'checklist') renderChecklist();
+      else if (name === 'hotel') renderHotel();
+      else if (name === 'shopping') renderShopping();
+    }
 
-            </section>
-        </main>
-    </div>
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('.tab-btn');
+      if (!btn) return;
+      const tab = btn.dataset.tab;
+      const idx = tabs.indexOf(tab);
+      if (idx !== -1) setTabByIndex(idx);
+    });
 
-    <!-- Modal 容器 -->
-    <div id="modal-container" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden transition-opacity duration-300 opacity-0">
-        <!-- Modal 內容將由 JS 填充 -->
-    </div>
-    
-    <!-- 複製反饋訊息 -->
-    <div id="copy-feedback" class="fixed bottom-0 right-0 m-4 p-3 bg-teal-500 text-white rounded-lg shadow-xl hidden transition-opacity duration-300 opacity-0">
-        ✅ 已複製！
-    </div>
-
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, onSnapshot, collection, deleteDoc, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // Firebase Config (Consolidated)
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-tokyo-vibe-app-id';
-        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
-
-        let app, db, auth, userId = 'anonymous', isAuthReady = false;
-        let hotel = { name: '請設定飯店名稱', address: '請點擊下方按鈕設定地址', dates: 'YYYY/MM/DD - YYYY/MM/DD', rate: 4.60 };
-        let shoppingList = [], notes = '';
-        let appView = 'FLIGHT'; // Default view
-        let itineraryDay = 1; 
-        let noteList = [
-             { id: 1, text: '記得帶轉接頭' },
-             { id: 2, text: '下載 Suica App' }
-        ];
-
-        // Itinerary Data
-        let itinerary = [
-            { day: 1, date: '12/26 (五)', activities: [
-                { time: '14:20', description: '抵達成田機場 (NRT)' },
-                { time: '16:00', description: '飯店Check-in', location: '飯店地址' },
-                { time: '18:00', description: '晚餐：阿美橫丁周邊美食', location: '阿美橫丁' },
-                { time: '20:00', description: '購物：無印良品 上野丸井店', location: '無印良品 上野丸井店' },
-                { time: '21:30', description: '購物：OS Drug 藥妝店', location: 'OS Drug 上野店' },
-                { time: '23:00', description: '返回飯店休息' }
-            ]},
-            { day: 2, date: '12/27 (六)', activities: [
-                { time: '09:00', description: '築地場外市場', location: '築地場外市場' },
-                { time: '11:30', description: '銀座購物(GU) / UNIQLO旗艦店', location: 'GU 銀座' },
-                { time: '15:00', description: '甜點：MARLOWE 焦糖布丁', location: 'MARLOWE 銀座' },
-                { time: '18:00', description: '晚餐：新宿燒肉放題', location: '新宿燒肉店' },
-                { time: '20:30', description: '夜景：惠比壽花園廣場燈光秀 (冬季限定)', location: '惠比壽花園廣場' }
-            ]},
-            { day: 3, date: '12/28 (日)', activities: [
-                { time: '08:00', description: '丸之內南口集合 (富士山一日遊)', location: '東京車站丸之內南口' },
-                { time: '10:30', description: '新倉山淺間公園', location: '新倉山淺間公園' },
-                { time: '11:45', description: '日川時計店', location: '日川時計店' },
-                { time: '12:30', description: '忍野八海 (含午餐)', location: '忍野八海' },
-                { time: '15:20', description: '大石公園', location: '大石公園' },
-                { time: '18:50', description: '返回東京市區' }
-            ]},
-            { day: 4, date: '12/29 (一)', activities: [
-                { time: '09:30', description: '東京都廳 北展望室 (免費觀景)', location: '東京都廳 北展望室' },
-                { time: '11:30', description: '午餐：Sukiyaki Juni Ten', location: 'Sukiyaki Juni Ten' },
-                { time: '14:30', description: '東急Plaza表參道原宿', location: '東急Plaza表參道原宿' },
-                { time: '18:00', description: '晚餐：當地特色料理' }
-            ]},
-            { day: 5, date: '12/30 (二)', activities: [
-                { time: '10:00', description: '上野公園/上野動物園', location: '上野動物園' },
-                { time: '14:00', description: '秋葉原動漫', location: '秋葉原' },
-                { time: '17:00', description: '新宿：NEWoMan TAKANAWA 購物', location: 'NEWoMan TAKANAWA' },
-                { time: '19:30', description: '晚餐：特色居酒屋', location: '新宿居酒屋' }
-            ]},
-            { day: 6, date: '12/31 (三)', activities: [
-                { time: '09:00', description: '飯店Check-out, 寄放行李' },
-                { time: '13:00', description: '前往成田機場 (NRT)' },
-                { time: '15:40', description: '登機 (JX801)' }
-            ]}
-        ];
-
-        // --- Firebase Init ---
-        const init = async () => {
-             if (Object.keys(firebaseConfig).length > 0) {
-                app = initializeApp(firebaseConfig);
-                db = getFirestore(app);
-                auth = getAuth(app);
-                const token = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-                if (token) await signInWithCustomToken(auth, token); else await signInAnonymously(auth);
-                onAuthStateChanged(auth, u => {
-                    userId = u ? u.uid : 'anonymous';
-                    isAuthReady = true;
-                    loadData();
-                });
-            }
-        };
-
-        // --- Load Data ---
-        const loadData = () => {
-            if (!isAuthReady) return;
-            onSnapshot(doc(db, `artifacts/${appId}/users/${userId}/config/hotel`), s => {
-                if (s.exists()) { hotel = s.data(); updateHotelUI(); convertCurrency(document.getElementById('twdInput')?.value||0, 'twd', false); }
-            });
-            onSnapshot(collection(db, `artifacts/${appId}/public/data/shoppingList`), s => {
-                shoppingList = [];
-                s.forEach(d => shoppingList.push({id: d.id, ...d.data()}));
-                shoppingList.sort((a,b) => (a.purchased === b.purchased) ? 0 : a.purchased ? 1 : -1);
-                if (appView === 'SHOPPING') renderShoppingList();
-                updateShoppingSummary();
-            });
-             // Load Note List (New Structure)
-             // Assuming noteList is stored in a collection for granular updates or a single doc with array
-             // For simplicity, keeping array in local state synced from single doc for now as per user requirement
-             onSnapshot(doc(db, `artifacts/${appId}/users/${userId}/config/noteListDoc`), s => {
-                if (s.exists()) { noteList = s.data().list || []; if(appView === 'NOTES') renderNotes(); }
-            });
-        };
-
-        // --- UI Helper Functions ---
-        window.updateHotelUI = () => {
-             document.getElementById('h-name').textContent = hotel.name;
-             document.getElementById('h-dates').textContent = hotel.dates;
-             document.getElementById('h-addr').textContent = hotel.address;
-             if(hotel.address !== '請點擊下方按鈕設定地址') document.getElementById('copy-addr-btn').classList.remove('hidden');
-             // Update Itinerary Day 1 Check-in
-             const checkIn = itinerary[0].activities.find(a => a.time === '16:00');
-             if(checkIn) checkIn.description = `${hotel.name} Check-in`;
-             if (appView === 'ITINERARY') renderItinerary();
-        };
-
-        window.convertCurrency = (val, type, update=true) => {
-            const t = document.getElementById('twdInput');
-            const j = document.getElementById('jpyInput');
-            const r = document.getElementById('rateInfo');
-            if(type==='twd') { if(update && j) j.value = (val * hotel.rate).toFixed(0); }
-            if(type==='jpy') { if(update && t) t.value = (val / hotel.rate).toFixed(0); }
-            if(r) r.textContent = `當前匯率: 1 TWD = ${hotel.rate.toFixed(2)} JPY`;
-        };
-
-        window.updateShoppingSummary = () => {
-            const el = document.getElementById('shopping-list-summary');
-            const cnt = document.getElementById('pending-count');
-            const pending = shoppingList.filter(i => !i.purchased);
-            if(cnt) cnt.textContent = pending.length;
-            if(el) el.innerHTML = pending.length ? pending.slice(0,3).map(i=>`<li>• ${i.name}</li>`).join('') : '<li>清單為空</li>';
-        };
-
-        // --- View Renderers ---
-        window.renderItinerary = () => {
-            const main = document.getElementById('main-content');
-            if(!main) return;
-            const currentDay = itinerary[itineraryDay - 1];
-            const dayNav = itinerary.map((d, i) => `
-                <button onclick="window.setItineraryDay(${i+1})" class="px-4 py-2 rounded-lg text-sm font-bold mr-2 mb-2 flex-shrink-0 ${itineraryDay===i+1 ? 'bg-teal-500 text-white shadow-md' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}">Day ${d.day}</button>
-            `).join('');
-            
-            const activities = currentDay.activities.map(a => `
-                <div class="flex py-4 border-b border-gray-200 last:border-0 items-start">
-                    <div class="w-16 text-teal-600 font-mono text-sm font-bold pt-1">${a.time}</div>
-                    <div class="flex-1 text-gray-900 font-medium text-lg">
-                        ${a.description}
-                        ${a.location ? `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(a.location)}" target="_blank" class="ml-2 text-teal-500 hover:text-teal-700 inline-block"><i data-lucide="map-pin" class="w-4 h-4 inline"></i></a>` : ''}
-                    </div>
-                </div>
-            `).join('');
-
-            main.innerHTML = `
-                <div class="mb-6 flex overflow-x-auto no-scrollbar pb-2">${dayNav}</div>
-                <div class="flat-panel p-6 rounded-xl bg-white">
-                    <h2 class="text-3xl font-extrabold text-gray-900 mb-2">${currentDay.title}</h2>
-                    <div class="text-sm font-bold text-teal-600 mb-6">${currentDay.date}</div>
-                    <div class="space-y-2">${activities}</div>
-                </div>
-            `;
-            lucide.createIcons();
-        };
-
-        window.renderFlightInfo = () => {
-             const main = document.getElementById('main-content');
-             if(!main) return;
-             main.innerHTML = `
-                <div class="ticket-container w-full max-w-2xl mx-auto">
-                    <div class="space-y-8">
-                        <!-- 去程 -->
-                        <div class="boarding-pass">
-                            <div class="tech-line"></div>
-                            <div class="pass-header">
-                                <div class="font-bold tracking-widest text-lg">STARLUX AIRLINES</div>
-                                <div class="text-sm font-mono">JX800</div>
-                            </div>
-                            <div class="pass-body relative">
-                                <div class="flex justify-between items-center mb-6">
-                                    <div class="text-center"><div class="airport-code">TPE</div><div class="text-xs font-bold text-gray-500 tracking-widest">TAIPEI</div></div>
-                                    <div class="text-center text-gray-400"><i data-lucide="plane" class="w-6 h-6 inline-block transform rotate-90"></i><div class="text-[10px] tracking-widest mt-1">------------</div></div>
-                                    <div class="text-center"><div class="airport-code">NRT</div><div class="text-xs font-bold text-gray-500 tracking-widest">TOKYO</div></div>
-                                </div>
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div class="flight-info-box"><div class="label">DATE</div><div class="value">26 DEC</div></div>
-                                    <div class="flight-info-box"><div class="label">BOARDING</div><div class="value">09:40</div></div>
-                                    <div class="flight-info-box"><div class="label">DEPARTURE</div><div class="value">10:10</div></div>
-                                    <div class="flight-info-box"><div class="label">ARRIVAL</div><div class="value">14:20</div></div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- 回程 -->
-                         <div class="boarding-pass">
-                            <div class="tech-line"></div>
-                            <div class="pass-header">
-                                <div class="font-bold tracking-widest text-lg">STARLUX AIRLINES</div>
-                                <div class="text-sm font-mono">JX801</div>
-                            </div>
-                            <div class="pass-body relative">
-                                <div class="flex justify-between items-center mb-6">
-                                    <div class="text-center"><div class="airport-code">NRT</div><div class="text-xs font-bold text-gray-500 tracking-widest">TOKYO</div></div>
-                                    <div class="text-center text-gray-400"><i data-lucide="plane" class="w-6 h-6 inline-block transform rotate-90"></i><div class="text-[10px] tracking-widest mt-1">------------</div></div>
-                                    <div class="text-center"><div class="airport-code">TPE</div><div class="text-xs font-bold text-gray-500 tracking-widest">TAIPEI</div></div>
-                                </div>
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div class="flight-info-box"><div class="label">DATE</div><div class="value">31 DEC</div></div>
-                                    <div class="flight-info-box"><div class="label">BOARDING</div><div class="value">15:10</div></div>
-                                    <div class="flight-info-box"><div class="label">DEPARTURE</div><div class="value">15:40</div></div>
-                                    <div class="flight-info-box"><div class="label">ARRIVAL</div><div class="value">18:45</div></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-             lucide.createIcons();
-        };
-
-        window.renderSkylinerTimetable = () => {
-             const main = document.getElementById('main-content');
-             if(!main) return;
-             const skylinerData = [
-                { t: "09:20", n: "Skyliner 10" }, { t: "09:40", n: "Skyliner 12" }, { t: "10:20", n: "Skyliner 16", h: true }, { t: "10:40", n: "Skyliner 18" },
-                { t: "11:20", n: "Skyliner 22" }, { t: "11:40", n: "Skyliner 24", h: true }, { t: "12:20", n: "Skyliner 28" }, { t: "12:40", n: "Skyliner 30", h: true },
-                { t: "13:20", n: "Skyliner 34" }, { t: "13:40", n: "Skyliner 36" }, { t: "14:20", n: "Skyliner 40", h: true }, { t: "14:40", n: "Skyliner 42" }
-             ];
-             main.innerHTML = `
-                <div class="flat-panel p-6 rounded-xl">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center"><i data-lucide="train-front" class="w-6 h-6 mr-2 text-teal-600"></i> Skyliner 時刻表 (上野 -> 成田)</h2>
-                    <div class="overflow-x-auto rounded-lg border border-gray-200"><table class="min-w-full text-sm text-left">
-                        <thead class="timetable-header"><tr><th class="p-3">班次</th><th class="p-3">時間</th><th class="p-3">起點</th><th class="p-3">終點</th></tr></thead>
-                        <tbody class="divide-y divide-gray-200 text-gray-800">
-                            ${skylinerData.map(d => `<tr class="timetable-row ${d.h?'highlight-train':''}"><td class="p-3 font-medium">${d.n} ${d.h?'<span class="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded ml-2">推薦</span>':''}</td><td class="p-3 font-bold">${d.t}</td><td class="p-3">上野</td><td class="p-3">成田機場</td></tr>`).join('')}
-                        </tbody>
-                    </table></div>
-                </div>
-             `;
-             lucide.createIcons();
-        };
-        
-        window.renderShoppingList = () => {
-             const main = document.getElementById('main-content');
-             if(!main) return;
-             main.innerHTML = `
-                <div class="flat-panel p-6 rounded-xl">
-                    <h2 class="text-2xl font-bold text-teal-600 mb-6 flex items-center"><i data-lucide="shopping-cart" class="w-6 h-6 mr-2"></i> 購物清單</h2>
-                    <div class="flex gap-2 mb-6">
-                        <input type="text" id="newShopItem" placeholder="新增購物項目..." class="flex-grow p-3 border border-gray-300 rounded-lg text-gray-900" onkeypress="if(event.key==='Enter') window.addShopItem()">
-                        <button onclick="window.addShopItem()" class="btn-primary px-6 rounded-lg font-bold">新增</button>
-                    </div>
-                    <div id="shopListUI" class="space-y-2"></div>
-                </div>
-             `;
-             window.renderShopListItems();
-             lucide.createIcons();
-        };
-
-        window.renderShopListItems = () => {
-             const container = document.getElementById('shopListUI');
-             if(!container) return;
-             if(shoppingList.length === 0) { container.innerHTML = '<p class="text-center text-gray-400 py-4">清單是空的</p>'; return; }
-             container.innerHTML = shoppingList.map((item, i) => `
-                <div class="flex items-center justify-between p-3 bg-white border border-gray-100 rounded-lg shadow-sm hover:shadow transition">
-                    <div class="flex items-center gap-3 cursor-pointer" onclick="window.toggleShop('${item.id}', ${item.purchased})">
-                        <i data-lucide="${item.purchased ? 'check-circle' : 'circle'}" class="w-5 h-5 ${item.purchased ? 'text-teal-500' : 'text-gray-400'}"></i>
-                        <span class="text-lg ${item.purchased ? 'text-gray-400 line-through' : 'text-gray-800 font-medium'}">${item.name}</span>
-                    </div>
-                    <button onclick="window.delShop('${item.id}')" class="text-gray-400 hover:text-red-500 p-2"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                </div>
-             `).join('');
-             lucide.createIcons();
-        };
-
-        window.renderNotes = () => {
-             const main = document.getElementById('main-content');
-             if(!main) return;
-             main.innerHTML = `
-                <div class="flat-panel p-6 rounded-xl">
-                    <h2 class="text-2xl font-bold text-teal-600 mb-6 flex items-center"><i data-lucide="sticky-note" class="w-6 h-6 mr-2"></i> 旅遊筆記</h2>
-                    <div class="flex gap-2 mb-6">
-                        <input type="text" id="newNoteItem" placeholder="新增筆記..." class="flex-grow p-3 border border-gray-300 rounded-lg text-gray-900" onkeypress="if(event.key==='Enter') window.addNoteItem()">
-                        <button onclick="window.addNoteItem()" class="btn-primary px-6 rounded-lg font-bold">新增</button>
-                    </div>
-                    <div id="noteListUI" class="space-y-2"></div>
-                </div>
-             `;
-             window.renderNoteListItems();
-             lucide.createIcons();
-        };
-
-        window.renderNoteListItems = () => {
-             const container = document.getElementById('noteListUI');
-             if(!container) return;
-             container.innerHTML = noteList.map((note, i) => `
-                <div class="flex items-center justify-between p-3 bg-yellow-50 border border-yellow-100 rounded-lg shadow-sm">
-                    <span class="text-lg text-gray-800 font-medium pl-2 border-l-4 border-teal-400">${note.text}</span>
-                    <button onclick="window.delNote('${note.id}')" class="text-gray-400 hover:text-red-500 p-2"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                </div>
-             `).join('');
-             lucide.createIcons();
+    function attachSwipe() {
+      const main = document.getElementById('main');
+      main.addEventListener('touchstart', (e) => {
+        touchStartX = e.touches[0].clientX;
+      }, { passive: true });
+      main.addEventListener('touchend', (e) => {
+        if (touchStartX === null) return;
+        const diffX = e.changedTouches[0].clientX - touchStartX;
+        if (Math.abs(diffX) > 60) {
+          if (diffX < 0) setTabByIndex(currentTabIndex + 1);
+          else setTabByIndex(currentTabIndex - 1);
         }
+        touchStartX = null;
+      });
+    }
 
-        // --- Action Handlers ---
-        window.addShopItem = async () => {
-            const input = document.getElementById('newShopItem');
-            if(input && input.value.trim()) {
-                if(isAuthReady) await addDoc(collection(db, `artifacts/${appId}/public/data/shoppingList`), { name: input.value.trim(), purchased: false });
-                else alert('請等待資料庫連線');
-                input.value = '';
-            }
-        };
-        window.toggleShop = async (id, status) => {
-             if(isAuthReady) await setDoc(doc(db, `artifacts/${appId}/public/data/shoppingList`, id), { purchased: !status }, { merge: true });
-        };
-        window.delShop = async (id) => {
-             if(confirm('刪除?')) await deleteDoc(doc(db, `artifacts/${appId}/public/data/shoppingList`, id));
-        };
-        
-        window.addNoteItem = async () => {
-             const input = document.getElementById('newNoteItem');
-             if(input && input.value.trim()) {
-                 // For simplicity, updating local array and syncing whole array to doc
-                 const newId = Date.now().toString();
-                 noteList.push({id: newId, text: input.value.trim()});
-                 if(isAuthReady) await setDoc(doc(db, `artifacts/${appId}/users/${userId}/config/noteListDoc`), { list: noteList });
-                 else renderNoteListItems();
-                 input.value = '';
-             }
-        };
-        window.delNote = async (id) => {
-             noteList = noteList.filter(n => n.id !== id);
-             if(isAuthReady) await setDoc(doc(db, `artifacts/${appId}/users/${userId}/config/noteListDoc`), { list: noteList });
-             renderNoteListItems();
-        };
+    const itineraryData = [
+      {
+        date: '12/26（五）上野',
+        items: [
+          { time: '14:20', text: '抵達成田機場 (NRT) T2', map: 'Narita Airport Terminal 2' },
+          { time: '16:00', text: '飯店 Check-in', map: '上野 飯店' },
+          { time: '18:00', text: '晚餐：阿美橫丁', map: '阿美橫丁' },
+          { time: '20:00', text: '購物：無印良品上野丸井店、OS Drug 藥妝店', map: '無印良品 上野丸井' }
+        ]
+      },
+      {
+        date: '12/27（六）東京、銀座',
+        items: [
+          { time: '09:00', text: 'Tricolore coffee（早餐：蘋果派、閃電泡芙）', map: 'トリコロール 本店 銀座' },
+          { time: '12:00', text: '牛たんの檸檬 有楽町店', map: '牛たんの檸檬 有楽町店' },
+          { time: '15:00', text: 'MARLOWE 焦糖布丁', map: 'Marlowe pudding' },
+          { time: '20:30', text: '東京・お台場海浜公園花火 / 惠比壽花園廣場燈光秀', map: 'お台場海浜公園' }
+        ]
+      },
+      {
+        date: '12/28（日）富士山一日遊',
+        items: [
+          { time: '08:00', text: '丸之內南口集合', map: '東京駅 丸の内南口' },
+          { time: '10:30', text: '新倉山淺間公園', map: '新倉山浅間公園' },
+          { time: '11:45', text: '日川時計店', map: '日川時計店 忍野' },
+          { time: '12:30', text: '忍野八海（含午餐）', map: '忍野八海' },
+          { time: '15:20', text: '大石公園', map: '大石公園 河口湖' },
+          { time: '18:50', text: '返回東京市區', map: '東京駅' }
+        ]
+      },
+      {
+        date: '12/29（一）東京、澀谷',
+        items: [
+          { time: '11:30', text: '壽喜燒：Sukiyaki Juni Ten', map: 'Sukiyaki Juni Ten' },
+          { time: '14:30', text: '東急 Plaza 表參道原宿', map: '東急プラザ 表参道原宿' },
+          { time: '19:30', text: '中目黑', map: '中目黒駅' }
+        ]
+      },
+      {
+        date: '12/30（二）新宿、秋葉原',
+        items: [
+          { time: '11:00', text: '新宿：NEWoMan TAKANAWA百貨', map: 'NEWoMan 新宿' },
+          { time: '18:30', text: '二木菓子（買伴手禮）', map: '二木の菓子 秋葉原' }
+        ]
+      },
+      {
+        date: '12/31（三）成田市',
+        items: [
+          { time: '09:30', text: '成田山新勝寺', map: '成田山新勝寺' },
+          { time: '10:30', text: '成田山表參道', map: '成田 山 表参道' },
+          { time: '11:30', text: '成田夢牧場 門前店', map: '成田ゆめ牧場 門前店' },
+          { time: '12:30', text: '成田機場 (NRT)', map: 'Narita Airport' }
+        ]
+      }
+    ];
 
+    async function fetchFxRate() {
+      const el = document.getElementById('fxRate');
+      const srcEl = document.getElementById('fxSource');
+      if (!el) return;
+      try {
+        const res = await fetch('https://api.exchangerate.host/latest?base=TWD&symbols=JPY');
+        const data = await res.json();
+        if (data && data.rates && data.rates.JPY) {
+          el.textContent = '1 TWD ≈ ' + data.rates.JPY.toFixed(2) + ' JPY';
+          if (srcEl) srcEl.textContent = '來源：exchangerate.host 公開匯率 API';
+        } else {
+          el.textContent = '無法取得匯率';
+        }
+      } catch (err) {
+        el.textContent = '匯率讀取錯誤';
+      }
+    }
 
-        // --- Main View Switcher ---
-        window.setView = (view) => {
-            appView = view;
-            document.querySelectorAll('.nav-button').forEach(b => b.classList.remove('active'));
-            const btn = document.getElementById({FLIGHT:'btnFlight', SKYLINER:'btnSkyliner', ITINERARY:'btnItinerary', JAPANESE:'btnJapanese', SHOPPING:'btnShopping', NOTES:'btnNotes'}[view]);
-            if(btn) btn.classList.add('active');
+    async function fetchTokyoWeather() {
+      const el = document.getElementById('tokyoWeather');
+      if (!el) return;
+      try {
+        const url = 'https://api.open-meteo.com/v1/jma?latitude=35.6895&longitude=139.6917&current=temperature_2m,weather_code';
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data && data.current) {
+          const t = data.current.temperature_2m;
+          const code = data.current.weather_code;
+          let desc = '多雲';
+          if (code === 0) desc = '晴朗';
+          else if (code < 3) desc = '大致晴朗';
+          else if (code < 60) desc = '陰 / 雲多';
+          else desc = '可能有降雨';
+          el.textContent = desc + '，約 ' + t + '°C（JMA 模式預報）';
+        } else {
+          el.textContent = '無法取得氣象資料';
+        }
+      } catch (err) {
+        el.textContent = '氣象讀取錯誤';
+      }
+    }
 
-            const main = document.getElementById('main-content');
-            main.innerHTML = '';
-            
-            switch(view) {
-                case 'FLIGHT': renderFlightInfo(); break;
-                case 'SKYLINER': renderSkylinerTimetable(); break;
-                case 'ITINERARY': renderItinerary(); break;
-                case 'JAPANESE': 
-                    main.innerHTML = `<h2 class="text-2xl font-bold text-teal-600 mb-4">常用日語</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-4">${[{j:'すみません',c:'不好意思'},{j:'ありがとう',c:'謝謝'},{j:'いくらですか',c:'多少錢'},{j:'これください',c:'我要這個'},{j:'トイレはどこですか',c:'廁所在哪'},{j:'お会計お願いします',c:'買單'}].map(p=>`<div onclick="navigator.clipboard.writeText('${p.j}').then(()=>alert('已複製'))" class="flat-panel p-4 rounded-lg cursor-pointer hover:bg-gray-100 relative group"><div class="text-xl text-teal-600 font-bold">${p.j}</div><div class="text-sm text-gray-500">${p.c}</div><i data-lucide="copy" class="w-4 h-4 absolute top-4 right-4 text-gray-400 opacity-0 group-hover:opacity-100"></i></div>`).join('')}</div>`;
-                    lucide.createIcons();
-                    break;
-                case 'SHOPPING': renderShoppingList(); break;
-                case 'NOTES': renderNotes(); break;
-            }
-        };
-        
-        // --- Helpers ---
-        window.setItineraryDay = (d) => { itineraryDay = d; renderItinerary(); };
-        window.copyAddress = () => { navigator.clipboard.writeText(hotel.address).then(()=>alert('地址已複製')); };
-        window.showHotelModal = () => { 
-            const n = prompt('飯店名稱', hotel.name); 
-            const a = prompt('地址', hotel.address); 
-            const d = prompt('日期', hotel.dates);
-            if(n) { hotel.name=n; hotel.address=a; hotel.dates=d; saveHotel(); updateHotelUI(); }
-        };
-        window.saveHotel = async (fb=true) => { if(isAuthReady && fb) await setDoc(doc(db, `artifacts/${appId}/users/${userId}/config/hotel`), hotel, {merge:true}); };
-        window.showRateModal = () => { const r = prompt('匯率', hotel.rate); if(r) { hotel.rate=parseFloat(r); saveHotel(); convertCurrency(1000, 'twd'); } };
+    function initFujiVisibility() {
+      const slider = document.getElementById('fujiLevel');
+      const label = document.getElementById('fujiText');
+      if (!slider || !label) return;
+      const map = {
+        1: '1 / 5：幾乎看不到，建議改排室內行程',
+        2: '2 / 5：能見度差，只看得到模糊輪廓',
+        3: '3 / 5：普通，肉眼可見，拍照 OK',
+        4: '4 / 5：清晰，很適合拍照、散步',
+        5: '5 / 5：超清晰，一定要多拍幾張！'
+      };
+      function update() {
+        const v = Number(slider.value) || 3;
+        label.textContent = map[v];
+      }
+      slider.addEventListener('input', update);
+      update();
+    }
 
+    function renderHome() {
+      const main = document.getElementById('main');
+      main.innerHTML = `
+        <section class="space-y-4">
+          <div class="grid md:grid-cols-2 gap-4">
+            <div class="bg-white rounded-xl shadow p-4">
+              <h2 class="text-lg font-bold mb-1">即時匯率（TWD → JPY）</h2>
+              <p id="fxRate" class="text-xl font-semibold text-sky-500 mb-1">讀取中…</p>
+              <p id="fxSource" class="text-[11px] text-slate-500 mb-1"></p>
+              <p class="text-[11px] text-slate-500">
+                日本免稅：同一店家合計未稅滿 5,000 日圓以上可免稅（以店家實際公告為準）。
+              </p>
+            </div>
 
-        // Init
-        window.onload = () => { init(); setView('FLIGHT'); };
+            <div class="bg-white rounded-xl shadow p-4">
+              <h2 class="text-lg font-bold mb-1">東京即時天氣</h2>
+              <p id="tokyoWeather" class="text-sm text-slate-700">讀取中…</p>
+              <p class="text-[11px] text-slate-500 mt-1">
+                資料來源：Open-Meteo JMA API（使用日本氣象廳預報模型）。
+              </p>
+            </div>
 
-    </script>
+            <div class="bg-white rounded-xl shadow p-4">
+              <h2 class="text-lg font-bold mb-1">富士山直播縮圖 + 能見度</h2>
+              <a href="https://live.fujigoko.tv/?e=1&n=3" target="_blank" class="block mb-2">
+                <img src="https://cam.fujigoko.tv/livecam3/cam1_8726.jpg" alt="富士山直播縮圖（示意）" class="w-full h-40 object-cover rounded-lg border border-slate-200" />
+              </a>
+              <label class="text-xs text-slate-500">請根據直播畫面自行評估當日能見度：</label>
+              <input id="fujiLevel" type="range" min="1" max="5" value="3" class="w-full mt-1" />
+              <p id="fujiText" class="text-[11px] text-slate-600 mt-1"></p>
+              <p class="text-[11px] text-slate-500 mt-1">
+                ※ 若縮圖連結失效，可自行替換 img 的 src 為你喜歡的富士山即時圖片網址。
+              </p>
+            </div>
+
+            <div class="bg-white rounded-xl shadow p-4">
+              <h2 class="text-lg font-bold mb-1">緊急電話 & 線上醫療</h2>
+              <ul class="text-xs space-y-1">
+                <li><span class="font-semibold">110</span>：警察（報案、走失等）</li>
+                <li><span class="font-semibold">119</span>：救護車 / 火警</li>
+                <li><span class="font-semibold">台灣駐日代表處：</span>+81-3-3280-7811</li>
+                <li><span class="font-semibold">旅遊保險緊急專線：</span>建議自行填入保險公司電話</li>
+                <li><span class="font-semibold">OHDr. 中文線上門診：</span>
+                  <a href="https://ohdr.co" target="_blank" class="text-sky-500 underline">開啟網站</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-xl shadow p-4">
+            <h2 class="text-lg font-bold mb-2">常用日語（點一下即可複製）</h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
+              ${[
+                ['すみません','不好意思 / 麻煩你'],
+                ['ありがとうございます','非常感謝'],
+                ['いくらですか','多少錢？'],
+                ['これください','我要這個'],
+                ['トイレはどこですか','請問廁所在哪裡？'],
+                ['お会計お願いします','我要結帳']
+              ].map(([jp, zh]) => `
+                <button class="border border-slate-200 rounded-lg px-3 py-2 text-left hover:bg-slate-50"
+                        onclick="copyPhrase('${jp}')">
+                  <div class="font-semibold text-sky-500 mb-1">${jp}</div>
+                  <div class="text-xs text-slate-500">${zh}</div>
+                </button>
+              `).join('')}
+            </div>
+          </div>
+        </section>
+      `;
+      fetchFxRate();
+      fetchTokyoWeather();
+      initFujiVisibility();
+    }
+
+    function copyPhrase(text) {
+      if (!navigator.clipboard) {
+        alert(text);
+        return;
+      }
+      navigator.clipboard.writeText(text).then(() => {
+        alert('已複製：' + text);
+      });
+    }
+
+    function renderItinerary() {
+      const main = document.getElementById('main');
+      main.innerHTML = itineraryData.map(day => `
+        <section class="bg-white rounded-xl shadow p-4 mb-4">
+          <h2 class="text-lg font-bold mb-2">${day.date}</h2>
+          <div class="space-y-2">
+            ${day.items.map(item => `
+              <div class="flex items-start justify-between gap-2 border-b border-slate-100 py-2 last:border-0">
+                <div class="w-14 text-[11px] font-mono text-sky-500 pt-1">${item.time}</div>
+                <div class="flex-1 text-sm">${item.text}</div>
+                <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.map)}"
+                   target="_blank"
+                   class="text-[11px] text-sky-500 underline flex-shrink-0 mt-1">
+                  導航
+                </a>
+              </div>
+            `).join('')}
+          </div>
+        </section>
+      `).join('');
+    }
+
+    let expenses = [];
+
+    function renderAccount() {
+      const main = document.getElementById('main');
+      const total = expenses.reduce((s,e) => s + (e.amount || 0), 0);
+      main.innerHTML = `
+        <section class="bg-white rounded-xl shadow p-4 mb-4">
+          <h2 class="text-lg font-bold mb-3">記帳 & CSV 匯出</h2>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3 text-xs">
+            <input id="accDate" placeholder="日期 如 12/26"
+                   class="px-2 py-1 border border-slate-300 rounded" />
+            <input id="accItem" placeholder="項目 如 早餐 / 伴手禮"
+                   class="px-2 py-1 border border-slate-300 rounded" />
+            <input id="accAmount" type="number" placeholder="金額"
+                   class="px-2 py-1 border border-slate-300 rounded" />
+            <button onclick="addExpense()" class="px-3 py-1 rounded bg-primary text-white font-semibold">新增</button>
+          </div>
+          <div class="flex items-center justify-between text-xs mb-2">
+            <span>目前總額：<span class="font-bold text-red-500">${total.toLocaleString()}</span></span>
+            <button onclick="exportCSV()" class="px-3 py-1 rounded border border-sky-500 text-sky-500 hover:bg-sky-50">
+              匯出 CSV
+            </button>
+          </div>
+          <div id="accList" class="max-h-72 overflow-y-auto text-xs border-t border-slate-100 pt-1">
+            ${expenses.length === 0 ? `<p class="text-slate-400 text-center py-4">尚未有記帳資料，先新增一筆吧。</p>` :
+              expenses.map((e,i) => `
+                <div class="flex items-center justify-between py-1 border-b border-slate-100 last:border-0">
+                  <div>
+                    <div class="font-semibold">${e.date || '未填日期'}｜${e.item}</div>
+                    <div class="text-[11px] text-slate-500">${e.amount.toLocaleString()}</div>
+                  </div>
+                  <button onclick="deleteExpense(${i})" class="text-red-500 text-[11px] px-2">刪除</button>
+                </div>
+              `).join('')}
+          </div>
+        </section>
+      `;
+    }
+
+    function addExpense() {
+      const d = document.getElementById('accDate').value.trim();
+      const i = document.getElementById('accItem').value.trim();
+      const a = parseFloat(document.getElementById('accAmount').value);
+      if (!i || isNaN(a)) {
+        alert('請至少填「項目」與「金額」');
+        return;
+      }
+      expenses.push({ date: d, item: i, amount: a });
+      renderAccount();
+    }
+
+    function deleteExpense(idx) {
+      expenses.splice(idx,1);
+      renderAccount();
+    }
+
+    function exportCSV() {
+      if (!expenses.length) {
+        alert('尚無記帳資料可匯出');
+        return;
+      }
+      const header = ['date','item','amount'];
+      const rows = expenses.map(e => [e.date || '', e.item || '', e.amount || 0]);
+      const csv = [header].concat(rows).map(r => r.map(field => {
+        const s = String(field);
+        if (s.includes(',') || s.includes('"') || s.includes('\n')) {
+          return '"' + s.replace(/"/g,'""') + '"';
+        }
+        return s;
+      }).join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'tokyo-expenses.csv';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    let checklistItems = [
+      { text: '護照（有效期 6 個月以上）', done: false },
+      { text: '日本入境卡 / 海關申報（可線上預填）', done: false },
+      { text: '日幣現金、金融卡、信用卡', done: false },
+      { text: '旅遊保險（保單 + 緊急聯絡電話）', done: false },
+      { text: '國際漫遊 / eSIM / Wi-Fi 分享器', done: false },
+      { text: '常備藥品（感冒藥、止痛藥、腸胃藥等）', done: false },
+      { text: '充電器、轉接頭（日本 A 型 110V）', done: false },
+      { text: '保暖衣物 / 雨具', done: false }
+    ];
+
+    function renderChecklist() {
+      const main = document.getElementById('main');
+      main.innerHTML = `
+        <section class="bg-white rounded-xl shadow p-4 mb-4">
+          <h2 class="text-lg font-bold mb-3">旅遊檢查清單</h2>
+          <div class="flex gap-2 mb-3 text-xs">
+            <input id="checkInput" class="flex-1 px-2 py-1 border border-slate-300 rounded"
+                   placeholder="新增項目，如：行前確認某間餐廳預約…" />
+            <button onclick="addChecklistItem()" class="px-3 py-1 rounded bg-primary text-white font-semibold">新增</button>
+          </div>
+          <div id="checkList" class="max-h-80 overflow-y-auto text-xs">
+            ${checklistItems.length === 0 ? `<p class="text-slate-400 text-center py-4">目前沒有清單項目。</p>` :
+              checklistItems.map((c,i) => `
+                <div class="flex items-center justify-between py-1 border-b border-slate-100 last:border-0">
+                  <label class="flex items-center gap-2 flex-1 cursor-pointer">
+                    <input type="checkbox" ${c.done ? 'checked' : ''} onchange="toggleChecklist(${i})" />
+                    <span class="${c.done ? 'line-through text-slate-400' : ''}">${c.text}</span>
+                  </label>
+                  <button onclick="deleteChecklist(${i})" class="text-red-500 text-[11px] px-2">刪除</button>
+                </div>
+              `).join('')}
+          </div>
+        </section>
+      `;
+    }
+
+    function addChecklistItem() {
+      const input = document.getElementById('checkInput');
+      const v = input.value.trim();
+      if (!v) {
+        alert('請輸入要新增的檢查項目');
+        return;
+      }
+      checklistItems.push({ text: v, done: false });
+      input.value = '';
+      renderChecklist();
+    }
+
+    function toggleChecklist(idx) {
+      checklistItems[idx].done = !checklistItems[idx].done;
+      renderChecklist();
+    }
+
+    function deleteChecklist(idx) {
+      checklistItems.splice(idx,1);
+      renderChecklist();
+    }
+
+    function renderHotel() {
+      const main = document.getElementById('main');
+      main.innerHTML = `
+        <section class="bg-white rounded-xl shadow p-4 mb-4 text-sm">
+          <h2 class="text-lg font-bold mb-3">飯店資訊</h2>
+          <div class="space-y-2">
+            <div>
+              <div class="font-semibold">飯店名稱</div>
+              <div>（請自行填入：例如 XXX Hotel Ueno）</div>
+            </div>
+            <div>
+              <div class="font-semibold">入住 / 退房時間</div>
+              <div>Check-in：15:00 之後（依飯店規定）</div>
+              <div>Check-out：11:00 之前（依飯店規定）</div>
+            </div>
+            <div>
+              <div class="font-semibold">地址</div>
+              <div>（請貼上飯店完整地址）</div>
+            </div>
+            <div>
+              <div class="font-semibold">交通方式備註</div>
+              <ul class="list-disc ml-5 text-xs">
+                <li>從成田機場 → 搭乘 Skyliner / N&apos;EX 至上野 / 東京，再轉地鐵</li>
+                <li>最近車站：請填入最近的 JR / 地鐵站</li>
+              </ul>
+            </div>
+            <div>
+              <a href="https://www.google.com/maps" target="_blank" class="inline-block mt-2 px-3 py-1 rounded bg-primary text-white text-xs">
+                在 Google Maps 搜尋飯店
+              </a>
+            </div>
+            <div class="pt-2 border-t border-slate-100 mt-2">
+              <div class="font-semibold">入住注意事項（可自行修改）</div>
+              <ul class="list-disc ml-5 text-xs">
+                <li>確認是否可提前寄放行李</li>
+                <li>確認是否需加收住宿稅、清潔費</li>
+                <li>確認是否有 24 小時櫃台 / 夜間門禁</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+      `;
+    }
+
+    let shoppingItems = [];
+
+    function renderShopping() {
+      const main = document.getElementById('main');
+      main.innerHTML = `
+        <section class="bg-white rounded-xl shadow p-4 mb-4">
+          <h2 class="text-lg font-bold mb-3">購物清單</h2>
+          <div class="flex gap-2 mb-3 text-xs">
+            <input id="shopInput" class="flex-1 px-2 py-1 border border-slate-300 rounded"
+                   placeholder="新增項目，如：無印良品收納盒 / 藥妝 / 伴手禮…" />
+            <button onclick="addShoppingItem()" class="px-3 py-1 rounded bg-primary text-white font-semibold">新增</button>
+          </div>
+          <div id="shopList" class="max-h-80 overflow-y-auto text-xs">
+            ${shoppingItems.length === 0 ? `<p class="text-slate-400 text-center py-4">購物清單目前是空的。</p>` :
+              shoppingItems.map((s,i) => `
+                <div class="flex items-center justify-between py-1 border-b border-slate-100 last:border-0">
+                  <span class="${s.done ? 'line-through text-slate-400' : ''}" onclick="toggleShopping(${i})">${s.text}</span>
+                  <button onclick="deleteShopping(${i})" class="text-red-500 text-[11px] px-2">刪除</button>
+                </div>
+              `).join('')}
+          </div>
+        </section>
+      `;
+    }
+
+    function addShoppingItem() {
+      const input = document.getElementById('shopInput');
+      const v = input.value.trim();
+      if (!v) {
+        alert('請輸入購物項目');
+        return;
+      }
+      shoppingItems.push({ text: v, done: false });
+      input.value = '';
+      renderShopping();
+    }
+
+    function toggleShopping(idx) {
+      shoppingItems[idx].done = !shoppingItems[idx].done;
+      renderShopping();
+    }
+
+    function deleteShopping(idx) {
+      shoppingItems.splice(idx,1);
+      renderShopping();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      attachSwipe();
+      setTabByIndex(0);
+    });
+  </script>
 </body>
 </html>
