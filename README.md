@@ -20,7 +20,7 @@
   <style>
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Noto Sans TC", sans-serif;
-      font-size: 18px;          /* 整體字體放大 */
+      font-size: 18px;
       line-height: 1.6;
     }
     .tab-active {
@@ -35,7 +35,7 @@
       <div>
         <h1 class="text-3xl font-bold">東京旅遊助理</h1>
         <p class="text-sm text-slate-600">
-          行程・匯率・天氣・富士山・記帳・檢查清單・購物清單，一次搞定
+          行程・匯率試算・天氣預報・富士山・記帳・檢查清單・購物清單，一次搞定
         </p>
       </div>
     </header>
@@ -58,13 +58,13 @@
     <footer class="w-full fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200">
       <div class="max-w-4xl mx-auto px-4 py-2 flex justify-between text-xs text-slate-600">
         <span>⬅️ 右滑 / 左滑 切換頁面</span>
-        <span>單一 HTML 檔，適合放到 GitHub Pages</span>
+        <span>單一 HTML 檔，可直接放 GitHub Pages</span>
       </div>
     </footer>
   </div>
 
   <script>
-    /* ----------- Tabs & Swipe ----------- */
+    /* -------- Tabs + Swipe -------- */
     const tabs = ['home','itinerary','account','checklist','hotel','shopping'];
     let currentTabIndex = 0;
     let touchStartX = null;
@@ -112,7 +112,7 @@
       }, { passive: true });
     }
 
-    /* ----------- Data: 行程 ----------- */
+    /* -------- 行程資料（加預算） -------- */
     const itineraryData = [
       {
         date: '12/26（五）上野',
@@ -169,71 +169,121 @@
       }
     ];
 
-    /* ----------- 匯率 & 天氣 & 富士山 ----------- */
-    let fxJPYtoTWD = null; // 1 JPY -> TWD
+    // 行程預算（TWD），key: "dayIndex-itemIndex"
+    const itineraryBudgets = {};
 
-    async function fetchFxRate() {
-      const rateEl = document.getElementById('fxRate');
-      const srcEl  = document.getElementById('fxSource');
-      if (!rateEl) return;
-      try {
-        // 以 JPY 為基準，抓 TWD 匯率（1 日圓等於幾元台幣）
-        const res = await fetch('https://api.exchangerate.host/latest?base=JPY&symbols=TWD');
-        const data = await res.json();
-        if (data && data.rates && data.rates.TWD) {
-          fxJPYtoTWD = data.rates.TWD;
-          const jpyToTwd = fxJPYtoTWD.toFixed(4);
-          const twdToJpy = (1 / fxJPYtoTWD).toFixed(2);
-          rateEl.textContent = `1 JPY ≈ ${jpyToTwd} TWD（約 1 TWD ≈ ${twdToJpy} JPY）`;
-          if (srcEl) srcEl.textContent = '來源：exchangerate.host 公開匯率 API（可能受網路或 API 限制影響）';
-          updateFxCalc();
-        } else {
-          rateEl.textContent = '無法取得匯率（可能是 API 回應異常）';
-        }
-      } catch (err) {
-        console.error(err);
-        rateEl.textContent = '匯率讀取錯誤（可能是網路或 API 限制）';
+    function updateItineraryBudget(el) {
+      const key = el.dataset.itkey;
+      const v = parseFloat(el.value);
+      if (!key) return;
+      if (isNaN(v)) {
+        delete itineraryBudgets[key];
+      } else {
+        itineraryBudgets[key] = v;
+      }
+    }
+
+    function getItineraryTotalBudget() {
+      return Object.values(itineraryBudgets).reduce((s, v) => s + v, 0);
+    }
+
+    /* -------- 匯率試算（手動） -------- */
+    let manualFxRate = 0.22; // 1 JPY = 0.22 TWD
+
+    function setManualRate() {
+      const input = document.getElementById('fxRateManual');
+      if (!input) return;
+      const v = parseFloat(input.value);
+      if (!isNaN(v) && v > 0) {
+        manualFxRate = v;
+        updateFxCalc();
+        updateFxCalcReverse();
       }
     }
 
     function updateFxCalc() {
-      const input = document.getElementById('fxInputJPY');
-      const out   = document.getElementById('fxOutputTWD');
-      if (!input || !out) return;
-      const val = parseFloat(input.value);
-      if (isNaN(val) || !fxJPYtoTWD) {
+      const jpyInput = document.getElementById('fxInputJPY');
+      const out = document.getElementById('fxOutputTWD');
+      if (!jpyInput || !out) return;
+      const val = parseFloat(jpyInput.value);
+      if (isNaN(val) || !manualFxRate) {
         out.textContent = '--';
         return;
       }
-      const twd = val * fxJPYtoTWD;
-      out.textContent = '約 NT$ ' + twd.toFixed(0).toLocaleString();
+      const twd = val * manualFxRate;
+      out.textContent = '約 NT$ ' + Math.round(twd).toLocaleString();
     }
 
+    function updateFxCalcReverse() {
+      const twdInput = document.getElementById('fxInputTWD');
+      const out = document.getElementById('fxOutputJPY');
+      if (!twdInput || !out) return;
+      const val = parseFloat(twdInput.value);
+      if (isNaN(val) || !manualFxRate) {
+        out.textContent = '--';
+        return;
+      }
+      const jpy = val / manualFxRate;
+      out.textContent = '約 ¥ ' + Math.round(jpy).toLocaleString();
+    }
+
+    /* -------- 東京天氣：即時 + 一週 -------- */
     async function fetchTokyoWeather() {
-      const el = document.getElementById('tokyoWeather');
-      if (!el) return;
+      const currentEl = document.getElementById('tokyoWeatherCurrent');
+      const weekEl = document.getElementById('tokyoWeatherWeek');
+      if (!currentEl || !weekEl) return;
       try {
-        const url = 'https://api.open-meteo.com/v1/jma?latitude=35.6895&longitude=139.6917&current=temperature_2m,weather_code';
+        const url = 'https://api.open-meteo.com/v1/forecast?latitude=35.6895&longitude=139.6917&current_weather=true&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=Asia%2FTokyo';
         const res = await fetch(url);
         const data = await res.json();
-        if (data && data.current) {
-          const t = data.current.temperature_2m;
-          const code = data.current.weather_code;
-          let desc = '多雲';
-          if (code === 0) desc = '晴朗';
-          else if (code < 3) desc = '大致晴朗';
-          else if (code < 60) desc = '陰 / 雲多';
-          else desc = '可能有降雨';
-          el.textContent = `${desc}，約 ${t}°C（JMA 模式預報）`;
-        } else {
-          el.textContent = '無法取得氣象資料';
+        if (!data || !data.current_weather || !data.daily) {
+          currentEl.textContent = '無法取得氣象資料';
+          weekEl.innerHTML = '<p class="text-sm text-slate-500">一週預報無法顯示。</p>';
+          return;
         }
+        const c = data.current_weather;
+        const desc = weatherCodeToText(c.weathercode);
+        currentEl.textContent = `${desc}，約 ${c.temperature}°C`;
+
+        const days = data.daily.time;
+        const tmax = data.daily.temperature_2m_max;
+        const tmin = data.daily.temperature_2m_min;
+        const codes = data.daily.weathercode;
+
+        let html = '<div class="overflow-x-auto"><table class="min-w-full text-sm text-left"><thead><tr class="border-b"><th class="py-1 pr-4">日期</th><th class="py-1 pr-4">天氣</th><th class="py-1 pr-4">最高</th><th class="py-1 pr-4">最低</th></tr></thead><tbody>';
+        for (let i = 0; i < days.length; i++) {
+          const d = days[i];
+          const label = d.substring(5); // MM-DD
+          html += `<tr class="border-b last:border-0">
+            <td class="py-1 pr-4">${label}</td>
+            <td class="py-1 pr-4">${weatherCodeToText(codes[i])}</td>
+            <td class="py-1 pr-4">${tmax[i]}°C</td>
+            <td class="py-1 pr-4">${tmin[i]}°C</td>
+          </tr>`;
+        }
+        html += '</tbody></table></div>';
+        weekEl.innerHTML = html;
       } catch (err) {
         console.error(err);
-        el.textContent = '氣象讀取錯誤（可能是網路或 API 限制）';
+        currentEl.textContent = '氣象讀取錯誤（可能是網路或 API 限制）';
+        weekEl.innerHTML = '<p class="text-sm text-slate-500">一週預報無法顯示。</p>';
       }
     }
 
+    function weatherCodeToText(code) {
+      if (code === 0) return '晴朗';
+      if (code === 1 || code === 2) return '大致晴朗';
+      if (code === 3) return '多雲';
+      if (code === 45 || code === 48) return '霧 / 霾';
+      if (code === 51 || code === 53 || code === 55) return '毛毛雨';
+      if (code >= 61 && code <= 67) return '雨';
+      if (code >= 71 && code <= 77) return '雪';
+      if (code >= 80 && code <= 82) return '陣雨';
+      if (code >= 95) return '雷雨';
+      return '陰 / 不穩定';
+    }
+
+    /* -------- 富士山能見度 Slider -------- */
     function initFujiVisibilitySlider() {
       const slider = document.getElementById('fujiLevel');
       const label  = document.getElementById('fujiText');
@@ -253,138 +303,82 @@
       update();
     }
 
-    /* ----------- 首頁渲染 ----------- */
-    function renderHome() {
-      const main = document.getElementById('main');
-      main.innerHTML = `
-        <section class="space-y-4">
-          <div class="grid md:grid-cols-2 gap-4">
-            <!-- 匯率 + 試算器 -->
-            <div class="bg-white rounded-xl shadow p-4">
-              <h2 class="text-xl font-bold mb-2">即時匯率（TWD ↔ JPY）</h2>
-              <p id="fxRate" class="text-lg font-semibold text-sky-600 mb-1">讀取中…</p>
-              <p id="fxSource" class="text-xs text-slate-600 mb-3"></p>
-              <div class="border-t border-slate-200 pt-2 mt-1">
-                <p class="text-sm font-semibold mb-1">匯率試算（輸入日幣，換算為台幣）：</p>
-                <div class="flex items-center gap-2 mb-1">
-                  <input
-                    id="fxInputJPY"
-                    type="number"
-                    inputmode="numeric"
-                    oninput="updateFxCalc()"
-                    placeholder="例如：5000（日圓）"
-                    class="flex-1 px-3 py-2 border border-slate-300 rounded-lg text-base"
-                  />
-                </div>
-                <p class="text-sm">
-                  估算結果：<span id="fxOutputTWD" class="font-bold text-emerald-600">--</span>
-                </p>
-                <p class="text-xs text-slate-500 mt-1">
-                  ※ 僅為即時匯率估算，實際刷卡匯率與手續費依銀行/發卡機構為準。
-                </p>
-              </div>
-              <p class="text-xs text-slate-500 mt-2">
-                日本一般免稅：同一店家合計「未稅」滿 5,000 日圓以上可免稅（以店家實際公告為準）。
-              </p>
-            </div>
+    /* -------- 富士山能見度預報（本地表格示意） -------- */
+    const fujiForecastData = [
+      { day: '第1天', time: '早上', level: '★★★★☆', note: '大致晴朗，可清楚看見富士山' },
+      { day: '第1天', time: '下午', level: '★★★☆☆', note: '稍有雲霧，仍可拍照' },
+      { day: '第1天', time: '傍晚', level: '★★☆☆☆', note: '雲層偏多，拍夕陽需碰碰運氣' },
+      { day: '第2天', time: '早上', level: '★★★★★', note: '能見度極佳，非常適合拍照' },
+      { day: '第2天', time: '下午', level: '★★★★☆', note: '天氣穩定，視野良好' },
+      { day: '第2天', time: '傍晚', level: '★★★☆☆', note: '稍有雲霧，但仍看得到山形' },
+      { day: '第3天', time: '早上', level: '★★☆☆☆', note: '雲霧偏多，山形較不清楚' },
+      { day: '第3天', time: '下午', level: '★☆☆☆☆', note: '多雲或有雨，幾乎看不到' },
+      { day: '第3天', time: '傍晚', level: '★★☆☆☆', note: '天氣略有好轉，視野略佳' }
+    ];
 
-            <!-- 東京天氣 -->
-            <div class="bg-white rounded-xl shadow p-4">
-              <h2 class="text-xl font-bold mb-2">東京即時天氣</h2>
-              <p id="tokyoWeather" class="text-base text-slate-800 mb-1">讀取中…</p>
-              <p class="text-xs text-slate-500 mt-1">
-                資料來源：Open-Meteo JMA API（使用日本氣象廳預報模型）。
-              </p>
-            </div>
+    function renderFujiForecastTable() {
+      const el = document.getElementById('fujiTable');
+      if (!el) return;
+      let html = '<div class="overflow-x-auto"><table class="min-w-full text-sm text-left">';
+      html += '<thead><tr class="border-b"><th class="py-1 pr-4">日別</th><th class="py-1 pr-4">時段</th><th class="py-1 pr-4">能見度</th><th class="py-1 pr-4">說明</th></tr></thead><tbody>';
+      fujiForecastData.forEach(row => {
+        html += `<tr class="border-b last:border-0">
+          <td class="py-1 pr-4">${row.day}</td>
+          <td class="py-1 pr-4">${row.time}</td>
+          <td class="py-1 pr-4">${row.level}</td>
+          <td class="py-1 pr-4">${row.note}</td>
+        </tr>`;
+      });
+      html += '</tbody></table></div>';
+      el.innerHTML = html;
+    }
 
-            <!-- 富士山直播 + 手動能見度 -->
-            <div class="bg-white rounded-xl shadow p-4">
-              <h2 class="text-xl font-bold mb-2">富士山直播縮圖 + 今日能見度</h2>
-              <a href="https://live.fujigoko.tv/?e=1&n=3" target="_blank" class="block mb-3">
-                <img
-                  src="https://cam.fujigoko.tv/livecam3/cam1_8726.jpg"
-                  alt="富士山直播縮圖（若載入失敗，可點擊開啟直播網站）"
-                  class="w-full h-40 object-cover rounded-lg border border-slate-200"
-                />
-              </a>
-              <label class="text-sm text-slate-700">請看直播畫面後，自己評估今日能見度：</label>
-              <input id="fujiLevel" type="range" min="1" max="5" value="3" class="w-full mt-2" />
-              <p id="fujiText" class="text-sm text-slate-700 mt-1"></p>
-              <p class="text-xs text-slate-500 mt-1">
-                ※ 若縮圖連結失效，可自行替換 <code>img</code> 的 <code>src</code> 為你喜歡的富士山即時圖片網址。
-              </p>
-            </div>
+    /* -------- 常用日語資料 -------- */
+    const phrases = {
+      restaurant: [
+        ['すみません、予約しています。','不好意思，我有訂位。'],
+        ['おすすめは何ですか。','請問有推薦的料理嗎？'],
+        ['これと同じものをもう一つください。','這個再來一份。'],
+        ['別々に会計できますか。','可以分開結帳嗎？'],
+        ['お水をお願いします。','麻煩給我水。']
+      ],
+      transport: [
+        ['○○駅へはどう行きますか。','請問要怎麼去○○站？'],
+        ['この電車は○○駅に止まりますか。','這班電車有停靠○○站嗎？'],
+        ['一日乗車券はありますか。','有一日券嗎？'],
+        ['ICカードはどこで買えますか。','哪裡可以買 IC 卡（Suica 等）？']
+      ],
+      emergency: [
+        ['助けてください。','請幫幫我。'],
+        ['具合が悪いです。','我身體不太舒服。'],
+        ['警察を呼んでください。','請幫我叫警察。'],
+        ['救急車を呼んでください。','請幫我叫救護車。']
+      ],
+      shopping: [
+        ['これはいくらですか。','這個多少錢？'],
+        ['免税できますか。','可以免稅嗎？'],
+        ['サイズ違いはありますか。','有不同尺寸嗎？'],
+        ['試着してもいいですか。','可以試穿嗎？']
+      ],
+      basic: [
+        ['こんにちは。','你好（白天的問候）。'],
+        ['おはようございます。','早安。'],
+        ['こんばんは。','晚安（打招呼）。'],
+        ['ありがとうございます。','非常感謝。'],
+        ['すみません。','不好意思 / 抱歉。']
+      ]
+    };
 
-            <!-- 緊急電話 & OHDr LINE -->
-            <div class="bg-white rounded-xl shadow p-4">
-              <h2 class="text-xl font-bold mb-2">緊急電話 & 線上醫療</h2>
-              <ul class="text-sm space-y-1 mb-2">
-                <li><span class="font-semibold">110</span>：警察（報案、走失等）</li>
-                <li><span class="font-semibold">119</span>：救護車 / 火警</li>
-                <li><span class="font-semibold">台灣駐日代表處：</span>+81-3-3280-7811</li>
-                <li><span class="font-semibold">旅遊保險緊急專線：</span>建議自行填入保險公司電話</li>
-              </ul>
-              <div class="mt-2 border-t border-slate-200 pt-2">
-                <p class="text-sm font-semibold mb-1">OHDr. 中文線上門診（LINE 官方帳號）</p>
-                <a
-                  href="https://lin.ee/aJ65BGe"
-                  target="_blank"
-                  class="inline-flex items-center px-3 py-2 rounded-lg bg-[#06C755] text-white text-sm font-bold"
-                >
-                  加入 OHDr. LINE 官方帳號
-                </a>
-                <p class="text-xs text-slate-500 mt-1">
-                  手機點擊後會直接開啟 LINE，加為好友即可線上諮詢、預約看診。
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <!-- 富士山能見度預報表格（fuji-san.info） -->
-          <div class="bg-white rounded-xl shadow p-4">
-            <h2 class="text-xl font-bold mb-2">富士山能見度預報表（fuji-san.info）</h2>
-            <p class="text-sm text-slate-700 mb-2">
-              下方為 <a href="https://fuji-san.info/zh-tw/index.html" target="_blank" class="text-sky-600 underline">fuji-san.info</a>
-              官方網站的能見度預報表。可以左右滑動、上下捲動查看幾天內不同時間的預測。
-            </p>
-            <div class="overflow-x-auto">
-              <iframe
-                src="https://fuji-san.info/zh-tw/index.html"
-                class="w-[900px] max-w-full h-[520px] border border-slate-200 rounded-lg"
-              ></iframe>
-            </div>
-            <p class="text-xs text-slate-500 mt-2">
-              ※ 若日後網站改版導致表格顯示異常，可直接開新分頁查看原始網頁。
-            </p>
-          </div>
-
-          <!-- 常用日語 -->
-          <div class="bg-white rounded-xl shadow p-4">
-            <h2 class="text-xl font-bold mb-3">常用日語（點一下即可複製）</h2>
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-3 text-base">
-              ${[
-                ['すみません','不好意思 / 麻煩你'],
-                ['ありがとうございます','非常感謝'],
-                ['いくらですか','多少錢？'],
-                ['これください','我要這個'],
-                ['トイレはどこですか','請問廁所在哪裡？'],
-                ['お会計お願いします','我要結帳']
-              ].map(([jp, zh]) => `
-                <button
-                  class="border border-slate-200 rounded-lg px-3 py-2 text-left hover:bg-slate-50"
-                  onclick="copyPhrase('${jp}')"
-                >
-                  <div class="font-semibold text-sky-600 mb-1 text-lg">${jp}</div>
-                  <div class="text-sm text-slate-600">${zh}</div>
-                </button>
-              `).join('')}
-            </div>
-          </div>
-        </section>
-      `;
-      fetchFxRate();
-      fetchTokyoWeather();
-      initFujiVisibilitySlider();
+    function phraseButtons(list) {
+      return list.map(([jp, zh]) => `
+        <button
+          class="border border-slate-200 rounded-lg px-3 py-2 text-left hover:bg-slate-50"
+          onclick="copyPhrase('${jp}')"
+        >
+          <div class="font-semibold text-sky-600 mb-1 text-lg">${jp}</div>
+          <div class="text-sm text-slate-600">${zh}</div>
+        </button>
+      `).join('');
     }
 
     function copyPhrase(text) {
@@ -397,41 +391,261 @@
       });
     }
 
-    /* ----------- 行程頁 ----------- */
+    /* -------- 首頁渲染 -------- */
+    function renderHome() {
+      const main = document.getElementById('main');
+      const totalBudget = getItineraryTotalBudget();
+      main.innerHTML = `
+        <section class="space-y-4">
+          <div class="grid md:grid-cols-2 gap-4">
+            <!-- 匯率試算 -->
+            <div class="bg-white rounded-xl shadow p-4">
+              <h2 class="text-xl font-bold mb-2">匯率試算（手動輸入匯率）</h2>
+              <div class="mb-2">
+                <label class="text-sm font-semibold">今天匯率：1 日圓 = 幾元台幣？</label>
+                <div class="flex items-center gap-2 mt-1">
+                  <span class="text-sm">1 JPY =</span>
+                  <input
+                    id="fxRateManual"
+                    type="number"
+                    step="0.0001"
+                    value="${manualFxRate}"
+                    oninput="setManualRate()"
+                    class="w-28 px-2 py-1 border border-slate-300 rounded-lg text-sm"
+                  />
+                  <span class="text-sm">TWD</span>
+                </div>
+                <p class="text-xs text-slate-500 mt-1">
+                  ※ 請依照你當天實際刷卡匯率或銀行牌告自行輸入。
+                </p>
+              </div>
+              <div class="border-t border-slate-200 pt-2 mt-2">
+                <p class="text-sm font-semibold mb-1">日幣 → 台幣：</p>
+                <div class="flex items-center gap-2 mb-1">
+                  <input
+                    id="fxInputJPY"
+                    type="number"
+                    inputmode="numeric"
+                    oninput="updateFxCalc()"
+                    placeholder="例如：5000（JPY）"
+                    class="flex-1 px-3 py-2 border border-slate-300 rounded-lg text-base"
+                  />
+                </div>
+                <p class="text-sm">
+                  估算結果：<span id="fxOutputTWD" class="font-bold text-emerald-600">--</span>
+                </p>
+              </div>
+              <div class="border-t border-slate-200 pt-2 mt-2">
+                <p class="text-sm font-semibold mb-1">台幣 → 日幣：</p>
+                <div class="flex items-center gap-2 mb-1">
+                  <input
+                    id="fxInputTWD"
+                    type="number"
+                    inputmode="numeric"
+                    oninput="updateFxCalcReverse()"
+                    placeholder="例如：3000（TWD）"
+                    class="flex-1 px-3 py-2 border border-slate-300 rounded-lg text-base"
+                  />
+                </div>
+                <p class="text-sm">
+                  估算結果：<span id="fxOutputJPY" class="font-bold text-sky-600">--</span>
+                </p>
+              </div>
+            </div>
+
+            <!-- 東京即時天氣 + 一週預報 -->
+            <div class="bg-white rounded-xl shadow p-4">
+              <h2 class="text-xl font-bold mb-2">東京天氣（即時 + 一週預報）</h2>
+              <p id="tokyoWeatherCurrent" class="text-base text-slate-800 mb-2">讀取中…</p>
+              <div id="tokyoWeatherWeek" class="text-sm text-slate-800 mb-2"></div>
+              <p class="text-xs text-slate-500">
+                資料來源：Open-Meteo 氣象 API（日本當地時間）。
+              </p>
+            </div>
+
+            <!-- 富士山直播縮圖 + Slider -->
+            <div class="bg-white rounded-xl shadow p-4">
+              <h2 class="text-xl font-bold mb-2">富士山直播縮圖 + 今日能見度</h2>
+              <a href="https://fuji-san.info/zh-tw/livecamera.html" target="_blank" class="block mb-3">
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Mount_Fuji_from_Hotel_Mt_Fuji_1995-3-14.jpg/640px-Mount_Fuji_from_Hotel_Mt_Fuji_1995-3-14.jpg"
+                  alt="富士山示意圖（點擊開啟直播頁面）"
+                  class="w-full h-40 object-cover rounded-lg border border-slate-200"
+                />
+              </a>
+              <label class="text-sm text-slate-700">看完直播畫面後，請自己評估今日能見度：</label>
+              <input id="fujiLevel" type="range" min="1" max="5" value="3" class="w-full mt-2" />
+              <p id="fujiText" class="text-sm text-slate-700 mt-1"></p>
+              <p class="text-xs text-slate-500 mt-1">
+                ※ 圖片為示意圖，實際畫面請點擊上方連結開啟官方直播。
+              </p>
+            </div>
+
+            <!-- 緊急電話 & OHDr 中文 LINE -->
+            <div class="bg-white rounded-xl shadow p-4">
+              <h2 class="text-xl font-bold mb-2">緊急電話 & 線上醫療</h2>
+              <ul class="text-sm space-y-1 mb-2">
+                <li><span class="font-semibold">110</span>：警察（報案、走失等）</li>
+                <li><span class="font-semibold">119</span>：救護車 / 火警</li>
+                <li><span class="font-semibold">台灣駐日代表處：</span>+81-3-3280-7811</li>
+                <li><span class="font-semibold">旅遊保險緊急專線：</span>建議自行填入保險公司電話</li>
+              </ul>
+              <div class="mt-2 border-t border-slate-200 pt-2">
+                <p class="text-sm font-semibold mb-1">OHDr. 中文線上門診（LINE 官方帳號）</p>
+                <a
+                  href="https://line.me/R/ti/p/@406vicce"
+                  target="_blank"
+                  class="inline-flex items-center px-3 py-2 rounded-lg bg-[#06C755] text-white text-sm font-bold"
+                >
+                  加入 OHDr. LINE 官方帳號（繁中）
+                </a>
+                <p class="text-xs text-slate-500 mt-1">
+                  手機點擊後會直接開啟 LINE，加為好友即可線上諮詢、預約看診。
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 富士山能見度預報（本地表格） -->
+          <div class="bg-white rounded-xl shadow p-4">
+            <h2 class="text-xl font-bold mb-2">富士山能見度預報（簡化表格）</h2>
+            <p class="text-sm text-slate-700 mb-2">
+              下表為依照 <a href="https://fuji-san.info/zh-tw/index.html" target="_blank" class="text-sky-600 underline">fuji-san.info</a>
+              的結構整理之示意表，可左右滑動。最新官方預報請點上方連結查看原網站。
+            </p>
+            <div id="fujiTable"></div>
+          </div>
+
+          <!-- 行程預算總額 -->
+          <div class="bg-white rounded-xl shadow p-4">
+            <h2 class="text-xl font-bold mb-2">行程預算總額</h2>
+            <p class="text-base text-slate-800">
+              目前在「行程」頁面輸入的預算合計：約
+              <span class="font-bold text-rose-600">NT$ ${Math.round(totalBudget).toLocaleString()}</span>
+            </p>
+            <p class="text-xs text-slate-500 mt-1">
+              ※ 本金額為你在各行程項目「預算（TWD）」欄位輸入的加總，可自行調整。
+            </p>
+          </div>
+
+          <!-- 常用日語（分類） -->
+          <div class="bg-white rounded-xl shadow p-4 space-y-4">
+            <h2 class="text-xl font-bold mb-2">常用日語（點一下即可複製）</h2>
+
+            <div>
+              <h3 class="text-lg font-semibold mb-2">🍽 餐廳用語</h3>
+              <div class="grid md:grid-cols-3 gap-3 text-base">
+                ${phraseButtons(phrases.restaurant)}
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-lg font-semibold mb-2">🚉 交通用語</h3>
+              <div class="grid md:grid-cols-3 gap-3 text-base">
+                ${phraseButtons(phrases.transport)}
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-lg font-semibold mb-2">⛑ 緊急求助</h3>
+              <div class="grid md:grid-cols-3 gap-3 text-base">
+                ${phraseButtons(phrases.emergency)}
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-lg font-semibold mb-2">🛍 購物用語</h3>
+              <div class="grid md:grid-cols-3 gap-3 text-base">
+                ${phraseButtons(phrases.shopping)}
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-lg font-semibold mb-2">🙌 基本問候</h3>
+              <div class="grid md:grid-cols-3 gap-3 text-base">
+                ${phraseButtons(phrases.basic)}
+              </div>
+            </div>
+          </div>
+        </section>
+      `;
+      fetchTokyoWeather();
+      initFujiVisibilitySlider();
+      renderFujiForecastTable();
+      // 匯率區重新套用目前值
+      const rateInput = document.getElementById('fxRateManual');
+      if (rateInput) rateInput.value = manualFxRate;
+      updateFxCalc();
+      updateFxCalcReverse();
+    }
+
+    /* -------- 行程頁（含備註 + 預算） -------- */
     function renderItinerary() {
       const main = document.getElementById('main');
-      main.innerHTML = itineraryData.map(day => `
+      main.innerHTML = itineraryData.map((day, dayIndex) => `
         <section class="bg-white rounded-xl shadow p-4 mb-4">
           <h2 class="text-xl font-bold mb-2">${day.date}</h2>
-          <div class="space-y-2">
-            ${day.items.map(item => `
-              <div class="flex items-start justify-between gap-2 border-b border-slate-100 py-2 last:border-0">
-                <div class="w-20 text-xs font-mono text-sky-600 pt-1">${item.time}</div>
-                <div class="flex-1 text-base">${item.text}</div>
-                <a
-                  href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.map)}"
-                  target="_blank"
-                  class="text-xs text-sky-600 underline flex-shrink-0 mt-1"
-                >
-                  導航
-                </a>
-              </div>
-            `).join('')}
+          <div class="space-y-3">
+            ${day.items.map((item, itemIndex) => {
+              const key = dayIndex + '-' + itemIndex;
+              const budget = itineraryBudgets[key] || '';
+              return `
+                <div class="border-b border-slate-100 pb-3 last:border-0">
+                  <div class="flex items-start justify-between gap-2 mb-1">
+                    <div class="w-20 text-xs font-mono text-sky-600 pt-1">${item.time}</div>
+                    <div class="flex-1 text-base">${item.text}</div>
+                    <a
+                      href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.map)}"
+                      target="_blank"
+                      class="text-xs text-sky-600 underline flex-shrink-0 mt-1"
+                    >
+                      導航
+                    </a>
+                  </div>
+                  <div class="mt-1 pl-20 space-y-1">
+                    <div>
+                      <label class="text-xs text-slate-600">備註：</label>
+                      <textarea
+                        rows="1"
+                        class="w-full px-2 py-1 border border-slate-300 rounded-lg text-sm"
+                        placeholder="可填寫交通方式、訂位編號、同行人數等（純文字，不會匯出）"
+                      ></textarea>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <label class="text-xs text-slate-600">預算（TWD）：</label>
+                      <input
+                        type="number"
+                        inputmode="numeric"
+                        value="${budget}"
+                        data-itkey="${key}"
+                        oninput="updateItineraryBudget(this)"
+                        class="w-32 px-2 py-1 border border-slate-300 rounded-lg text-sm"
+                        placeholder="如：500"
+                      />
+                    </div>
+                  </div>
+                </div>
+              `;
+            }).join('')}
           </div>
         </section>
       `).join('');
     }
 
-    /* ----------- 記帳 + CSV ----------- */
+    /* -------- 記帳（幣別 + 照片 3 張） -------- */
     let expenses = [];
 
     function renderAccount() {
       const main = document.getElementById('main');
-      const total = expenses.reduce((s,e) => s + (e.amount || 0), 0);
+      const totalTWD = expenses.reduce((s, e) => {
+        if (e.currency === 'TWD') return s + (e.amount || 0);
+        if (e.currency === 'JPY' && manualFxRate) return s + (e.amount * manualFxRate);
+        return s;
+      }, 0);
       main.innerHTML = `
         <section class="bg-white rounded-xl shadow p-4 mb-4">
           <h2 class="text-xl font-bold mb-3">記帳 & CSV 匯出</h2>
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3 text-sm">
+          <div class="grid md:grid-cols-5 gap-2 mb-3 text-sm">
             <input
               id="accDate"
               placeholder="日期 如 12/26"
@@ -446,62 +660,141 @@
               id="accAmount"
               type="number"
               inputmode="numeric"
-              placeholder="金額（TWD 或 JPY）"
+              placeholder="金額"
               class="px-3 py-2 border border-slate-300 rounded-lg"
             />
-            <button
-              onclick="addExpense()"
-              class="px-3 py-2 rounded-lg bg-primary text-white font-semibold"
+            <select
+              id="accCurrency"
+              class="px-2 py-2 border border-slate-300 rounded-lg"
             >
-              新增
-            </button>
+              <option value="JPY">JPY（日幣）</option>
+              <option value="TWD">TWD（台幣）</option>
+            </select>
+            <input
+              id="accPhotos"
+              type="file"
+              accept="image/*"
+              multiple
+              class="text-xs"
+            />
+          </div>
+          <div class="mb-3">
+            <textarea
+              id="accNote"
+              rows="2"
+              class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
+              placeholder="備註（例如：在哪一間店買、誰一起吃、發票號碼…）"
+            ></textarea>
           </div>
           <div class="flex items-center justify-between text-sm mb-2">
-            <span>目前總額：<span class="font-bold text-rose-600">${total.toLocaleString()}</span></span>
-            <button
-              onclick="exportCSV()"
-              class="px-3 py-2 rounded-lg border border-sky-500 text-sky-600 hover:bg-sky-50"
-            >
-              匯出 CSV
-            </button>
+            <span>目前預估總額（換算為 TWD）：<span class="font-bold text-rose-600">NT$ ${Math.round(totalTWD).toLocaleString()}</span></span>
+            <div class="flex gap-2">
+              <button
+                onclick="addExpense()"
+                class="px-3 py-2 rounded-lg bg-primary text-white font-semibold"
+              >
+                新增記帳
+              </button>
+              <button
+                onclick="exportCSV()"
+                class="px-3 py-2 rounded-lg border border-sky-500 text-sky-600 hover:bg-sky-50"
+              >
+                匯出 CSV
+              </button>
+            </div>
           </div>
           <div id="accList" class="max-h-80 overflow-y-auto text-sm border-t border-slate-100 pt-1">
             ${expenses.length === 0 ? `
               <p class="text-slate-400 text-center py-4">尚未有記帳資料，先新增一筆吧。</p>
             ` :
-              expenses.map((e,i) => `
-                <div class="flex items-center justify-between py-2 border-b border-slate-100 last:border-0">
-                  <div>
-                    <div class="font-semibold">${e.date || '未填日期'}｜${e.item}</div>
-                    <div class="text-xs text-slate-600">金額：${e.amount.toLocaleString()}</div>
+              expenses.map((e, i) => {
+                const amountStr = e.amount.toLocaleString() + ' ' + e.currency;
+                let approx = '';
+                if (e.currency === 'JPY' && manualFxRate) {
+                  const twd = e.amount * manualFxRate;
+                  approx = `（約 NT$ ${Math.round(twd).toLocaleString()}）`;
+                }
+                return `
+                  <div class="py-2 border-b border-slate-100 last:border-0">
+                    <div class="flex items-center justify-between">
+                      <div>
+                        <div class="font-semibold">${e.date || '未填日期'}｜${e.item}</div>
+                        <div class="text-xs text-slate-600">
+                          金額：${amountStr} ${approx}
+                        </div>
+                        ${e.note ? `<div class="text-xs text-slate-600 mt-1">備註：${e.note}</div>` : ''}
+                      </div>
+                      <button
+                        onclick="deleteExpense(${i})"
+                        class="text-rose-600 text-xs px-2"
+                      >
+                        刪除
+                      </button>
+                    </div>
+                    ${e.photos && e.photos.length ? `
+                      <div class="flex gap-2 mt-2 flex-wrap">
+                        ${e.photos.map(src => `
+                          <img src="${src}" class="w-16 h-16 object-cover rounded border border-slate-200" />
+                        `).join('')}
+                      </div>
+                    ` : ''}
                   </div>
-                  <button
-                    onclick="deleteExpense(${i})"
-                    class="text-rose-600 text-xs px-2"
-                  >
-                    刪除
-                  </button>
-                </div>
-              `).join('')}
+                `;
+              }).join('')}
           </div>
+          <p class="text-xs text-slate-500 mt-2">
+            ※ 照片僅暫存在此頁面瀏覽器記憶體，重新整理或關閉頁面後不會保留，也不會出現在 CSV 檔案中。
+          </p>
         </section>
       `;
     }
 
-    function addExpense() {
+    function readFileAsDataURL(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function addExpense() {
       const d = document.getElementById('accDate').value.trim();
       const i = document.getElementById('accItem').value.trim();
       const a = parseFloat(document.getElementById('accAmount').value);
+      const c = document.getElementById('accCurrency').value;
+      const note = document.getElementById('accNote').value.trim();
+      const files = document.getElementById('accPhotos').files;
+
       if (!i || isNaN(a)) {
-        alert('請至少填「項目」與「金額」');
+        alert('請至少填「項目」與「金額」。');
         return;
       }
-      expenses.push({ date: d, item: i, amount: a });
+
+      const photos = [];
+      const max = Math.min(files.length, 3);
+      for (let idx = 0; idx < max; idx++) {
+        const file = files[idx];
+        try {
+          const dataUrl = await readFileAsDataURL(file);
+          photos.push(dataUrl);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      expenses.push({ date: d, item: i, amount: a, currency: c, note, photos });
+      // 清空輸入欄位
+      document.getElementById('accDate').value = '';
+      document.getElementById('accItem').value = '';
+      document.getElementById('accAmount').value = '';
+      document.getElementById('accNote').value = '';
+      document.getElementById('accPhotos').value = '';
       renderAccount();
     }
 
     function deleteExpense(idx) {
-      expenses.splice(idx,1);
+      expenses.splice(idx, 1);
       renderAccount();
     }
 
@@ -510,8 +803,8 @@
         alert('尚無記帳資料可匯出');
         return;
       }
-      const header = ['date','item','amount'];
-      const rows = expenses.map(e => [e.date || '', e.item || '', e.amount || 0]);
+      const header = ['date','item','currency','amount','note'];
+      const rows = expenses.map(e => [e.date || '', e.item || '', e.currency || '', e.amount || 0, e.note || '']);
       const csv = [header].concat(rows).map(r =>
         r.map(field => {
           const s = String(field);
@@ -532,7 +825,7 @@
       URL.revokeObjectURL(url);
     }
 
-    /* ----------- 旅遊檢查清單 ----------- */
+    /* -------- 旅遊檢查清單 -------- */
     let checklistItems = [
       { text: '護照（有效期 6 個月以上）', done: false },
       { text: '日本入境卡 / 海關申報（可線上預填）', done: false },
@@ -607,11 +900,11 @@
     }
 
     function deleteChecklist(idx) {
-      checklistItems.splice(idx,1);
+      checklistItems.splice(idx, 1);
       renderChecklist();
     }
 
-    /* ----------- 飯店資訊頁 ----------- */
+    /* -------- 飯店資訊 -------- */
     function renderHotel() {
       const main = document.getElementById('main');
       main.innerHTML = `
@@ -660,7 +953,7 @@
       `;
     }
 
-    /* ----------- 購物清單 ----------- */
+    /* -------- 購物清單 -------- */
     let shoppingItems = [];
 
     function renderShopping() {
@@ -724,11 +1017,11 @@
     }
 
     function deleteShopping(idx) {
-      shoppingItems.splice(idx,1);
+      shoppingItems.splice(idx, 1);
       renderShopping();
     }
 
-    /* ----------- 初始化 ----------- */
+    /* -------- 初始化 -------- */
     document.addEventListener('DOMContentLoaded', () => {
       attachSwipe();
       setTabByIndex(0);
