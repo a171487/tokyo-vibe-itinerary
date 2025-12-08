@@ -215,27 +215,28 @@
       min-width: 520px;
     }
     thead {
-      background: #111827;
-    }
-    th, td {
-      padding: 4px 6px;
-      text-align: center;
-      white-space: nowrap;
-    }
-    th {
-      color: #e5e7eb;
-      border-bottom: 1px solid #1f2937;
-    }
-    tbody tr:nth-child(odd) {
-      background: #020617;
-    }
-    tbody tr:nth-child(even) {
-      background: #0b1120;
-    }
-    td {
-      color: #e5e7eb;
-      border-bottom: 1px solid #111827;
-    }
+  background: #d1d5db;              /* 淺灰表頭 */
+}
+th, td {
+  padding: 4px 6px;
+  text-align: center;
+  white-space: nowrap;
+}
+th {
+  color: #111827;                   /* 深灰接近黑字 */
+  border-bottom: 1px solid #9ca3af;
+}
+tbody tr:nth-child(odd) {
+  background: #e5e7eb;              /* 淺灰 */
+}
+tbody tr:nth-child(even) {
+  background: #f3f4f6;              /* 更淺灰 */
+}
+td {
+  color: #111827;                   /* 黑字 */
+  border-bottom: 1px solid #d1d5db;
+}
+
 
     iframe { border: 0; }
     .video {
@@ -1114,7 +1115,6 @@
     </div>
   </section>
 </main>
-
 <script>
   // === Supabase 初始化 ===
   const { createClient } = supabase;
@@ -1122,7 +1122,7 @@
   const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpiZnJ3dm1jdm5jdG5md2tueHR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUyMDI3ODYsImV4cCI6MjA4MDc3ODc4Nn0.H8vosru6poIlFcV7bGo28hRP9ukOGzh_eJ3Ba5dnXFM";
   const sb = createClient(supabaseUrl, supabaseKey);
 
-  // === 頁籤切換（只用點擊，不要左右滑動誤觸） ===
+  // === 頁籤切換（只用點擊，不用左右滑） ===
   const tabButtons = document.querySelectorAll("nav button");
   const sections = document.querySelectorAll("main section");
   tabButtons.forEach(btn => {
@@ -1185,7 +1185,7 @@
     const forecastUrl =
       `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
       `&current_weather=true` +
-      `&daily=weathercode,temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max,precipitation_probability_max,snowfall_sum` +
+      `&daily=weathercode,temperature_2m_max,temperature_2m_min,sunset,uv_index_max,precipitation_probability_max,snowfall_sum` +
       `&timezone=Asia%2FTokyo`;
 
     const airUrl =
@@ -1199,21 +1199,20 @@
       if (airRes.ok) {
         const airData = await airRes.json();
         const h = airData.hourly || {};
-        const times = h.time || [];
         const aqArr = h.european_aqi || [];
         const pmArr = h.pm2_5 || [];
-        if (times.length && aqArr.length) {
+        if (aqArr.length) {
           const idx = aqArr.length - 1;
           aqiValue = aqArr[idx];
           const pm = pmArr[idx];
-          let levelLabel = "";
-          if (aqiValue <= 50) levelLabel = "（良好）";
-          else if (aqiValue <= 100) levelLabel = "（普通）";
-          else if (aqiValue <= 150) levelLabel = "（對敏感族群不健康）";
-          else levelLabel = "（空氣品質較差，注意防護）";
+          let level = "";
+          if (aqiValue <= 50) level = "（良好）";
+          else if (aqiValue <= 100) level = "（普通）";
+          else if (aqiValue <= 150) level = "（對敏感族群不健康）";
+          else level = "（較差，注意防護）";
 
           airNowEl.innerHTML =
-            `空氣品質 AQI：<b>${aqiValue}</b> ${levelLabel}<br>` +
+            `空氣品質 AQI：<b>${aqiValue}</b> ${level}<br>` +
             `PM2.5：約 <b>${pm != null ? pm.toFixed(1) : "—"}</b> μg/m³`;
         } else {
           airNowEl.textContent = "空氣品質：暫時無法取得資料";
@@ -1294,12 +1293,29 @@
   }
   function copyJP(text) {
     navigator.clipboard?.writeText(text).then(
-      () => { /* 可加提示 */ },
+      () => {},
       () => { alert("複製失敗，請再試一次。"); }
     );
   }
 
-  // === 記帳：讀取 & 新增 ===
+  // === 共用：上傳檔案到 Storage，回傳 public URL 陣列 ===
+  async function uploadFilesToBucket(bucket, files) {
+    const urls = [];
+    for (let i = 0; i < files.length; i++) {
+      const f = files[i];
+      const path = `${Date.now()}-${Math.random().toString(36).slice(2)}-${f.name}`;
+      const { error: upErr } = await sb.storage.from(bucket).upload(path, f);
+      if (upErr) {
+        console.error("upload error", upErr);
+        throw upErr;
+      }
+      const { data } = sb.storage.from(bucket).getPublicUrl(path);
+      urls.push(data.publicUrl);
+    }
+    return urls;
+  }
+
+  // === 記帳 ===
   const expDate = document.getElementById("expDate");
   const expTime = document.getElementById("expTime");
   const expName = document.getElementById("expName");
@@ -1315,9 +1331,10 @@
       .from("expenses")
       .select("*")
       .order("created_at", { ascending: false });
+
     if (error) {
       console.error(error);
-      expenseListEl.textContent = "讀取記帳資料失敗。";
+      expenseListEl.textContent = "讀取記帳資料失敗：" + error.message;
       return;
     }
     if (!data.length) {
@@ -1328,46 +1345,32 @@
     data.forEach(e => {
       const div = document.createElement("div");
       div.className = "expense-item";
-      const dateStr = e.travel_date || "";
-      const timeStr = e.travel_time || "";
-      let photosHtml = "";
-      if (e.photo_urls && e.photo_urls.length) {
-        const thumbs = e.photo_urls.map(url =>
-          `<a href="${url}" target="_blank" class="small">照片</a>`
-        ).join(" / ");
-        photosHtml = `<div class="small">照片：${thumbs}</div>`;
-      }
+
+      const created = e.created_at ? new Date(e.created_at) : null;
+      const createdStr = created
+        ? created.toLocaleString("zh-TW", { timeZone: "Asia/Tokyo" })
+        : "";
+
+      const photos = [e.photo1_url, e.photo2_url, e.photo3_url]
+        .filter(Boolean)
+        .map(url => `<a href="${url}" target="_blank" class="small">照片</a>`)
+        .join(" / ");
+
       div.innerHTML = `
         <div class="expense-header">
           <div>
             <div class="expense-title">${e.title || "(未命名)"}</div>
-            <div class="small">${dateStr || ""} ${timeStr || ""}</div>
+            <div class="small">${createdStr}</div>
           </div>
           <div class="expense-amount">
-            ${e.amount?.toLocaleString?.() || e.amount || 0} ${e.currency || ""}
+            ${(e.amount ?? 0).toLocaleString?.() || e.amount || 0} ${e.currency || ""}
           </div>
         </div>
         ${e.note ? `<div class="small">備註：${e.note}</div>` : ""}
-        ${photosHtml}
+        ${photos ? `<div class="small">照片：${photos}</div>` : ""}
       `;
       expenseListEl.appendChild(div);
     });
-  }
-
-  async function uploadFilesToBucket(bucket, files) {
-    const urls = [];
-    for (let i = 0; i < files.length; i++) {
-      const f = files[i];
-      const path = `${Date.now()}-${Math.random().toString(36).slice(2)}-${f.name}`;
-      const { error: upErr } = await sb.storage.from(bucket).upload(path, f);
-      if (upErr) {
-        console.error("upload error", upErr);
-        throw upErr;
-      }
-      const { data } = sb.storage.from(bucket).getPublicUrl(path);
-      urls.push(data.publicUrl);
-    }
-    return urls;
   }
 
   expSubmitBtn.addEventListener("click", async () => {
@@ -1388,26 +1391,38 @@
         alert("請至少填寫項目名稱與金額。");
         return;
       }
+
       expSubmitBtn.disabled = true;
       expSubmitBtn.textContent = "上傳中…";
+
+      // 日期 + 時間 合併進備註最前面
+      let noteFull = (expNote.value || "").trim();
+      const d = expDate.value;
+      const t = expTime.value;
+      if (d || t) {
+        noteFull = `[${d || ""} ${t || ""}] ${noteFull}`;
+      }
 
       let photoUrls = [];
       if (files.length) {
         photoUrls = await uploadFilesToBucket("expense-photos", files);
       }
+      const p1 = photoUrls[0] || null;
+      const p2 = photoUrls[1] || null;
+      const p3 = photoUrls[2] || null;
 
       const { error } = await sb.from("expenses").insert({
-        travel_date: expDate.value || null,
-        travel_time: expTime.value || null,
         title: expName.value.trim(),
         amount,
         currency: expCurrency.value,
-        note: expNote.value.trim() || null,
-        photo_urls: photoUrls
+        note: noteFull || null,
+        photo1_url: p1,
+        photo2_url: p2,
+        photo3_url: p3
       });
       if (error) {
         console.error(error);
-        alert("儲存記帳資料失敗，請稍後再試。");
+        alert("儲存記帳資料失敗：" + error.message);
       } else {
         expDate.value = "";
         expTime.value = "";
@@ -1434,9 +1449,10 @@
       .from("prep_items")
       .select("*")
       .order("created_at", { ascending: true });
+
     if (error) {
       console.error(error);
-      prepListEl.innerHTML = `<div class="small">讀取行前準備清單失敗。</div>`;
+      prepListEl.innerHTML = `<div class="small">讀取行前準備清單失敗：${error.message}</div>`;
       return;
     }
     prepItems = data;
@@ -1456,28 +1472,28 @@
       const checkbox = document.createElement("input");
       checkbox.type = "checkbox";
       checkbox.className = "prep-check";
-      checkbox.checked = item.done;
+      checkbox.checked = item.checked;
       checkbox.addEventListener("change", async () => {
-        item.done = checkbox.checked;
+        item.checked = checkbox.checked;
         renderPrep();
-        await sb.from("prep_items").update({ done: item.done }).eq("id", item.id);
+        await sb.from("prep_items").update({ checked: item.checked }).eq("id", item.id);
       });
 
       const span = document.createElement("div");
-      span.className = "prep-text" + (item.done ? " done" : "");
-      span.textContent = item.text;
+      span.className = "prep-text" + (item.checked ? " done" : "");
+      span.textContent = item.name;
 
       const editBtn = document.createElement("button");
       editBtn.className = "tiny-btn";
       editBtn.textContent = "編輯";
       editBtn.addEventListener("click", async () => {
-        const newText = prompt("編輯項目內容：", item.text || "");
+        const newText = prompt("編輯項目內容：", item.name || "");
         if (newText === null) return;
         const trimmed = newText.trim();
         if (!trimmed) return;
-        item.text = trimmed;
+        item.name = trimmed;
         renderPrep();
-        await sb.from("prep_items").update({ text: trimmed }).eq("id", item.id);
+        await sb.from("prep_items").update({ name: trimmed }).eq("id", item.id);
       });
 
       const delBtn = document.createElement("button");
@@ -1501,10 +1517,14 @@
   prepAddBtn.addEventListener("click", async () => {
     const text = prepInput.value.trim();
     if (!text) return;
-    const { data, error } = await sb.from("prep_items").insert({ text }).select().single();
+    const { data, error } = await sb
+      .from("prep_items")
+      .insert({ name: text })
+      .select()
+      .single();
     if (error) {
       console.error(error);
-      alert("新增行前準備項目失敗。");
+      alert("新增行前準備項目失敗：" + error.message);
       return;
     }
     prepInput.value = "";
@@ -1527,9 +1547,10 @@
       .from("shopping_items")
       .select("*")
       .order("created_at", { ascending: false });
+
     if (error) {
       console.error(error);
-      shopListEl.innerHTML = `<div class="small">讀取購物清單失敗。</div>`;
+      shopListEl.innerHTML = `<div class="small">讀取購物清單失敗：${error.message}</div>`;
       return;
     }
     shopItems = data;
@@ -1547,18 +1568,18 @@
       row.className = "shop-item";
 
       const textDiv = document.createElement("div");
-      textDiv.className = "shop-text" + (item.done ? " done" : "");
-      let photosHtml = "";
-      if (item.photo_urls && item.photo_urls.length) {
-        const links = item.photo_urls.map(url =>
-          `<a href="${url}" target="_blank" class="small">照片</a>`
-        ).join(" / ");
-        photosHtml = `<div class="small">${links}</div>`;
-      }
+      textDiv.className = "shop-text";
+      const amountLabel = (item.price ?? 0).toLocaleString?.() || item.price || 0;
+
+      const photos = [item.photo1_url, item.photo2_url, item.photo3_url]
+        .filter(Boolean)
+        .map(url => `<a href="${url}" target="_blank" class="small">照片</a>`)
+        .join(" / ");
+
       textDiv.innerHTML =
-        `<b>${item.name || "(未命名)"}</b> <span class="tag">${(item.amount || 0).toLocaleString?.() || item.amount || 0} ${item.currency || ""}</span>` +
+        `<b>${item.name || "(未命名)"}</b> <span class="tag">${amountLabel} ${item.currency || ""}</span>` +
         (item.note ? `<div class="small">備註：${item.note}</div>` : "") +
-        photosHtml;
+        (photos ? `<div class="small">${photos}</div>` : "");
 
       const editBtn = document.createElement("button");
       editBtn.className = "tiny-btn";
@@ -1566,16 +1587,16 @@
       editBtn.addEventListener("click", async () => {
         const newName = prompt("品項名稱：", item.name || "");
         if (newName === null) return;
-        const newAmountStr = prompt("金額：", item.amount || 0);
+        const newAmountStr = prompt("金額：", item.price || 0);
         if (newAmountStr === null) return;
         const newNote = prompt("備註：", item.note || "");
         item.name = newName.trim();
-        item.amount = parseFloat(newAmountStr || "0") || 0;
+        item.price = parseFloat(newAmountStr || "0") || 0;
         item.note = (newNote || "").trim();
         renderShop();
         await sb.from("shopping_items").update({
           name: item.name,
-          amount: item.amount,
+          price: item.price,
           note: item.note
         }).eq("id", item.id);
       });
@@ -1621,17 +1642,22 @@
       if (files.length) {
         photoUrls = await uploadFilesToBucket("shopping-photos", files);
       }
+      const p1 = photoUrls[0] || null;
+      const p2 = photoUrls[1] || null;
+      const p3 = photoUrls[2] || null;
 
       const { data, error } = await sb.from("shopping_items").insert({
         name: shopName.value.trim(),
-        amount: parseFloat(shopAmount.value || "0") || 0,
+        price: parseFloat(shopAmount.value || "0") || 0,
         currency: shopCurrency.value,
         note: shopNote.value.trim() || null,
-        photo_urls: photoUrls
+        photo1_url: p1,
+        photo2_url: p2,
+        photo3_url: p3
       }).select().single();
       if (error) {
         console.error(error);
-        alert("新增購物項目失敗。");
+        alert("新增購物項目失敗：" + error.message);
         return;
       }
       shopName.value = "";
