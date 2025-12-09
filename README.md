@@ -1700,7 +1700,7 @@
       textDiv.className = "shop-text";
       const amountLabel = (item.price ?? 0).toLocaleString?.() || item.price || 0;
 
-const photos = [e.photo1_url, e.photo2_url, e.photo3_url]
+const photos = [item.photo1_url, item.photo2_url, item.photo3_url]
   .filter(Boolean)
   .map(url => `
     <a href="${url}" target="_blank">
