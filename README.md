@@ -1415,9 +1415,15 @@
         : "";
 
       const photos = [e.photo1_url, e.photo2_url, e.photo3_url]
-        .filter(Boolean)
-        .map(url => `<a href="${url}" target="_blank" class="small">照片</a>`)
-        .join(" / ");
+  .filter(Boolean)
+  .map(url => `
+    <a href="${url}" target="_blank">
+      <img src="${url}" 
+           style="width:70px;height:70px;object-fit:cover;border-radius:8px;margin-right:6px;border:1px solid #555;" />
+    </a>
+  `)
+  .join("");
+
 
       const contentHtml = `
         <div class="expense-header">
@@ -1430,7 +1436,8 @@
           </div>
         </div>
         ${e.note ? `<div class="small">備註：${e.note}</div>` : ""}
-        ${photos ? `<div class="small">照片：${photos}</div>` : ""}
+        ${photos ? `<div style="margin-top:6px;">${photos}</div>` : ""}
+
       `;
       div.innerHTML = contentHtml;
 
@@ -1693,10 +1700,19 @@
       textDiv.className = "shop-text";
       const amountLabel = (item.price ?? 0).toLocaleString?.() || item.price || 0;
 
-      const photos = [item.photo1_url, item.photo2_url, item.photo3_url]
-        .filter(Boolean)
-        .map(url => `<a href="${url}" target="_blank" class="small">照片</a>`)
-        .join(" / ");
+const photos = [e.photo1_url, e.photo2_url, e.photo3_url]
+  .filter(Boolean)
+  .map(url => `
+    <a href="${url}" target="_blank">
+      <img src="${url}" 
+           style="width:70px;height:70px;object-fit:cover;border-radius:8px;margin-right:6px;border:1px solid #555;" />
+    </a>
+  `)
+  .join("");
+
+
+${photos ? `<div style="margin-top:6px;">${photos}</div>` : ""}
+
 
       textDiv.innerHTML =
         `<b>${item.name || "(未命名)"}</b> <span class="tag">${amountLabel} ${item.currency || ""}</span>` +
