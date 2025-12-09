@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <title>東京旅遊助理 v6</title>
+  <title>東京旅遊助理 v6.2</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <!-- Supabase CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -215,28 +215,27 @@
       min-width: 520px;
     }
     thead {
-  background: #d1d5db;              /* 淺灰表頭 */
-}
-th, td {
-  padding: 4px 6px;
-  text-align: center;
-  white-space: nowrap;
-}
-th {
-  color: #111827;                   /* 深灰接近黑字 */
-  border-bottom: 1px solid #9ca3af;
-}
-tbody tr:nth-child(odd) {
-  background: #e5e7eb;              /* 淺灰 */
-}
-tbody tr:nth-child(even) {
-  background: #f3f4f6;              /* 更淺灰 */
-}
-td {
-  color: #111827;                   /* 黑字 */
-  border-bottom: 1px solid #d1d5db;
-}
-
+      background: #d1d5db; /* 淺灰表頭 */
+    }
+    th, td {
+      padding: 4px 6px;
+      text-align: center;
+      white-space: nowrap;
+    }
+    th {
+      color: #111827;
+      border-bottom: 1px solid #9ca3af;
+    }
+    tbody tr:nth-child(odd) {
+      background: #e5e7eb;
+    }
+    tbody tr:nth-child(even) {
+      background: #f3f4f6;
+    }
+    td {
+      color: #111827;
+      border-bottom: 1px solid #d1d5db;
+    }
 
     iframe { border: 0; }
     .video {
@@ -392,7 +391,7 @@ td {
   </style>
 </head>
 <body>
-<header>東京旅遊助理 v6</header>
+<header>東京旅遊助理 v6.2</header>
 
 <nav>
   <button class="active" data-tab="home">🏠 首頁</button>
@@ -519,11 +518,13 @@ td {
     <div class="card">
       <h2>飯店資訊 🏨</h2>
       <div class="label">飯店名稱</div>
-      <div style="font-size:16px;font-weight:600;">上野站前1號遊客酒店（Hotel New Ueno）</div>
+      <div style="font-size:16px;font-weight:600;">
+        上野站前1號遊客酒店（Hotel Guest 1 Ueno Station）
+      </div>
 
       <div class="label">地址</div>
       <div class="small">
-        東京都台東區東上野 2-18-18，日本
+        2 Chome-18-18 Higashiueno, Taito City, Tokyo 110-0015 日本
       </div>
 
       <div class="label">入住 / 退房</div>
@@ -533,10 +534,9 @@ td {
       </div>
 
       <div class="map-embed">
-        <!-- 使用 Hotel New Ueno 關鍵字直接嵌入 Google Maps -->
         <iframe
           loading="lazy"
-          src="https://www.google.com/maps?q=Hotel+New+Ueno&output=embed">
+          src="https://www.google.com/maps?q=2+Chome-18-18+Higashiueno,+Taito+City,+Tokyo+110-0015+Japan&output=embed">
         </iframe>
       </div>
     </div>
@@ -649,19 +649,38 @@ td {
   <section id="plan">
     <!-- 12/26 -->
     <div class="card">
-      <div class="day-card-title">12/26（五） 上野</div>
+      <div class="day-card-title">12/26（五） 台北 → 東京・上野</div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-time">10:10</div>
+          <div class="schedule-title">桃園國際機場 TPE T1（JX802 起飛）</div>
+        </div>
+        <div class="schedule-desc">
+          搭乘星宇航空 JX802 前往東京，建議於起飛前 2–3 小時抵達機場，預留辦理托運、安檢與登機時間。
+        </div>
+        <div class="schedule-hours">溫馨提醒：出發前確認護照、機票、隨身行李體積與重量。</div>
+        <div class="schedule-nav">
+          <a class="nav-link" target="_blank"
+             href="https://www.google.com/maps/search/?api=1&query=Taoyuan+International+Airport+Terminal+1">
+            📍 導航到 桃園國際機場 T1
+          </a>
+        </div>
+      </div>
 
       <div class="schedule-item">
         <div class="schedule-header">
           <div class="schedule-time">14:20</div>
           <div class="schedule-title">抵達成田機場 (NRT) T2</div>
         </div>
-        <div class="schedule-desc">入境、領行李、辦理網卡／交通票券，開始東京旅程。</div>
-        <div class="schedule-hours">營業時間：機場 24 小時營運。</div>
+        <div class="schedule-desc">
+          抵達東京成田機場第二航廈，辦理入境、領行李，準備前往市區。可在機場購買交通票券或儲值 Suica / PASMO。
+        </div>
+        <div class="schedule-hours">航班：JX802，實際降落時間以航空公司公告為準。</div>
         <div class="schedule-nav">
           <a class="nav-link" target="_blank"
              href="https://www.google.com/maps/search/?api=1&query=Narita+Airport+Terminal+2">
-            📍 導航到成田機場 T2
+            📍 導航到 成田機場 T2
           </a>
         </div>
       </div>
@@ -675,8 +694,8 @@ td {
         <div class="schedule-hours">Check-in：15:00 起，依飯店公告為準。</div>
         <div class="schedule-nav">
           <a class="nav-link" target="_blank"
-             href="https://www.google.com/maps/search/?api=1&query=Hotel+New+Ueno+Tokyo">
-            📍 導航到飯店
+             href="https://www.google.com/maps/search/?api=1&query=2+Chome-18-18+Higashiueno,+Taito+City,+Tokyo+110-0015+Japan">
+            📍 導航到 飯店
           </a>
         </div>
       </div>
@@ -691,7 +710,7 @@ td {
         <div class="schedule-nav">
           <a class="nav-link" target="_blank"
              href="https://www.google.com/maps/search/?api=1&query=Ameya-Yokocho+Market+Tokyo">
-            📍 導航到阿美橫丁
+            📍 導航到 阿美橫丁
           </a>
         </div>
       </div>
@@ -1012,11 +1031,43 @@ td {
           <div class="schedule-title">成田機場 (NRT) 出境</div>
         </div>
         <div class="schedule-desc">預留時間辦理退稅、托運與安檢，準備搭機返家。</div>
-        <div class="schedule-hours">請依航空公司值機時間為準，建議起飛前 3 小時抵達。</div>
+        <div class="schedule-hours">建議起飛前約 3 小時抵達機場。</div>
         <div class="schedule-nav">
           <a class="nav-link" target="_blank"
-             href="https://www.google.com/maps/search/?api=1&query=Narita+Airport">
-            📍 導航到 成田機場
+             href="https://www.google.com/maps/search/?api=1&query=Narita+Airport+Terminal+2">
+            📍 導航到 成田機場 T2
+          </a>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-time">15:40</div>
+          <div class="schedule-title">成田機場 NRT T2（JX803 起飛）</div>
+        </div>
+        <div class="schedule-desc">
+          搭乘星宇航空 JX803 飛返桃園國際機場，請再次確認登機門與登機時間。
+        </div>
+        <div class="schedule-hours">溫馨提醒：起飛前 2–3 小時抵達機場，預留辦理出境與安檢時間。</div>
+        <div class="schedule-nav">
+          <a class="nav-link" target="_blank"
+             href="https://www.google.com/maps/search/?api=1&query=Narita+Airport+Terminal+2">
+            📍 導航到 成田機場 T2
+          </a>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-time">18:45</div>
+          <div class="schedule-title">抵達 桃園國際機場 TPE T1</div>
+        </div>
+        <div class="schedule-desc">返回台灣，結束東京旅程。可於入境後領取托運行李並通關。</div>
+        <div class="schedule-hours">實際抵達時間以航班資訊為準。</div>
+        <div class="schedule-nav">
+          <a class="nav-link" target="_blank"
+             href="https://www.google.com/maps/search/?api=1&query=Taoyuan+International+Airport+Terminal+1">
+            📍 導航到 桃園國際機場 T1
           </a>
         </div>
       </div>
@@ -1054,6 +1105,7 @@ td {
 
       <label class="label">照片（最多 3 張 / 10MB）</label>
       <input id="expImg" type="file" accept="image/*" multiple />
+      <div id="expUploadStatus" class="small"></div>
 
       <div class="btn-row">
         <button class="primary" id="expSubmitBtn">新增記帳</button>
@@ -1106,6 +1158,7 @@ td {
 
       <label class="label">照片（最多 3 張 / 10MB）</label>
       <input id="shopImg" type="file" accept="image/*" multiple />
+      <div id="shopUploadStatus" class="small"></div>
 
       <div class="btn-row">
         <button class="primary" id="shopAddBtn">新增購物項目</button>
@@ -1115,6 +1168,7 @@ td {
     </div>
   </section>
 </main>
+
 <script>
   // === Supabase 初始化 ===
   const { createClient } = supabase;
@@ -1122,7 +1176,7 @@ td {
   const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpiZnJ3dm1jdm5jdG5md2tueHR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUyMDI3ODYsImV4cCI6MjA4MDc3ODc4Nn0.H8vosru6poIlFcV7bGo28hRP9ukOGzh_eJ3Ba5dnXFM";
   const sb = createClient(supabaseUrl, supabaseKey);
 
-  // === 頁籤切換（只用點擊，不用左右滑） ===
+  // === 頁籤切換（只用點擊，不使用左右滑動） ===
   const tabButtons = document.querySelectorAll("nav button");
   const sections = document.querySelectorAll("main section");
   tabButtons.forEach(btn => {
@@ -1298,12 +1352,17 @@ td {
     );
   }
 
-  // === 共用：上傳檔案到 Storage，回傳 public URL 陣列 ===
-  async function uploadFilesToBucket(bucket, files) {
+  // === 共用：上傳檔案到 Storage，支援進度回報 ===
+  async function uploadFilesToBucket(bucket, files, progressCallback) {
     const urls = [];
+    const total = files.length || 1;
     for (let i = 0; i < files.length; i++) {
       const f = files[i];
       const path = `${Date.now()}-${Math.random().toString(36).slice(2)}-${f.name}`;
+      if (progressCallback) {
+        const percent = Math.round((i / total) * 100);
+        progressCallback(percent);
+      }
       const { error: upErr } = await sb.storage.from(bucket).upload(path, f);
       if (upErr) {
         console.error("upload error", upErr);
@@ -1311,6 +1370,9 @@ td {
       }
       const { data } = sb.storage.from(bucket).getPublicUrl(path);
       urls.push(data.publicUrl);
+    }
+    if (progressCallback) {
+      progressCallback(100);
     }
     return urls;
   }
@@ -1325,6 +1387,7 @@ td {
   const expImg = document.getElementById("expImg");
   const expSubmitBtn = document.getElementById("expSubmitBtn");
   const expenseListEl = document.getElementById("expenseList");
+  const expUploadStatus = document.getElementById("expUploadStatus");
 
   async function loadExpenses() {
     const { data, error } = await sb
@@ -1356,7 +1419,7 @@ td {
         .map(url => `<a href="${url}" target="_blank" class="small">照片</a>`)
         .join(" / ");
 
-      div.innerHTML = `
+      const contentHtml = `
         <div class="expense-header">
           <div>
             <div class="expense-title">${e.title || "(未命名)"}</div>
@@ -1369,12 +1432,62 @@ td {
         ${e.note ? `<div class="small">備註：${e.note}</div>` : ""}
         ${photos ? `<div class="small">照片：${photos}</div>` : ""}
       `;
+      div.innerHTML = contentHtml;
+
+      // 編輯 & 刪除按鈕
+      const btnRow = document.createElement("div");
+      btnRow.style.marginTop = "4px";
+      const editBtn = document.createElement("button");
+      editBtn.className = "tiny-btn";
+      editBtn.textContent = "編輯";
+      editBtn.addEventListener("click", async () => {
+        const newTitle = prompt("項目名稱：", e.title || "");
+        if (newTitle === null) return;
+        const newAmtStr = prompt("金額：", e.amount || 0);
+        if (newAmtStr === null) return;
+        const newCurrency = prompt("幣別（例如 JPY / TWD）：", e.currency || "JPY");
+        if (newCurrency === null) return;
+        const newNote = prompt("備註：", e.note || "");
+        const newAmt = parseFloat(newAmtStr || "0") || 0;
+
+        const { error: upErr } = await sb.from("expenses").update({
+          title: newTitle.trim(),
+          amount: newAmt,
+          currency: newCurrency.trim() || "JPY",
+          note: (newNote || "").trim() || null
+        }).eq("id", e.id);
+        if (upErr) {
+          alert("更新記帳資料失敗：" + upErr.message);
+        } else {
+          loadExpenses();
+        }
+      });
+
+      const delBtn = document.createElement("button");
+      delBtn.className = "tiny-btn danger";
+      delBtn.textContent = "刪除";
+      delBtn.style.marginLeft = "6px";
+      delBtn.addEventListener("click", async () => {
+        if (!confirm("確定刪除此記帳項目？")) return;
+        const { error: delErr } = await sb.from("expenses").delete().eq("id", e.id);
+        if (delErr) {
+          alert("刪除記帳資料失敗：" + delErr.message);
+        } else {
+          loadExpenses();
+        }
+      });
+
+      btnRow.appendChild(editBtn);
+      btnRow.appendChild(delBtn);
+      div.appendChild(btnRow);
+
       expenseListEl.appendChild(div);
     });
   }
 
   expSubmitBtn.addEventListener("click", async () => {
     try {
+      expUploadStatus.textContent = "";
       const files = expImg.files;
       if (files.length > 3) {
         alert("最多僅能上傳 3 張照片。");
@@ -1405,8 +1518,13 @@ td {
 
       let photoUrls = [];
       if (files.length) {
-        photoUrls = await uploadFilesToBucket("expense-photos", files);
+        expUploadStatus.textContent = "照片上傳中… 0%";
+        photoUrls = await uploadFilesToBucket("expense-photos", files, (p) => {
+          expUploadStatus.textContent = `照片上傳中… ${p}%`;
+        });
+        expUploadStatus.textContent = "照片上傳完成 ✅";
       }
+
       const p1 = photoUrls[0] || null;
       const p2 = photoUrls[1] || null;
       const p3 = photoUrls[2] || null;
@@ -1432,6 +1550,9 @@ td {
         expImg.value = "";
         loadExpenses();
       }
+    } catch (e) {
+      console.error(e);
+      alert("上傳或儲存時發生錯誤：" + (e.message || e));
     } finally {
       expSubmitBtn.disabled = false;
       expSubmitBtn.textContent = "新增記帳";
@@ -1540,6 +1661,7 @@ td {
   const shopImg = document.getElementById("shopImg");
   const shopAddBtn = document.getElementById("shopAddBtn");
   const shopListEl = document.getElementById("shopList");
+  const shopUploadStatus = document.getElementById("shopUploadStatus");
   let shopItems = [];
 
   async function loadShop() {
@@ -1589,14 +1711,18 @@ td {
         if (newName === null) return;
         const newAmountStr = prompt("金額：", item.price || 0);
         if (newAmountStr === null) return;
+        const newCur = prompt("幣別（JPY / TWD）：", item.currency || "JPY");
+        if (newCur === null) return;
         const newNote = prompt("備註：", item.note || "");
         item.name = newName.trim();
         item.price = parseFloat(newAmountStr || "0") || 0;
+        item.currency = newCur.trim() || "JPY";
         item.note = (newNote || "").trim();
         renderShop();
         await sb.from("shopping_items").update({
           name: item.name,
           price: item.price,
+          currency: item.currency,
           note: item.note
         }).eq("id", item.id);
       });
@@ -1620,6 +1746,7 @@ td {
 
   shopAddBtn.addEventListener("click", async () => {
     try {
+      shopUploadStatus.textContent = "";
       const files = shopImg.files;
       if (files.length > 3) {
         alert("最多僅能上傳 3 張照片。");
@@ -1640,8 +1767,13 @@ td {
 
       let photoUrls = [];
       if (files.length) {
-        photoUrls = await uploadFilesToBucket("shopping-photos", files);
+        shopUploadStatus.textContent = "照片上傳中… 0%";
+        photoUrls = await uploadFilesToBucket("shopping-photos", files, (p) => {
+          shopUploadStatus.textContent = `照片上傳中… ${p}%`;
+        });
+        shopUploadStatus.textContent = "照片上傳完成 ✅";
       }
+
       const p1 = photoUrls[0] || null;
       const p2 = photoUrls[1] || null;
       const p3 = photoUrls[2] || null;
@@ -1666,6 +1798,9 @@ td {
       shopImg.value = "";
       shopItems.unshift(data);
       renderShop();
+    } catch (e) {
+      console.error(e);
+      alert("上傳或儲存購物項目時發生錯誤：" + (e.message || e));
     } finally {
       shopAddBtn.disabled = false;
       shopAddBtn.textContent = "新增購物項目";
