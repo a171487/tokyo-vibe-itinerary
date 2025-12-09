@@ -1712,10 +1712,11 @@ const photos = [e.photo1_url, e.photo2_url, e.photo3_url]
 
 
 
-      textDiv.innerHTML =
-        `<b>${item.name || "(未命名)"}</b> <span class="tag">${amountLabel} ${item.currency || ""}</span>` +
-        (item.note ? `<div class="small">備註：${item.note}</div>` : "") +
-        (photos ? `<div style="margin-top:6px;">${photos}</div>` : "");
+textDiv.innerHTML =
+    `<b>${item.name}</b>` +
+    (item.note ? `<div class="small">${item.note}</div>` : "") +
+    (photos ? `<div style="margin-top:6px;">${photos}</div>` : "");
+
 
       const editBtn = document.createElement("button");
       editBtn.className = "tiny-btn";
