@@ -327,7 +327,18 @@
       color: #facc15;
     }
 
-    .prep-item, .shop-item {
+    
+    .shop-item-title {
+      font-size: 15px;
+      font-weight: 600;
+    }
+    .shop-item-amount {
+      font-size: 14px;
+      font-weight: 700;
+      color: #7dd3fc;
+      margin-top: 2px;
+    }
+.prep-item, .shop-item {
       display: flex;
       align-items: flex-start;
       gap: 8px;
@@ -1712,10 +1723,12 @@ const photos = [item.photo1_url, item.photo2_url, item.photo3_url]
 
 
 
-textDiv.innerHTML =
-    `<b>${item.name}</b>` +
-    (item.note ? `<div class="small">${item.note}</div>` : "") +
-    (photos ? `<div style="margin-top:6px;">${photos}</div>` : "");
+textDiv.innerHTML = `
+        <div class="shop-item-title">${item.name || "(未命名)"}</div>
+        <div class="shop-item-amount">${amountLabel} ${item.currency || ""}</div>
+        ${item.note ? `<div class="small">備註：${item.note}</div>` : ""}
+        ${photos ? `<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;">${photos}</div>` : ""}
+      `;
 
 
       const editBtn = document.createElement("button");
