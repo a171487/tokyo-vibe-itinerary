@@ -1958,27 +1958,54 @@ textDiv.innerHTML = `
     `;
   }
 
-  async function loadFoods(){
-    if(!foodList) return;
-    const { data, error } = await sb.from("food_places").select("*").order("created_at", { ascending:false });
-    if(error){
-      foodList.innerHTML = `<div class="small">讀取失敗：${error.message}</div>`;
-      return;
-    }
-    if(!data || data.length === 0){
-      foodList.innerHTML = `<div class="small">尚未新增美食。</div>`;
-      if(foodMap) foodMap.src = "https://www.google.com/maps?q=Tokyo&output=embed";
-      return;
-    }
+  async function loadFoods() {
+  const { data, error } = await sb
+    .from("food_places")
+    .select("*")
+    .order("created_at", { ascending: false });
 
-    // 地圖：每家一個 pin（用 query 串接）
-    const mapQuery = data.map(d => `${d.name || ""} ${d.address || ""}`.trim()).join(" | ");
-    if(foodMap){
-      foodMap.src = "https://www.google.com/maps?q=" + encodeURIComponent(mapQuery) + "&output=embed";
-    }
-
-    foodList.innerHTML = data.map(renderFoodItem).join("");
+  if (error) {
+    foodList.textContent = error.message;
+    return;
   }
+
+  if (!data || !data.length) {
+    foodList.textContent = "尚未新增美食";
+    foodMap.src = "https://www.google.com/maps?q=Tokyo&output=embed";
+    return;
+  }
+
+  // === 依區域分組 ===
+  const groups = {};
+  data.forEach(f => {
+    const area = f.area || "其他";
+    if (!groups[area]) groups[area] = [];
+    groups[area].push(f);
+  });
+
+  foodList.innerHTML = "";
+
+  // === Google Maps：每家一個 pin ===
+  foodMap.src =
+    "https://www.google.com/maps?q=" +
+    encodeURIComponent(
+      data.map(d => `${d.name} ${d.address}`).join(" | ")
+    ) +
+    "&output=embed";
+
+  // === 顯示分區 ===
+  Object.keys(groups).forEach(area => {
+    const h = document.createElement("h3");
+    h.textContent = area;
+    h.style.margin = "14px 0 6px";
+    h.style.fontWeight = "700";
+    foodList.appendChild(h);
+
+    groups[area].forEach(d => {
+      foodList.insertAdjacentHTML("beforeend", renderFood(d));
+    });
+  });
+}
 
   async function _uploadFoodPhotos(files){
     const urls = [];
