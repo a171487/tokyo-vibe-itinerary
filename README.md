@@ -1439,44 +1439,77 @@ async function loadFoods() {
     .order("created_at", { ascending: false });
 
   if (error) {
-    foodList.innerHTML = `<div class="small">讀取失敗：${error.message}</div>`;
+    foodList.textContent = error.message;
     return;
   }
 
-  if (!data || !data.length) {
-    foodList.innerHTML = `<div class="small">尚未新增美食。</div>`;
+  if (!data || data.length === 0) {
+    foodList.textContent = "尚未新增美食";
     foodMap.src = "https://www.google.com/maps?q=Tokyo&output=embed";
     return;
   }
 
-  // Google Maps：每家一個 pin（用多個 query 片段）
-  const mapQuery = data.map(d => `${d.name} ${d.address}`).join(" | ");
-  foodMap.src = "https://www.google.com/maps?q=" + encodeURIComponent(mapQuery) + "&output=embed";
-
-  // 依區域分組顯示（優先用資料庫 area，沒有就用前端推估）
+  // ===== 依區域分組 =====
   const groups = {};
-  data.forEach(f => {
-    const area = f.area || computeFoodArea(f.address, f.name);
-    (groups[area] ||= []).push(f);
+  data.forEach(d => {
+    const area = d.area || "其他";
+    if (!groups[area]) groups[area] = [];
+    groups[area].push(d);
   });
 
-  const order = ["銀座", "上野", "澀谷", "其他"];
   foodList.innerHTML = "";
-  order.filter(a => groups[a]?.length).forEach(area => {
-    const h = document.createElement("div");
-    h.style.margin = "10px 0 8px";
-    h.style.fontWeight = "800";
-    h.style.fontSize = "16px";
+
+  // ===== 地圖：每家一個 pin =====
+  foodMap.src =
+    "https://www.google.com/maps?q=" +
+    encodeURIComponent(
+      data.map(d => `${d.name} ${d.address}`).join(" | ")
+    ) +
+    "&output=embed";
+
+  // ===== 輸出列表（照片左、按鈕右） =====
+  Object.keys(groups).forEach(area => {
+    const h = document.createElement("h3");
     h.textContent = area;
+    h.style.margin = "14px 0 6px";
+    h.style.fontWeight = "700";
     foodList.appendChild(h);
 
-    groups[area].forEach(f => {
-      const wrap = document.createElement("div");
-      wrap.innerHTML = renderFoodItem(f);
-      foodList.appendChild(wrap.firstElementChild);
+    groups[area].forEach(d => {
+      const photosHTML = [d.photo1_url, d.photo2_url, d.photo3_url]
+        .filter(Boolean)
+        .map(url => `<img src="${url}" />`)
+        .join("");
+
+      foodList.insertAdjacentHTML(
+        "beforeend",
+        `
+        <div class="food-item">
+
+          <div class="food-info">
+            <div class="food-name"><strong>${d.name}</strong></div>
+            <div class="food-address small">${d.address}</div>
+            ${d.area ? `<div class="small">分區：${d.area}</div>` : ""}
+          </div>
+
+          <div class="food-right">
+            <div class="food-photos">
+              ${photosHTML}
+            </div>
+
+            <div class="food-actions">
+              <button onclick="editFood(${d.id})">編輯</button>
+              <button onclick="deleteFood(${d.id})">刪除</button>
+            </div>
+          </div>
+
+        </div>
+        `
+      );
     });
   });
 }
+
 
 foodAddBtn?.addEventListener("click", async () => {
   if (!foodName.value.trim() || !foodAddress.value.trim()) {
