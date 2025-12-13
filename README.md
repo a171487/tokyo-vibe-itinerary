@@ -399,36 +399,7 @@
       .day-card-title { font-size: 18px; }
       nav button { font-size: 15px; padding: 8px 4px; }
     }
-  
-    /* === 美食：編輯視窗 === */
-    .modal-overlay{
-      position:fixed; inset:0; background:rgba(0,0,0,.45);
-      display:flex; align-items:center; justify-content:center;
-      z-index:9999;
-    }
-    .modal-box{
-      width:min(92vw, 420px);
-      background:#0b1220;
-      border:1px solid #1f2937;
-      border-radius:16px;
-      padding:14px;
-      box-shadow:0 18px 60px rgba(0,0,0,.55);
-    }
-    .modal-title{font-weight:800; font-size:16px; margin-bottom:8px;}
-    .thumb-row{display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;}
-    .thumb-wrap{position:relative;}
-    .thumb-img{
-      width:78px; height:78px; object-fit:cover; border-radius:12px;
-      border:1px solid #1f2937;
-    }
-    .thumb-del{
-      position:absolute; top:-8px; right:-8px;
-      width:26px; height:26px; border-radius:999px;
-      border:1px solid #1f2937;
-      background:#111827; color:#e5e7eb;
-      cursor:pointer;
-    }
-    </style>
+  </style>
 </head>
 <body>
 <header>東京旅遊助理 v6.2</header>
@@ -436,8 +407,8 @@
 <nav>
   <button class="active" data-tab="home">🏠 首頁</button>
   <button data-tab="plan">🗺️ 行程</button>
-    <button data-tab="food">🍜 美食</button>
-<button data-tab="expense">💰 記帳</button>
+  <button data-tab="food">🍜 美食</button>
+  <button data-tab="expense">💰 記帳</button>
   <button data-tab="list">📝 清單</button>
 </nav>
 
@@ -1115,43 +1086,47 @@
     </div>
   </section>
 
+<!-- 美食 -->
+<section id="food">
+  <div class="card">
+    <h2>美食清單 🍜</h2>
+    <div class="small">新增你想去吃的店（最多 3 張照片）。新增後會自動依區域分組，並在地圖上以每家一個 pin 顯示。</div>
+
+    <label class="label">店名</label>
+    <input id="foodName" placeholder="例如：No.4 / 治一郎 KITTE 丸の內店" />
+
+    <label class="label">地址（或關鍵字）</label>
+    <input id="foodAddress" placeholder="例如：Marunouchi Tokyo / Ueno" />
+
+    <label class="label">照片（最多 3 張 / 10MB）</label>
+    <input id="foodImg" type="file" accept="image/*" multiple />
+    <div id="foodUploadStatus" class="small"></div>
+
+    <div class="btn-row">
+      <button class="primary" id="foodAddBtn">新增美食</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>地圖標記 📍</h2>
+    <div class="small">每家一個 pin（Google Maps 內嵌，不需 API Key）。</div>
+    <div class="map-embed" style="margin-top:10px;">
+      <iframe id="foodMap" loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        style="width:100%;height:300px;border:0;border-radius:14px;"
+        src="https://www.google.com/maps?q=Tokyo&output=embed"></iframe>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>想吃清單（自動分區）</h2>
+    <div id="foodList" style="margin-top:8px;"></div>
+  </div>
+
+  <!-- 編輯美食 Modal（動態注入） -->
+  <div id="foodEditModal" class="modal" style="display:none;"></div>
+</section>
   <!-- 記帳 -->
-  
-  <!-- 美食 -->
-  <section id="food">
-    <div class="card">
-      <h2>美食清單 🍜</h2>
-      <div class="small">新增想去吃的美食，並在下方地圖以每家一個 pin 顯示。資料會同步儲存在 Supabase；照片沿用 shopping-photos bucket（最多 3 張）。</div>
-
-      <label class="label">店名</label>
-      <input id="foodName" type="text" placeholder="例如：牛たんの檸檬 有楽町店" />
-
-      <label class="label">地址 / 關鍵字（Google Maps）</label>
-      <input id="foodAddress" type="text" placeholder="例如：Yurakucho Tokyo / 銀座" />
-
-      <label class="label">照片（最多 3 張 / 10MB）</label>
-      <input id="foodImg" type="file" accept="image/*" multiple />
-      <div id="foodUploadStatus" class="small"></div>
-
-      <div class="btn-row">
-        <button class="primary" id="foodAddBtn">新增美食</button>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>我的美食</h2>
-      <div id="foodList" style="margin-top:8px;"></div>
-    </div>
-
-    <div class="card">
-      <h2>地圖標記 📍</h2>
-      <div class="map-embed">
-        <iframe id="foodMap" loading="lazy" src="https://www.google.com/maps?q=Tokyo&output=embed"></iframe>
-      </div>
-      <div class="small" style="margin-top:6px;">若 pin 位置不精準，請在地址欄填更完整的地址或直接貼 Google Maps 店家地址。</div>
-    </div>
-  </section>
-
   <section id="expense">
     <div class="card">
       <h2>旅費記帳 💰</h2>
@@ -1263,6 +1238,332 @@
       sections.forEach(s => s.classList.toggle("active", s.id === id));
     });
   });
+
+
+// =========================
+// 🍜 美食（Supabase：food_places）
+// =========================
+const foodName = document.getElementById("foodName");
+const foodAddress = document.getElementById("foodAddress");
+const foodImg = document.getElementById("foodImg");
+const foodAddBtn = document.getElementById("foodAddBtn");
+const foodUploadStatus = document.getElementById("foodUploadStatus");
+const foodList = document.getElementById("foodList");
+const foodMap = document.getElementById("foodMap");
+const foodEditModal = document.getElementById("foodEditModal");
+
+function computeFoodArea(addr = "", name = "") {
+  const s = (addr + " " + name).toLowerCase();
+  // 銀座 / 丸之內 / 有樂町
+  if (s.includes("marunouchi") || s.includes("銀座") || s.includes("ginza") || s.includes("有楽町") || s.includes("yurakucho")) return "銀座";
+  // 上野
+  if (s.includes("ueno") || s.includes("上野") || s.includes("taito") || s.includes("台東")) return "上野";
+  // 澀谷（含原宿/表參道）
+  if (s.includes("shibuya") || s.includes("渋谷") || s.includes("澀谷") || s.includes("jingumae") || s.includes("原宿") || s.includes("harajuku") || s.includes("omotesando") || s.includes("表參道")) return "澀谷";
+  return "其他";
+}
+
+function bytesToMB(n) { return Math.round((n / (1024*1024)) * 100) / 100; }
+
+async function uploadFoodPhotos(files, folder = "food") {
+  const urls = [];
+  if (!files || !files.length) return urls;
+
+  const selected = Array.from(files).slice(0, 3);
+  const totalBytes = selected.reduce((a,f)=>a+f.size, 0);
+  if (bytesToMB(totalBytes) > 10) {
+    throw new Error("照片總量超過 10MB，請改用較小檔案或減少張數。");
+  }
+
+  // 逐張上傳（沿用 shopping-photos bucket）
+  for (let i = 0; i < selected.length; i++) {
+    const file = selected[i];
+    const safeName = file.name.replace(/\s+/g, "_");
+    const path = `${folder}/${Date.now()}_${Math.random().toString(16).slice(2)}_${safeName}`;
+
+    foodUploadStatus.textContent = `上傳第 ${i+1}/${selected.length} 張：0%`;
+    // supabase-js 不提供原生進度事件（fetch），因此這裡以「開始/完成」提示為主
+    const { error: upErr } = await sb.storage
+      .from("shopping-photos")
+      .upload(path, file, { upsert: true });
+
+    if (upErr) throw upErr;
+
+    const { data } = sb.storage.from("shopping-photos").getPublicUrl(path);
+    urls.push(data.publicUrl);
+    foodUploadStatus.textContent = `上傳第 ${i+1}/${selected.length} 張：100%（完成）`;
+  }
+  setTimeout(()=>{ foodUploadStatus.textContent = ""; }, 800);
+  return urls;
+}
+
+function renderFoodItem(f) {
+  const photos = [f.photo1_url, f.photo2_url, f.photo3_url]
+    .filter(Boolean)
+    .map(url => `
+      <a href="${url}" target="_blank" rel="noreferrer">
+        <img src="${url}" class="thumb" style="width:70px;height:70px;object-fit:cover;border-radius:10px;border:1px solid rgba(148,163,184,.35);margin-right:6px;" />
+      </a>
+    `).join("");
+
+  const area = f.area || computeFoodArea(f.address, f.name);
+
+  return `
+    <div class="shop-item" style="padding:12px;border-radius:16px;border:1px solid rgba(148,163,184,.18);background:rgba(15,23,42,.55);">
+      <div style="display:flex;justify-content:space-between;gap:10px;">
+        <div>
+          <div class="shop-item-title" style="font-weight:800;">${f.name || "(未命名)"}</div>
+          <div class="small">${f.address || ""}</div>
+          <div class="small" style="margin-top:4px;">分區：<b>${area}</b></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;min-width:84px;">
+          <button class="secondary" style="padding:8px;border-radius:10px;" onclick="editFood(${f.id})">編輯</button>
+          <button class="danger" style="padding:8px;border-radius:10px;" onclick="deleteFood(${f.id})">刪除</button>
+        </div>
+      </div>
+      ${photos ? `<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;">${photos}</div>` : ""}
+    </div>
+  `;
+}
+
+async function loadFoods() {
+  const { data, error } = await sb
+    .from("food_places")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    foodList.innerHTML = `<div class="small">讀取失敗：${error.message}</div>`;
+    return;
+  }
+
+  if (!data || !data.length) {
+    foodList.innerHTML = `<div class="small">尚未新增美食。</div>`;
+    foodMap.src = "https://www.google.com/maps?q=Tokyo&output=embed";
+    return;
+  }
+
+  // Google Maps：每家一個 pin（用多個 query 片段）
+  const mapQuery = data.map(d => `${d.name} ${d.address}`).join(" | ");
+  foodMap.src = "https://www.google.com/maps?q=" + encodeURIComponent(mapQuery) + "&output=embed";
+
+  // 依區域分組顯示（優先用資料庫 area，沒有就用前端推估）
+  const groups = {};
+  data.forEach(f => {
+    const area = f.area || computeFoodArea(f.address, f.name);
+    (groups[area] ||= []).push(f);
+  });
+
+  const order = ["銀座", "上野", "澀谷", "其他"];
+  foodList.innerHTML = "";
+  order.filter(a => groups[a]?.length).forEach(area => {
+    const h = document.createElement("div");
+    h.style.margin = "10px 0 8px";
+    h.style.fontWeight = "800";
+    h.style.fontSize = "16px";
+    h.textContent = area;
+    foodList.appendChild(h);
+
+    groups[area].forEach(f => {
+      const wrap = document.createElement("div");
+      wrap.innerHTML = renderFoodItem(f);
+      foodList.appendChild(wrap.firstElementChild);
+    });
+  });
+}
+
+foodAddBtn?.addEventListener("click", async () => {
+  if (!foodName.value.trim() || !foodAddress.value.trim()) {
+    alert("請填寫店名與地址。");
+    return;
+  }
+  try {
+    const urls = await uploadFoodPhotos(foodImg.files, "food");
+    const area = computeFoodArea(foodAddress.value, foodName.value);
+
+    const { error } = await sb.from("food_places").insert({
+      name: foodName.value.trim(),
+      address: foodAddress.value.trim(),
+      area,
+      photo1_url: urls[0] || null,
+      photo2_url: urls[1] || null,
+      photo3_url: urls[2] || null
+    });
+
+    if (error) throw error;
+
+    foodName.value = "";
+    foodAddress.value = "";
+    foodImg.value = "";
+    await loadFoods();
+    alert("新增成功！");
+  } catch (e) {
+    alert("新增失敗：" + (e?.message || e));
+  }
+});
+
+async function deleteFood(id) {
+  if (!confirm("確定刪除這筆美食？")) return;
+  const { error } = await sb.from("food_places").delete().eq("id", id);
+  if (error) alert("刪除失敗：" + error.message);
+  await loadFoods();
+}
+
+function openModal(html) {
+  foodEditModal.style.display = "block";
+  foodEditModal.innerHTML = `
+    <div class="modal-backdrop" style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;">
+      <div class="modal-card" style="width:min(520px, 100%);background:#0b1220;border:1px solid rgba(148,163,184,.25);border-radius:16px;padding:14px;">
+        ${html}
+      </div>
+    </div>
+  `;
+  foodEditModal.querySelector(".modal-backdrop").addEventListener("click", (ev) => {
+    if (ev.target.classList.contains("modal-backdrop")) closeModal();
+  });
+}
+function closeModal() {
+  foodEditModal.style.display = "none";
+  foodEditModal.innerHTML = "";
+}
+
+async function editFood(id) {
+  const { data, error } = await sb.from("food_places").select("*").eq("id", id).single();
+  if (error) { alert("讀取失敗：" + error.message); return; }
+
+  const current = {
+    photo1_url: data.photo1_url || null,
+    photo2_url: data.photo2_url || null,
+    photo3_url: data.photo3_url || null
+  };
+
+  const photoSlots = ["photo1_url", "photo2_url", "photo3_url"];
+
+  const renderCurrentPhotos = () => {
+    return photoSlots.map(slot => {
+      const url = current[slot];
+      if (!url) return "";
+      return `
+        <div style="position:relative;">
+          <a href="${url}" target="_blank" rel="noreferrer">
+            <img src="${url}" style="width:74px;height:74px;border-radius:12px;object-fit:cover;border:1px solid rgba(148,163,184,.35);" />
+          </a>
+          <button data-slot="${slot}" style="position:absolute;top:-8px;right:-8px;background:#ef4444;color:#fff;border:0;border-radius:999px;width:26px;height:26px;cursor:pointer;">✕</button>
+        </div>
+      `;
+    }).join("");
+  };
+
+  openModal(`
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+      <div style="font-weight:900;font-size:16px;">編輯美食</div>
+      <button id="foodEditClose" class="secondary" style="padding:8px 10px;border-radius:10px;">關閉</button>
+    </div>
+
+    <div style="margin-top:10px;">
+      <label class="label">店名</label>
+      <input id="efName" value="${(data.name||"").replace(/"/g,"&quot;")}" />
+    </div>
+
+    <div style="margin-top:10px;">
+      <label class="label">地址</label>
+      <input id="efAddr" value="${(data.address||"").replace(/"/g,"&quot;")}" />
+    </div>
+
+    <div style="margin-top:12px;">
+      <div class="label">目前照片（點右上角 ✕ 刪除）</div>
+      <div id="efPhotoGrid" style="margin-top:8px;display:flex;gap:10px;flex-wrap:wrap;">
+        ${renderCurrentPhotos() || '<div class="small">目前沒有照片</div>'}
+      </div>
+    </div>
+
+    <div style="margin-top:12px;">
+      <div class="label">新增 / 替換照片（最多補到 3 張）</div>
+      <input id="efNewPhotos" type="file" accept="image/*" multiple />
+      <div id="efUploadStatus" class="small" style="margin-top:6px;"></div>
+    </div>
+
+    <div style="margin-top:14px;display:flex;gap:10px;">
+      <button id="foodEditSave" class="primary" style="width:100%;">儲存</button>
+    </div>
+  `);
+
+  document.getElementById("foodEditClose").onclick = closeModal;
+
+  const grid = document.getElementById("efPhotoGrid");
+  grid.querySelectorAll("button[data-slot]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const slot = btn.dataset.slot;
+      current[slot] = null;
+      // 重新渲染
+      grid.innerHTML = renderCurrentPhotos() || '<div class="small">目前沒有照片</div>';
+    });
+  });
+
+  const efUploadStatus = document.getElementById("efUploadStatus");
+
+  document.getElementById("foodEditSave").onclick = async () => {
+    try {
+      const newName = document.getElementById("efName").value.trim();
+      const newAddr = document.getElementById("efAddr").value.trim();
+      if (!newName || !newAddr) { alert("店名與地址不可空白"); return; }
+
+      // 將 current 的空 slot 補上新照片
+      const files = document.getElementById("efNewPhotos").files;
+      const selected = Array.from(files || []).slice(0, 3);
+
+      // 先組 update payload（保留已刪除後的 null）
+      const update = {
+        name: newName,
+        address: newAddr,
+        area: computeFoodArea(newAddr, newName),
+        photo1_url: current.photo1_url,
+        photo2_url: current.photo2_url,
+        photo3_url: current.photo3_url
+      };
+
+      // 找空位
+      const emptySlots = photoSlots.filter(s => !update[s]);
+
+      if (selected.length && emptySlots.length) {
+        const totalBytes = selected.reduce((a,f)=>a+f.size, 0);
+        if (bytesToMB(totalBytes) > 10) throw new Error("照片總量超過 10MB，請改用較小檔案或減少張數。");
+
+        for (let i = 0; i < selected.length; i++) {
+          const slot = emptySlots[i];
+          if (!slot) break;
+          const file = selected[i];
+          const safeName = file.name.replace(/\s+/g, "_");
+          const path = `food/${Date.now()}_${Math.random().toString(16).slice(2)}_${safeName}`;
+          efUploadStatus.textContent = `上傳第 ${i+1}/${selected.length} 張…`;
+          const { error: upErr } = await sb.storage.from("shopping-photos").upload(path, file, { upsert: true });
+          if (upErr) throw upErr;
+          const { data: pub } = sb.storage.from("shopping-photos").getPublicUrl(path);
+          update[slot] = pub.publicUrl;
+          efUploadStatus.textContent = `上傳第 ${i+1}/${selected.length} 張：完成`;
+        }
+      }
+
+      const { error } = await sb.from("food_places").update(update).eq("id", id);
+      if (error) throw error;
+
+      closeModal();
+      await loadFoods();
+      alert("已更新！");
+    } catch (e) {
+      alert("更新失敗：" + (e?.message || e));
+    } finally {
+      efUploadStatus.textContent = "";
+    }
+  };
+}
+
+// 切到美食頁時自動刷新（避免多人同步時看不到最新）
+tabButtons.forEach(btn => {
+  btn.addEventListener("click", () => {
+    if (btn.dataset.tab === "food") loadFoods();
+  });
+});
 
   // === 匯率試算 ===
   const rateTwdPerJpy = document.getElementById("rateTwdPerJpy");
@@ -1905,260 +2206,6 @@ textDiv.innerHTML = `
   loadExpenses();
   loadPrep();
   loadShop();
-
-  // === 美食（新增/編輯/刪除 + 照片 + 地圖 pin） ===
-  const foodName = document.getElementById("foodName");
-  const foodAddress = document.getElementById("foodAddress");
-  const foodImg = document.getElementById("foodImg");
-  const foodUploadStatus = document.getElementById("foodUploadStatus");
-  const foodAddBtn = document.getElementById("foodAddBtn");
-  const foodList = document.getElementById("foodList");
-  const foodMap = document.getElementById("foodMap");
-
-  // 解析 public URL，拿到 storage object path（用於刪除）
-  function _storagePathFromPublicUrl(url){
-    try{
-      const u = new URL(url);
-      const marker = "/storage/v1/object/public/";
-      const i = u.pathname.indexOf(marker);
-      if(i === -1) return null;
-      // /storage/v1/object/public/<bucket>/<path...>
-      const rest = u.pathname.slice(i + marker.length);
-      const parts = rest.split("/");
-      parts.shift(); // bucket
-      return decodeURIComponent(parts.join("/"));
-    }catch(e){ return null; }
-  }
-
-  function _foodPhotosThumbs(d){
-    const urls = [d.photo1_url, d.photo2_url, d.photo3_url].filter(Boolean);
-    if(!urls.length) return "";
-    const imgs = urls.map(url => `
-      <a href="${url}" target="_blank" rel="noopener">
-        <img src="${url}" style="width:70px;height:70px;object-fit:cover;border-radius:10px;border:1px solid #1f2937;margin-right:6px;" />
-      </a>
-    `).join("");
-    return `<div style="margin-top:8px;display:flex;flex-wrap:wrap">${imgs}</div>`;
-  }
-
-  function renderFoodItem(d){
-    return `
-      <div class="shop-item">
-        <div class="shop-text">
-          <div class="shop-item-title">${d.name || "(未命名)"}</div>
-          <div class="small">${d.address || ""}</div>
-          ${_foodPhotosThumbs(d)}
-          <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
-            <button class="secondary" onclick="editFood(${d.id})">編輯</button>
-            <button class="secondary" onclick="deleteFood(${d.id})">刪除</button>
-            <a class="pill" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((d.name||"") + " " + (d.address||""))}" target="_blank" rel="noopener">導航</a>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-
-  async function loadFoods(){
-    if(!foodList) return;
-    const { data, error } = await sb.from("food_places").select("*").order("created_at", { ascending:false });
-    if(error){
-      foodList.innerHTML = `<div class="small">讀取失敗：${error.message}</div>`;
-      return;
-    }
-    if(!data || data.length === 0){
-      foodList.innerHTML = `<div class="small">尚未新增美食。</div>`;
-      if(foodMap) foodMap.src = "https://www.google.com/maps?q=Tokyo&output=embed";
-      return;
-    }
-
-    // 地圖：每家一個 pin（用 query 串接）
-    const mapQuery = data.map(d => `${d.name || ""} ${d.address || ""}`.trim()).join(" | ");
-    if(foodMap){
-      foodMap.src = "https://www.google.com/maps?q=" + encodeURIComponent(mapQuery) + "&output=embed";
-    }
-
-    foodList.innerHTML = data.map(renderFoodItem).join("");
-  }
-
-  async function _uploadFoodPhotos(files){
-    const urls = [];
-    const max = Math.min(files.length, 3);
-    for(let i=0; i<max; i++){
-      const f = files[i];
-      const path = `food/${Date.now()}_${Math.random().toString(16).slice(2)}_${f.name}`;
-      foodUploadStatus.textContent = `上傳中… ${i+1}/${max}`;
-      const { error: upErr } = await sb.storage.from("shopping-photos").upload(path, f, { upsert: true });
-      if(upErr) throw upErr;
-      const { data } = sb.storage.from("shopping-photos").getPublicUrl(path);
-      urls.push(data.publicUrl);
-    }
-    foodUploadStatus.textContent = urls.length ? "上傳完成 ✅" : "";
-    return urls;
-  }
-
-  if(foodAddBtn){
-    foodAddBtn.addEventListener("click", async () => {
-      const name = (foodName?.value || "").trim();
-      const addr = (foodAddress?.value || "").trim();
-      if(!name || !addr){
-        alert("請填寫店名與地址/關鍵字");
-        return;
-      }
-      try{
-        const files = foodImg?.files ? Array.from(foodImg.files) : [];
-        const urls = files.length ? await _uploadFoodPhotos(files) : [];
-        const payload = {
-          name, address: addr,
-          photo1_url: urls[0] || null,
-          photo2_url: urls[1] || null,
-          photo3_url: urls[2] || null
-        };
-        const { error } = await sb.from("food_places").insert(payload);
-        if(error) throw error;
-
-        if(foodName) foodName.value = "";
-        if(foodAddress) foodAddress.value = "";
-        if(foodImg) foodImg.value = "";
-        foodUploadStatus.textContent = "";
-        loadFoods();
-      }catch(err){
-        alert("新增失敗：" + (err?.message || err));
-        foodUploadStatus.textContent = "";
-      }
-    });
-  }
-
-  async function deleteFood(id){
-    if(!confirm("確定刪除這筆美食？")) return;
-    const { data: d } = await sb.from("food_places").select("*").eq("id", id).single();
-    const { error } = await sb.from("food_places").delete().eq("id", id);
-    if(error){ alert("刪除失敗：" + error.message); return; }
-
-    // 嘗試把照片也刪掉（失敗不影響主要刪除）
-    try{
-      const urls = [d?.photo1_url, d?.photo2_url, d?.photo3_url].filter(Boolean);
-      const paths = urls.map(_storagePathFromPublicUrl).filter(Boolean);
-      if(paths.length){
-        await sb.storage.from("shopping-photos").remove(paths);
-      }
-    }catch(e){}
-
-    loadFoods();
-  }
-  window.deleteFood = deleteFood;
-
-  function _openModal(title){
-    const overlay = document.createElement("div");
-    overlay.className = "modal-overlay";
-    const box = document.createElement("div");
-    box.className = "modal-box";
-    box.innerHTML = `<div class="modal-title">${title}</div>`;
-    overlay.appendChild(box);
-    overlay.addEventListener("click", (e)=>{ if(e.target===overlay) overlay.remove(); });
-    document.body.appendChild(overlay);
-    return { overlay, box };
-  }
-
-  async function editFood(id){
-    const { data: d, error } = await sb.from("food_places").select("*").eq("id", id).single();
-    if(error){ alert("讀取失敗：" + error.message); return; }
-
-    const { overlay, box } = _openModal("編輯美食");
-    const current = { ...d };
-
-    const form = document.createElement("div");
-    form.innerHTML = `
-      <label class="label">店名</label>
-      <input id="efName" type="text" value="${(current.name||"").replace(/"/g,'&quot;')}" />
-      <label class="label">地址 / 關鍵字</label>
-      <input id="efAddr" type="text" value="${(current.address||"").replace(/"/g,'&quot;')}" />
-      <div class="small">點照片右上角「×」可刪除該張；下方可上傳新照片補到 3 張。</div>
-      <div id="efThumbs" class="thumb-row"></div>
-      <label class="label" style="margin-top:10px;">新增/替換照片（最多 3 張）</label>
-      <input id="efNewPhotos" type="file" accept="image/*" multiple />
-      <div id="efStatus" class="small"></div>
-      <div class="btn-row" style="margin-top:10px;">
-        <button class="secondary" id="efCancel">取消</button>
-        <button class="primary" id="efSave">儲存</button>
-      </div>
-    `;
-    box.appendChild(form);
-
-    const thumbs = form.querySelector("#efThumbs");
-    const status = form.querySelector("#efStatus");
-
-    function refreshThumbs(){
-      thumbs.innerHTML = "";
-      const keys = ["photo1_url","photo2_url","photo3_url"];
-      keys.forEach(k=>{
-        const url = current[k];
-        if(!url) return;
-        const wrap = document.createElement("div");
-        wrap.className = "thumb-wrap";
-        wrap.innerHTML = `
-          <img class="thumb-img" src="${url}" />
-          <button class="thumb-del" title="刪除">×</button>
-        `;
-        wrap.querySelector(".thumb-del").onclick = () => {
-          current[k] = null;
-          refreshThumbs();
-        };
-        thumbs.appendChild(wrap);
-      });
-    }
-    refreshThumbs();
-
-    form.querySelector("#efCancel").onclick = ()=> overlay.remove();
-
-    form.querySelector("#efSave").onclick = async ()=>{
-      const name = form.querySelector("#efName").value.trim();
-      const addr = form.querySelector("#efAddr").value.trim();
-      if(!name || !addr){ alert("請填寫店名與地址/關鍵字"); return; }
-
-      // 將目前剩下的照片壓縮到前面欄位
-      let urls = [current.photo1_url, current.photo2_url, current.photo3_url].filter(Boolean);
-
-      try{
-        const files = Array.from(form.querySelector("#efNewPhotos").files || []);
-        const canAdd = Math.max(0, 3 - urls.length);
-        const addFiles = files.slice(0, canAdd);
-        if(addFiles.length){
-          status.textContent = "上傳中…";
-          for(let i=0;i<addFiles.length;i++){
-            const f = addFiles[i];
-            status.textContent = `上傳中… ${i+1}/${addFiles.length}`;
-            const path = `food/${Date.now()}_${Math.random().toString(16).slice(2)}_${f.name}`;
-            const { error: upErr } = await sb.storage.from("shopping-photos").upload(path, f, { upsert:true });
-            if(upErr) throw upErr;
-            const { data } = sb.storage.from("shopping-photos").getPublicUrl(path);
-            urls.push(data.publicUrl);
-          }
-          status.textContent = "上傳完成 ✅";
-        }
-
-        const payload = {
-          name, address: addr,
-          photo1_url: urls[0] || null,
-          photo2_url: urls[1] || null,
-          photo3_url: urls[2] || null
-        };
-
-        const { error: upErr2 } = await sb.from("food_places").update(payload).eq("id", id);
-        if(upErr2) throw upErr2;
-
-        overlay.remove();
-        loadFoods();
-      }catch(err){
-        alert("儲存失敗：" + (err?.message || err));
-        status.textContent = "";
-      }
-    };
-  }
-  window.editFood = editFood;
-
-  // 初次載入
-  loadFoods();
-
 </script>
 </body>
 </html>
