@@ -399,6 +399,112 @@
       .day-card-title { font-size: 18px; }
       nav button { font-size: 15px; padding: 8px 4px; }
     }
+
+/* =========================
+   [PATCH v9-UI] 美食清單卡片：照片在左、編輯/刪除在右
+   只改排版，不動功能
+   ========================= */
+
+/* 容錯：有些版本 class 可能不同，先讓 food-item 都變成左右結構 */
+.food-item,
+.foodPlaceItem,
+.food-place-item {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+  gap: 14px !important;
+}
+
+/* 左側文字區（若你的版本是 food-info / foodInfo / placeInfo 都吃得到） */
+.food-info,
+.foodInfo,
+.placeInfo,
+.food-item .info,
+.foodPlaceItem .info,
+.food-place-item .info {
+  flex: 1 1 auto !important;
+  min-width: 0 !important; /* 防止長地址把右側擠爆 */
+}
+
+/* 右側整塊：照片 + 按鈕（Part2 會把 HTML 結構包進這個容器） */
+.food-right,
+.foodRight,
+.food-actions-wrap {
+  display: flex !important;
+  flex-direction: row !important; /* 照片在左、按鈕在右 */
+  align-items: flex-start !important;
+  gap: 12px !important;
+  flex: 0 0 auto !important;
+}
+
+/* 照片區：直排 */
+.food-photos,
+.foodPhotos,
+.food-thumbs,
+.foodThumbs {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+/* 照片縮圖尺寸（跟你截圖感覺一致） */
+.food-photos img,
+.foodPhotos img,
+.food-thumbs img,
+.foodThumbs img,
+.food-photo-thumb {
+  width: 74px !important;
+  height: 74px !important;
+  object-fit: cover !important;
+  border-radius: 12px !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  display: block !important;
+}
+
+/* 編輯/刪除：固定在最右側直排 */
+.food-actions,
+.foodActions,
+.food-btns,
+.foodBtns {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  align-items: stretch !important;
+}
+
+/* 讓按鈕寬度一致，不會被照片擠壓 */
+.food-actions button,
+.foodActions button,
+.food-btns button,
+.foodBtns button,
+.food-item button,
+.foodPlaceItem button,
+.food-place-item button {
+  min-width: 76px !important;
+  white-space: nowrap !important;
+}
+
+/* 防止照片把卡片撐得過寬（小螢幕更穩） */
+@media (max-width: 430px) {
+  .food-photos img,
+  .foodPhotos img,
+  .food-thumbs img,
+  .foodThumbs img,
+  .food-photo-thumb {
+    width: 68px !important;
+    height: 68px !important;
+  }
+  .food-actions button,
+  .foodActions button,
+  .food-btns button,
+  .foodBtns button,
+  .food-item button,
+  .foodPlaceItem button,
+  .food-place-item button {
+    min-width: 72px !important;
+  }
+}
+
   </style>
 </head>
 <body>
