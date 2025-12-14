@@ -513,14 +513,6 @@
   margin-bottom: 14px;
 }
 
-.food-body {
-  margin-top: 10px;
-}
-
-.food-card.collapsed .food-body {
-  display: none;
-}
-
 .food-card-main {
   display: flex;
   justify-content: space-between;
@@ -577,110 +569,6 @@
   border-radius: 10px;
   border: 1px solid rgba(255,255,255,0.1);
 }
-
-#lightbox {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.85);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-}
-
-#lightbox img {
-  max-width: 90%;
-  max-height: 90%;
-  border-radius: 14px;
-}
-
-function openLightbox(url) {
-  const box = document.getElementById("lightbox");
-  const img = document.getElementById("lightboxImg");
-  img.src = url;
-  box.style.display = "flex";
-}
-
-.food-card.collapsed .food-body {
-  display: none;
-}
-
-#lightbox {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.85);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-}
-
-#lightbox img {
-  max-width: 90%;
-  max-height: 90%;
-  border-radius: 14px;
-}
-
-
-.food-card.highlight {
-  outline: 2px solid #6bbcff;
-  box-shadow: 0 0 0 3px rgba(107,188,255,.35);
-}
-
-.food-area-title {
-  cursor: pointer;
-  user-select: none;
-  margin: 18px 0 10px;
-}
-
-.food-area-section.collapsed {
-  display: none;
-}
-
-/* ===== Photo Viewer (Full Screen) ===== */
-.photo-viewer {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.9);
-  z-index: 99999;
-  display: flex;
-  flex-direction: column;
-}
-
-.photo-viewer.hidden {
-  display: none;
-}
-
-.photo-viewer-header {
-  height: 56px;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  padding: 0 16px;
-  color: #fff;
-  font-size: 22px;
-}
-
-.photo-viewer-header span {
-  cursor: pointer;
-}
-
-.photo-viewer-body {
-  flex: 1;
-  display: flex;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-}
-
-.photo-viewer-body img {
-  flex: 0 0 100%;
-  object-fit: contain;
-  scroll-snap-align: center;
-  max-width: 100%;
-}
-
-
-
 
   </style>
 </head>
@@ -1535,31 +1423,6 @@ const foodList = document.getElementById("foodList");
 const foodMap = document.getElementById("foodMap");
 const foodEditModal = document.getElementById("foodEditModal");
 
-
-function openPhotoViewer(urls = [], startIndex = 0) {
-  const viewer = document.getElementById("photoViewer");
-  const body = document.getElementById("photoViewerBody");
-
-  body.innerHTML = "";
-
-  urls.forEach(url => {
-    const img = document.createElement("img");
-    img.src = url;
-    body.appendChild(img);
-  });
-
-  viewer.classList.remove("hidden");
-
-  setTimeout(() => {
-    body.scrollLeft = body.clientWidth * startIndex;
-  }, 50);
-}
-
-document.getElementById("photoViewerClose").onclick = () => {
-  document.getElementById("photoViewer").classList.add("hidden");
-};
-
-
 function computeFoodArea(addr = "", name = "") {
   const s = (addr + " " + name).toLowerCase();
   // 銀座 / 丸之內 / 有樂町
@@ -1651,7 +1514,7 @@ async function loadFoods() {
     return;
   }
 
-  // === 依區域分組 ===
+  // ===== 依區域分組 =====
   const groups = {};
   data.forEach(d => {
     const area = d.area || "其他";
@@ -1661,63 +1524,39 @@ async function loadFoods() {
 
   foodList.innerHTML = "";
 
-  // === 地圖 pin（每家一個）===
+  // ===== 地圖：每家一個 pin =====
   foodMap.src =
-  "https://www.google.com/maps?q=" +
-  encodeURIComponent(
-    data.map(d => `${d.name} ${d.address}`).join(" | ")
-  ) +
-  "&output=embed&hl=zh-TW";
+    "https://www.google.com/maps?q=" +
+    encodeURIComponent(
+      data.map(d => `${d.name} ${d.address}`).join(" | ")
+    ) +
+    "&output=embed";
 
+  // ===== 輸出列表（每家一張卡片）=====
   Object.keys(groups).forEach(area => {
     const h = document.createElement("h3");
-h.className = "food-area-title";
-h.innerHTML = `▶ ${area}`;
-h.onclick = () => {
-  section.classList.toggle("collapsed");
-  h.innerHTML = section.classList.contains("collapsed")
-    ? `▶ ${area}`
-    : `▼ ${area}`;
-};
-foodList.appendChild(h);
-
-const section = document.createElement("div");
-section.className = "food-area-section";
-foodList.appendChild(section);
+    h.textContent = area;
+    h.style.margin = "18px 0 8px";
+    h.style.fontWeight = "700";
+    foodList.appendChild(h);
 
     groups[area].forEach(d => {
       const photos = [d.photo1_url, d.photo2_url, d.photo3_url].filter(Boolean);
 
-const photosHTML = photos.length
-  ? `
-    <div class="food-photos-row">
-      ${photos
-        .map(
-          (url, idx) =>
-            `<img src="${url}" onclick="event.stopPropagation(); openPhotoViewer(${JSON.stringify(
-              photos
-            )}, ${idx})" />`
-        )
-        .join("")}
-    </div>
-  `
-  : "";
+      const photosHTML = photos.length
+        ? `
+          <div class="food-photos-row">
+            ${photos.map(url => `<img src="${url}" />`).join("")}
+          </div>
+        `
+        : "";
 
-
-      section.insertAdjacentHTML(
+      foodList.insertAdjacentHTML(
         "beforeend",
         `
-        <div
-  class="food-card"
-  id="food-${d.id}"
-  onclick="focusFoodOnMap(${d.id}, '${encodeURIComponent(
-    `${d.name} ${d.address}`
-  )}')"
->
+        <div class="food-card">
 
-          
-          <!-- 卡片主列（可點擊收合） -->
-          <div class="food-card-main" onclick="toggleFood(this)">
+          <div class="food-card-main">
             <div class="food-text">
               <div class="food-name">${d.name}</div>
               <div class="food-address">${d.address}</div>
@@ -1725,28 +1564,12 @@ const photosHTML = photos.length
             </div>
 
             <div class="food-actions">
-             <button onclick="event.stopPropagation(); editFood(${d.id})">編輯</button>
-             <button onclick="event.stopPropagation(); deleteFood(${d.id})">刪除</button>
-
+              <button onclick="editFood(${d.id})">編輯</button>
+              <button onclick="deleteFood(${d.id})">刪除</button>
             </div>
           </div>
 
-          <!-- 可收合內容 -->
-          <div class="food-body">
-            ${
-              photos.length
-                ? `
-                <div class="food-photos-row">
-                  ${photos
-                    .map(
-                      url =>
-                        `<img src="${url}" onclick="openLightbox('${url}')" />`
-                    )
-                    .join("")}
-                </div>`
-                : ""
-            }
-          </div>
+          ${photosHTML}
 
         </div>
         `
@@ -1948,10 +1771,6 @@ tabButtons.forEach(btn => {
     if (btn.dataset.tab === "food") loadFoods();
   });
 });
-
-
-
-
 
   // === 匯率試算 ===
   const rateTwdPerJpy = document.getElementById("rateTwdPerJpy");
@@ -2594,80 +2413,6 @@ textDiv.innerHTML = `
   loadExpenses();
   loadPrep();
   loadShop();
-
-
-
-window.addEventListener("hashchange", () => {
-  const id = location.hash.replace("#", "");
-  if (!id) return;
-
-  const el = document.getElementById(id);
-  if (el) {
-    el.scrollIntoView({
-      behavior: "smooth",
-      block: "start"
-    });
-
-    // 高亮提示
-    el.classList.add("highlight");
-    setTimeout(() => el.classList.remove("highlight"), 1500);
-  }
-});
-
-function focusFoodOnMap(id, query) {
-  const map = document.getElementById("foodMap");
-  if (!map) return;
-
-  // 重新定位地圖
-  map.src =
-    "https://www.google.com/maps?q=" +
-    query +
-    "&output=embed&hl=zh-TW";
-
-  // 同步更新 hash（不會 reload）
-  history.replaceState(null, "", "#food-" + id);
-}
-
-/* === Lightbox === */
-function openLightbox(url) {
-  const box = document.getElementById("lightbox");
-  const img = document.getElementById("lightboxImg");
-  img.src = url;
-  box.style.display = "flex";
-}
-
-function closeLightbox() {
-  document.getElementById("lightbox").style.display = "none";
-}
-
-/* === Food card collapse === */
-function toggleFood(el) {
-  const card = el.closest(".food-card");
-  if (card) card.classList.toggle("collapsed");
-}
-
-loadFoods();
-loadExpenses();
-loadShopping();
-
-
 </script>
-
-<div id="lightbox" onclick="closeLightbox()" style="display:none">
-  <img id="lightboxImg" />
-</div>
-
-<!-- ===== Photo Lightbox ===== -->
-<div id="photoViewer" class="photo-viewer hidden">
-  <div class="photo-viewer-header">
-    <span id="photoViewerClose">✕</span>
-  </div>
-
-  <div class="photo-viewer-body" id="photoViewerBody">
-    <!-- images injected here -->
-  </div>
-</div>
-
-
 </body>
 </html>
