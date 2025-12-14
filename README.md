@@ -1631,7 +1631,14 @@ foodList.appendChild(section);
       section.insertAdjacentHTML(
         "beforeend",
         `
-        <div class="food-card" id="food-${d.id}">
+        <div
+  class="food-card"
+  id="food-${d.id}"
+  onclick="focusFoodOnMap(${d.id}, '${encodeURIComponent(
+    `${d.name} ${d.address}`
+  )}')"
+>
+
           
           <!-- 卡片主列（可點擊收合） -->
           <div class="food-card-main" onclick="toggleFood(this)">
@@ -1642,8 +1649,9 @@ foodList.appendChild(section);
             </div>
 
             <div class="food-actions">
-              <button onclick="event.stopPropagation();editFood(${d.id})">編輯</button>
-              <button onclick="event.stopPropagation();deleteFood(${d.id})">刪除</button>
+             <button onclick="event.stopPropagation(); editFood(${d.id})">編輯</button>
+             <button onclick="event.stopPropagation(); deleteFood(${d.id})">刪除</button>
+
             </div>
           </div>
 
@@ -2551,6 +2559,19 @@ window.addEventListener("hashchange", () => {
   }
 });
 
+function focusFoodOnMap(id, query) {
+  const map = document.getElementById("foodMap");
+  if (!map) return;
+
+  // 重新定位地圖
+  map.src =
+    "https://www.google.com/maps?q=" +
+    query +
+    "&output=embed&hl=zh-TW";
+
+  // 同步更新 hash（不會 reload）
+  history.replaceState(null, "", "#food-" + id);
+}
 
 </script>
 
