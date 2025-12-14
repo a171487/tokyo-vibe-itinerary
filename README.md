@@ -669,35 +669,25 @@
     </div>
 
     <div class="card">
-  <h3>富士山即時直播</h3>
 
-  <div class="embed-box">
+<div class="card">
+  <h2 class="card-title">富士山即時直播 🗻</h2>
+
+  <div style="width:100%; aspect-ratio:16/9; overflow:hidden; border-radius:14px;">
     <iframe
-      src="https://www.youtube.com/embed/bdUbACCWmoY"
-      title="富士山直播"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-      allowfullscreen
-    ></iframe>
+      src="https://www.youtube.com/embed/VIDEO_ID"
+      style="width:100%; height:100%; border:0;"
+      allowfullscreen>
+    </iframe>
+  </div>
+
+  <div style="margin-top:14px;">
+    <a href="https://fuji-san.info/" target="_blank" class="btn-outline">
+      🔗 開啟 fuji-san.info 能見度預報
+    </a>
   </div>
 </div>
 
-      <div class="video">
-        <iframe src="https://www.youtube.com/embed/bdUbACCWmoY"
-                title="Mt. Fuji Live 1"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowfullscreen></iframe>
-      </div>
-      <div class="video">
-        <iframe src="https://www.youtube.com/embed/Gn2CJjzY068"
-                title="Mt. Fuji Live 2"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowfullscreen></iframe>
-      </div>
-      <div class="label" style="margin-top:8px;">富士山能見度預報</div>
-      <a class="pill pill-accent" href="https://fuji-san.info/zh-tw/index.html" target="_blank" rel="noopener">
-        🔗 開啟 fuji-san.info 能見度預報
-      </a>
-    </div>
 
     <!-- 緊急電話 & 線上醫療 -->
     <div class="card">
@@ -737,11 +727,7 @@
       </div>
 
 <div class="embed-box" style="margin-top:12px;">
-  <iframe
-    src="https://www.google.com/maps?q=2%20Chome-18-18%20Higashiueno%20Taito%20City%20Tokyo%20110-0015&output=embed"
-    loading="lazy"
-    referrerpolicy="no-referrer-when-downgrade"
-  ></iframe>
+  
 </div>
 
 
@@ -753,9 +739,10 @@
 
       <div class="map-embed">
         <iframe
-          loading="lazy"
-          src="https://www.google.com/maps?q=2+Chome-18-18+Higashiueno,+Taito+City,+Tokyo+110-0015+Japan&output=embed">
-        </iframe>
+    src="https://www.google.com/maps?q=2%20Chome-18-18%20Higashiueno%20Taito%20City%20Tokyo%20110-0015&output=embed"
+    loading="lazy"
+    referrerpolicy="no-referrer-when-downgrade"
+  ></iframe>
       </div>
     </div>
 
