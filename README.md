@@ -570,64 +570,7 @@
   border: 1px solid rgba(255,255,255,0.1);
 }
 
-  
-    /* ===== Modal (shared) ===== */
-    .modal {
-      position: fixed;
-      inset: 0;
-      z-index: 9999;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 18px;
-      background: rgba(0,0,0,.55);
-      backdrop-filter: blur(2px);
-    }
-    .modal.show { display: flex; }
-    .modal .modal-card {
-      width: 100%;
-      max-width: 520px;
-      border-radius: 16px;
-      border: 1px solid rgba(148,163,184,.18);
-      background: rgba(2,6,23,.92);
-      box-shadow: 0 18px 50px rgba(0,0,0,.45);
-      padding: 14px;
-    }
-    .modal .modal-head {
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      margin-bottom: 10px;
-    }
-    .modal .modal-head h3 {
-      margin: 0;
-      font-size: 18px;
-      font-weight: 800;
-      letter-spacing: .2px;
-    }
-    .modal .close-x {
-      border: 1px solid rgba(148,163,184,.25);
-      background: rgba(148,163,184,.10);
-      color: #e5e7eb;
-      padding: 8px 10px;
-      border-radius: 12px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-    .modal .grid2 {
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-    .modal .actions {
-      display:flex;
-      gap:10px;
-      margin-top: 12px;
-    }
-    .modal .actions button { flex:1; }
-
-</style>
+  </style>
 </head>
 <body>
 <header>東京旅遊助理 v6.2</header>
@@ -1449,79 +1392,6 @@
   </section>
 </main>
 
-<!-- ===================== 編輯 Modal（記帳 / 購物） ===================== -->
-<div id="expenseEditModal" class="modal" aria-hidden="true">
-  <div class="modal-card" role="dialog" aria-modal="true" aria-label="編輯記帳">
-    <div class="modal-head">
-      <h3>編輯記帳</h3>
-      <button class="close-x" type="button" onclick="closeExpenseEdit()">關閉</button>
-    </div>
-
-    <input type="hidden" id="ee_id" />
-
-    <label class="label">項目名稱</label>
-    <input id="ee_title" type="text" />
-
-    <div class="grid2">
-      <div>
-        <label class="label">金額</label>
-        <input id="ee_amount" type="number" inputmode="decimal" />
-      </div>
-      <div>
-        <label class="label">幣別</label>
-        <select id="ee_currency">
-          <option value="JPY">JPY（日圓）</option>
-          <option value="TWD">TWD（台幣）</option>
-        </select>
-      </div>
-    </div>
-
-    <label class="label">備註</label>
-    <textarea id="ee_note" placeholder="可補充：店家 / 用途 / 備註…"></textarea>
-
-    <div class="actions">
-      <button class="secondary" type="button" onclick="closeExpenseEdit()">取消</button>
-      <button class="primary" type="button" onclick="saveExpenseEdit()">儲存</button>
-    </div>
-  </div>
-</div>
-
-<div id="shopEditModal" class="modal" aria-hidden="true">
-  <div class="modal-card" role="dialog" aria-modal="true" aria-label="編輯購物項目">
-    <div class="modal-head">
-      <h3>編輯購物項目</h3>
-      <button class="close-x" type="button" onclick="closeShopEdit()">關閉</button>
-    </div>
-
-    <input type="hidden" id="se_id" />
-
-    <label class="label">品項名稱</label>
-    <input id="se_name" type="text" />
-
-    <div class="grid2">
-      <div>
-        <label class="label">金額</label>
-        <input id="se_amount" type="number" inputmode="decimal" />
-      </div>
-      <div>
-        <label class="label">幣別</label>
-        <select id="se_currency">
-          <option value="JPY">JPY（日圓）</option>
-          <option value="TWD">TWD（台幣）</option>
-        </select>
-      </div>
-    </div>
-
-    <label class="label">備註</label>
-    <textarea id="se_note" placeholder="可記錄：要買給誰 / 品牌 / 款式顏色…"></textarea>
-
-    <div class="actions">
-      <button class="secondary" type="button" onclick="closeShopEdit()">取消</button>
-      <button class="primary" type="button" onclick="saveShopEdit()">儲存</button>
-    </div>
-  </div>
-</div>
-
 <script>
   // === Supabase 初始化 ===
   const { createClient } = supabase;
@@ -2092,103 +1962,6 @@ tabButtons.forEach(btn => {
     return urls;
   }
 
-
-  // ===================== 編輯 Modal（記帳 / 購物） =====================
-  let editingExpenseId = null;
-  function openModal(id) {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.classList.add("show");
-    el.setAttribute("aria-hidden", "false");
-    // 點背景關閉
-    el.addEventListener("click", (ev) => {
-      if (ev.target === el) el.classList.remove("show");
-    }, { once: true });
-  }
-  function closeModal(id) {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.classList.remove("show");
-    el.setAttribute("aria-hidden", "true");
-  }
-
-  // --- 記帳編輯 ---
-  async function openExpenseEdit(id) {
-    const { data, error } = await sb.from("expenses").select("*").eq("id", id).single();
-    if (error) { alert("讀取記帳資料失敗：" + error.message); return; }
-    editingExpenseId = id;
-
-    document.getElementById("ee_id").value = data.id;
-    document.getElementById("ee_title").value = data.title || "";
-    document.getElementById("ee_amount").value = data.amount ?? 0;
-    document.getElementById("ee_currency").value = data.currency || "JPY";
-    document.getElementById("ee_note").value = data.note || "";
-
-    openModal("expenseEditModal");
-  }
-  function closeExpenseEdit() {
-    editingExpenseId = null;
-    closeModal("expenseEditModal");
-  }
-  async function saveExpenseEdit() {
-    const id = document.getElementById("ee_id").value || editingExpenseId;
-    if (!id) return;
-
-    const payload = {
-      title: (document.getElementById("ee_title").value || "").trim(),
-      amount: parseFloat(document.getElementById("ee_amount").value || "0") || 0,
-      currency: document.getElementById("ee_currency").value || "JPY",
-      note: (document.getElementById("ee_note").value || "").trim() || null
-    };
-
-    const { error } = await sb.from("expenses").update(payload).eq("id", id);
-    if (error) { alert("更新記帳失敗：" + error.message); return; }
-
-    closeExpenseEdit();
-    await loadExpenses();
-  }
-
-  // --- 購物清單編輯 ---
-  let editingShopId = null;
-  function openShopEdit(id) {
-    const item = (shopItems || []).find(s => s.id === id);
-    if (!item) { alert("找不到該購物項目"); return; }
-    editingShopId = id;
-
-    document.getElementById("se_id").value = item.id;
-    document.getElementById("se_name").value = item.name || "";
-    document.getElementById("se_amount").value = item.price ?? 0;
-    document.getElementById("se_currency").value = item.currency || "JPY";
-    document.getElementById("se_note").value = item.note || "";
-
-    openModal("shopEditModal");
-  }
-  function closeShopEdit() {
-    editingShopId = null;
-    closeModal("shopEditModal");
-  }
-  async function saveShopEdit() {
-    const id = document.getElementById("se_id").value || editingShopId;
-    if (!id) return;
-
-    const payload = {
-      name: (document.getElementById("se_name").value || "").trim(),
-      price: parseFloat(document.getElementById("se_amount").value || "0") || 0,
-      currency: document.getElementById("se_currency").value || "JPY",
-      note: (document.getElementById("se_note").value || "").trim() || ""
-    };
-
-    const { error } = await sb.from("shopping_items").update(payload).eq("id", id);
-    if (error) { alert("更新購物項目失敗：" + error.message); return; }
-
-    // 同步本地陣列，立即反映
-    const idx = (shopItems || []).findIndex(s => s.id === id);
-    if (idx >= 0) shopItems[idx] = { ...shopItems[idx], ...payload };
-
-    closeShopEdit();
-    renderShop();
-  }
-
   // === 記帳 ===
   const expDate = document.getElementById("expDate");
   const expTime = document.getElementById("expTime");
@@ -2259,8 +2032,30 @@ tabButtons.forEach(btn => {
       const editBtn = document.createElement("button");
       editBtn.className = "tiny-btn";
       editBtn.textContent = "編輯";
-      editBtn.addEventListener("click", () => openExpenseEdit(e.id));
-const delBtn = document.createElement("button");
+      editBtn.addEventListener("click", async () => {
+        const newTitle = prompt("項目名稱：", e.title || "");
+        if (newTitle === null) return;
+        const newAmtStr = prompt("金額：", e.amount || 0);
+        if (newAmtStr === null) return;
+        const newCurrency = prompt("幣別（例如 JPY / TWD）：", e.currency || "JPY");
+        if (newCurrency === null) return;
+        const newNote = prompt("備註：", e.note || "");
+        const newAmt = parseFloat(newAmtStr || "0") || 0;
+
+        const { error: upErr } = await sb.from("expenses").update({
+          title: newTitle.trim(),
+          amount: newAmt,
+          currency: newCurrency.trim() || "JPY",
+          note: (newNote || "").trim() || null
+        }).eq("id", e.id);
+        if (upErr) {
+          alert("更新記帳資料失敗：" + upErr.message);
+        } else {
+          loadExpenses();
+        }
+      });
+
+      const delBtn = document.createElement("button");
       delBtn.className = "tiny-btn danger";
       delBtn.textContent = "刪除";
       delBtn.style.marginLeft = "6px";
@@ -2404,8 +2199,137 @@ const delBtn = document.createElement("button");
       const editBtn = document.createElement("button");
       editBtn.className = "tiny-btn";
       editBtn.textContent = "編輯";
-      editBtn.addEventListener("click", () => openShopEdit(item.id));
-const delBtn = document.createElement("button");
+      editBtn.addEventListener("click", async () => {
+        const newText = prompt("編輯項目內容：", item.name || "");
+        if (newText === null) return;
+        const trimmed = newText.trim();
+        if (!trimmed) return;
+        item.name = trimmed;
+        renderPrep();
+        await sb.from("prep_items").update({ name: trimmed }).eq("id", item.id);
+      });
+
+      const delBtn = document.createElement("button");
+      delBtn.className = "tiny-btn danger";
+      delBtn.textContent = "刪除";
+      delBtn.addEventListener("click", async () => {
+        if (!confirm("確定刪除此項目？")) return;
+        await sb.from("prep_items").delete().eq("id", item.id);
+        prepItems = prepItems.filter(p => p.id !== item.id);
+        renderPrep();
+      });
+
+      row.appendChild(checkbox);
+      row.appendChild(span);
+      row.appendChild(editBtn);
+      row.appendChild(delBtn);
+      prepListEl.appendChild(row);
+    });
+  }
+
+  prepAddBtn.addEventListener("click", async () => {
+    const text = prepInput.value.trim();
+    if (!text) return;
+    const { data, error } = await sb
+      .from("prep_items")
+      .insert({ name: text })
+      .select()
+      .single();
+    if (error) {
+      console.error(error);
+      alert("新增行前準備項目失敗：" + error.message);
+      return;
+    }
+    prepInput.value = "";
+    prepItems.push(data);
+    renderPrep();
+  });
+
+  // === 購物清單 ===
+  const shopName = document.getElementById("shopName");
+  const shopAmount = document.getElementById("shopAmount");
+  const shopCurrency = document.getElementById("shopCurrency");
+  const shopNote = document.getElementById("shopNote");
+  const shopImg = document.getElementById("shopImg");
+  const shopAddBtn = document.getElementById("shopAddBtn");
+  const shopListEl = document.getElementById("shopList");
+  const shopUploadStatus = document.getElementById("shopUploadStatus");
+  let shopItems = [];
+
+  async function loadShop() {
+    const { data, error } = await sb
+      .from("shopping_items")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error(error);
+      shopListEl.innerHTML = `<div class="small">讀取購物清單失敗：${error.message}</div>`;
+      return;
+    }
+    shopItems = data;
+    renderShop();
+  }
+
+  function renderShop() {
+    if (!shopItems.length) {
+      shopListEl.innerHTML = `<div class="small">目前尚無購物清單項目。</div>`;
+      return;
+    }
+    shopListEl.innerHTML = "";
+    shopItems.forEach(item => {
+      const row = document.createElement("div");
+      row.className = "shop-item";
+
+      const textDiv = document.createElement("div");
+      textDiv.className = "shop-text";
+      const amountLabel = (item.price ?? 0).toLocaleString?.() || item.price || 0;
+
+const photos = [item.photo1_url, item.photo2_url, item.photo3_url]
+  .filter(Boolean)
+  .map(url => `
+    <a href="${url}" target="_blank">
+      <img src="${url}" 
+           style="width:70px;height:70px;object-fit:cover;border-radius:8px;margin-right:6px;border:1px solid #555;" />
+    </a>
+  `)
+  .join("");
+
+
+
+textDiv.innerHTML = `
+        <div class="shop-item-title">${item.name || "(未命名)"}</div>
+        <div class="shop-item-amount">${amountLabel} ${item.currency || ""}</div>
+        ${item.note ? `<div class="small">備註：${item.note}</div>` : ""}
+        ${photos ? `<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;">${photos}</div>` : ""}
+      `;
+
+
+      const editBtn = document.createElement("button");
+      editBtn.className = "tiny-btn";
+      editBtn.textContent = "編輯";
+      editBtn.addEventListener("click", async () => {
+        const newName = prompt("品項名稱：", item.name || "");
+        if (newName === null) return;
+        const newAmountStr = prompt("金額：", item.price || 0);
+        if (newAmountStr === null) return;
+        const newCur = prompt("幣別（JPY / TWD）：", item.currency || "JPY");
+        if (newCur === null) return;
+        const newNote = prompt("備註：", item.note || "");
+        item.name = newName.trim();
+        item.price = parseFloat(newAmountStr || "0") || 0;
+        item.currency = newCur.trim() || "JPY";
+        item.note = (newNote || "").trim();
+        renderShop();
+        await sb.from("shopping_items").update({
+          name: item.name,
+          price: item.price,
+          currency: item.currency,
+          note: item.note
+        }).eq("id", item.id);
+      });
+
+      const delBtn = document.createElement("button");
       delBtn.className = "tiny-btn danger";
       delBtn.textContent = "刪除";
       delBtn.addEventListener("click", async () => {
