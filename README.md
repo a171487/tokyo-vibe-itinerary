@@ -505,6 +505,71 @@
   }
 }
 
+.food-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 14px;
+}
+
+.food-card-main {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.food-text {
+  flex: 1;
+}
+
+.food-name {
+  font-weight: 700;
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+
+.food-address {
+  font-size: 13px;
+  opacity: 0.85;
+  line-height: 1.4;
+}
+
+.food-area {
+  font-size: 12px;
+  opacity: 0.6;
+  margin-top: 4px;
+}
+
+.food-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.food-actions button {
+  padding: 6px 14px;
+  border-radius: 10px;
+  border: none;
+  background: #f0f0f0;
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.food-photos-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.food-photos-row img {
+  width: 90px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
   </style>
 </head>
 <body>
@@ -1467,34 +1532,35 @@ async function loadFoods() {
     ) +
     "&output=embed";
 
-  // ===== 輸出列表（照片左、按鈕右） =====
+  // ===== 輸出列表（每家一張卡片）=====
   Object.keys(groups).forEach(area => {
     const h = document.createElement("h3");
     h.textContent = area;
-    h.style.margin = "14px 0 6px";
+    h.style.margin = "18px 0 8px";
     h.style.fontWeight = "700";
     foodList.appendChild(h);
 
     groups[area].forEach(d => {
-      const photosHTML = [d.photo1_url, d.photo2_url, d.photo3_url]
-        .filter(Boolean)
-        .map(url => `<img src="${url}" />`)
-        .join("");
+      const photos = [d.photo1_url, d.photo2_url, d.photo3_url].filter(Boolean);
+
+      const photosHTML = photos.length
+        ? `
+          <div class="food-photos-row">
+            ${photos.map(url => `<img src="${url}" />`).join("")}
+          </div>
+        `
+        : "";
 
       foodList.insertAdjacentHTML(
         "beforeend",
         `
-        <div class="food-item">
+        <div class="food-card">
 
-          <div class="food-info">
-            <div class="food-name"><strong>${d.name}</strong></div>
-            <div class="food-address small">${d.address}</div>
-            ${d.area ? `<div class="small">分區：${d.area}</div>` : ""}
-          </div>
-
-          <div class="food-right">
-            <div class="food-photos">
-              ${photosHTML}
+          <div class="food-card-main">
+            <div class="food-text">
+              <div class="food-name">${d.name}</div>
+              <div class="food-address">${d.address}</div>
+              <div class="food-area">分區：${d.area || "其他"}</div>
             </div>
 
             <div class="food-actions">
@@ -1502,6 +1568,8 @@ async function loadFoods() {
               <button onclick="deleteFood(${d.id})">刪除</button>
             </div>
           </div>
+
+          ${photosHTML}
 
         </div>
         `
