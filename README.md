@@ -570,25 +570,6 @@
   border: 1px solid rgba(255,255,255,0.1);
 }
 
-/* ===== Embed box (YouTube / Google Maps) ===== */
-.embed-box {
-  position: relative;
-  width: 100%;
-  padding-top: 56.25%; /* 16:9 */
-  border-radius: 12px;
-  overflow: hidden;
-  background: #000;
-}
-
-.embed-box iframe {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  border: 0;
-}
-
-
   </style>
 </head>
 <body>
@@ -668,26 +649,29 @@
       </div>
     </div>
 
+    <!-- 富士山直播 -->
     <div class="card">
-
-<div class="card">
-  <h2 class="card-title">富士山即時直播 🗻</h2>
-
-  <div style="width:100%; aspect-ratio:16/9; overflow:hidden; border-radius:14px;">
-    <iframe
-      src="https://www.youtube.com/embed/VIDEO_ID"
-      style="width:100%; height:100%; border:0;"
-      allowfullscreen>
-    </iframe>
-  </div>
-
-  <div style="margin-top:14px;">
-    <a href="https://fuji-san.info/" target="_blank" class="btn-outline">
-      🔗 開啟 fuji-san.info 能見度預報
-    </a>
-  </div>
-</div>
-
+      <h2>富士山直播 🗻</h2>
+      <div class="small">
+        連線兩個 YouTube 富士山直播，建議在 Wi-Fi 環境下觀看。
+      </div>
+      <div class="video">
+        <iframe src="https://www.youtube.com/embed/bdUbACCWmoY"
+                title="Mt. Fuji Live 1"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen></iframe>
+      </div>
+      <div class="video">
+        <iframe src="https://www.youtube.com/embed/Gn2CJjzY068"
+                title="Mt. Fuji Live 2"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen></iframe>
+      </div>
+      <div class="label" style="margin-top:8px;">富士山能見度預報</div>
+      <a class="pill pill-accent" href="https://fuji-san.info/zh-tw/index.html" target="_blank" rel="noopener">
+        🔗 開啟 fuji-san.info 能見度預報
+      </a>
+    </div>
 
     <!-- 緊急電話 & 線上醫療 -->
     <div class="card">
@@ -726,10 +710,6 @@
         2 Chome-18-18 Higashiueno, Taito City, Tokyo 110-0015 日本
       </div>
 
-  
-</div>
-
-
       <div class="label">入住 / 退房</div>
       <div class="small">
         Check-in：<b>15:00</b> 後<br />
@@ -737,13 +717,10 @@
       </div>
 
       <div class="map-embed">
-
-<div class="embed-box" style="margin-top:12px;">
         <iframe
-    src="https://www.google.com/maps?q=2%20Chome-18-18%20Higashiueno%20Taito%20City%20Tokyo%20110-0015&output=embed"
-    loading="lazy"
-    referrerpolicy="no-referrer-when-downgrade"
-  ></iframe>
+          loading="lazy"
+          src="https://www.google.com/maps?q=2+Chome-18-18+Higashiueno,+Taito+City,+Tokyo+110-0015+Japan&output=embed">
+        </iframe>
       </div>
     </div>
 
