@@ -584,6 +584,20 @@
 .day-map-box iframe{width:100%;height:100%;border:0}
 </style>
 
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+<style id="trip-leaflet-map-style">
+  /* Trip daily map (isolated) */
+  #tripDayMap { width: 100%; height: 280px; border-radius: 14px; overflow: hidden; }
+  .trip-daybar { display:flex; gap:8px; overflow-x:auto; padding-bottom:6px; -webkit-overflow-scrolling:touch; }
+  .trip-daybar button { flex: 0 0 auto; padding:8px 12px; border-radius:999px; border:1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.06); color:#fff; }
+  .trip-daybar button.active { background: rgba(255,255,255,.16); border-color: rgba(255,255,255,.28); }
+  .trip-map-actions { display:flex; gap:8px; margin-top:10px; }
+  .trip-map-actions a { flex:1; text-align:center; text-decoration:none; padding:10px 12px; border-radius:12px; border:1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.06); color:#fff; }
+  .trip-map-note { font-size:12px; opacity:.75; margin-top:8px; line-height:1.35; }
+</style>
+
 </head>
 <body>
 <header>東京旅遊助理 v6.2</header>
@@ -2523,6 +2537,161 @@ textDiv.innerHTML = `
     // Default select first day
     selectDay(days[0].key);
   });
+})();
+</script>
+
+
+<!-- ===== Trip Day Tabs + Leaflet Daily Map (Fixed Pins + Draggable) ===== -->
+<script>
+(function() {
+  // Find trip section (your file uses #plan)
+  const tripSection = document.querySelector('#plan') || document.querySelector('#trip') || document.querySelector('[data-tab="plan"]') || document.querySelector('[data-tab="trip"]');
+  if(!tripSection) return;
+
+  // Create day bar + containers (isolated; does not touch existing trip text)
+  const dayBar = document.createElement('div');
+  dayBar.className = 'trip-daybar';
+
+  // Wrap existing trip content into day panels by detecting headings that include dates like 12/26
+  // If we cannot reliably parse, we fall back to showing all text and only update map pins.
+  const panels = new Map();
+  const dayKeys = ["2024-12-26", "2024-12-27", "2024-12-28", "2024-12-29", "2024-12-30", "2024-12-31"];
+
+  // Build buttons
+  const dayList = [
+    {key:'2024-12-26', label:'12/26'},
+    {key:'2024-12-27', label:'12/27'},
+    {key:'2024-12-28', label:'12/28'},
+    {key:'2024-12-29', label:'12/29'},
+    {key:'2024-12-30', label:'12/30'},
+    {key:'2024-12-31', label:'12/31'},
+  ];
+
+  // Map container card
+  const mapCard = document.createElement('div');
+  mapCard.style.marginTop = '12px';
+  mapCard.innerHTML = `
+    <div id="tripDayMap"></div>
+    <div class="trip-map-actions">
+      <a id="openDayInGmaps" href="#" target="_blank" rel="noopener">在 Google Maps 開啟當日行程</a>
+      <a id="recenterDayMap" href="javascript:void(0)">地圖置中</a>
+    </div>
+    <div class="trip-map-note">提示：地圖可拖曳/縮放；點擊地圖也會開啟 Google Maps（含當日所有點）。</div>
+  `;
+
+  // Insert UI at top of trip section
+  tripSection.prepend(mapCard);
+  tripSection.prepend(dayBar);
+
+  // Initialize Leaflet map
+  let map, layerGroup, lastBounds;
+  function ensureMap() {
+    if(map) return;
+    map = L.map('tripDayMap', { zoomControl: true });
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap'
+    }).addTo(map);
+    layerGroup = L.layerGroup().addTo(map);
+    map.setView([35.681236, 139.767125], 11); // Tokyo default
+
+    // Clicking map opens Google Maps for the active day (with all points)
+    map.on('click', function() {
+      const url = buildGoogleDirectionsUrl(activeDayKey);
+      if(url) window.open(url, '_blank');
+    });
+
+    document.getElementById('recenterDayMap').addEventListener('click', () => {
+      if(lastBounds) map.fitBounds(lastBounds, { padding:[20,20] });
+    });
+  }
+
+  // Geocoding with Nominatim (no key); cache in localStorage
+  async function geocode(q) {
+    const cacheKey = 'geo:'+q;
+    try {
+      const cached = localStorage.getItem(cacheKey);
+      if(cached) return JSON.parse(cached);
+    } catch(e) {}
+
+    const url = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(q);
+    const res = await fetch(url, {
+      headers: { 'Accept': 'application/json' }
+    });
+    const js = await res.json();
+    if(!js || !js[0]) return null;
+    const out = { lat: parseFloat(js[0].lat), lon: parseFloat(js[0].lon) };
+    try { localStorage.setItem(cacheKey, JSON.stringify(out)); } catch(e) {}
+    return out;
+  }
+
+  function buildGoogleDirectionsUrl(dayKey) {
+    const points = PLACES[dayKey] || [];
+    if(points.length < 2) {
+      if(points.length === 1) return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(points[0]);
+      return '';
+    }
+    const origin = points[0];
+    const destination = points[points.length-1];
+    const waypoints = points.slice(1, -1).join('|');
+    // Directions URL (works in app with api=1)
+    let u = 'https://www.google.com/maps/dir/?api=1'
+      + '&origin=' + encodeURIComponent(origin)
+      + '&destination=' + encodeURIComponent(destination)
+      + '&travelmode=transit';
+    if(waypoints) u += '&waypoints=' + encodeURIComponent(waypoints);
+    return u;
+  }
+
+  const PLACES = {"2024-12-26": ["桃園國際機場 第一航廈 T1", "成田國際機場 第二航廈 T2", "Hotel Guest 1 Ueno Station", "阿美橫丁", "無印良品 上野丸井店", "OS Drug 上野店"], "2024-12-27": ["Tricolore Coffee 銀座本店", "牛たんの檸檬 有楽町店", "MARLOWE 丸之內店", "台場海濱公園", "惠比壽花園廣場"], "2024-12-28": ["東京車站 丸之內南口", "新倉山淺間公園", "日川時計店", "忍野八海", "大石公園（河口湖）"], "2024-12-29": ["Sukiyaki Juni Ten", "東急 Plaza 表參道原宿", "中目黑站"], "2024-12-30": ["NEWoMan TAKANAWA", "二木菓子 秋葉原本店"], "2024-12-31": ["成田山新勝寺", "成田山表參道", "成田夢牧場 門前店", "成田國際機場 第二航廈", "桃園國際機場 第一航廈 T1"]};
+
+  let activeDayKey = '2024-12-26';
+
+  async function renderDay(dayKey) {
+    activeDayKey = dayKey;
+    // button active
+    [...dayBar.querySelectorAll('button')].forEach(b => b.classList.toggle('active', b.dataset.key===dayKey));
+
+    ensureMap();
+    layerGroup.clearLayers();
+
+    const points = PLACES[dayKey] || [];
+    const coords = [];
+    for(const p of points) {
+      // Add region hints to improve accuracy
+      const hinted = (p.includes('桃園') ? (p + ' Taiwan') :
+                     (p.includes('成田') ? (p + ' Japan') :
+                     (p + ' Tokyo Japan')));
+      const c = await geocode(hinted);
+      if(!c) continue;
+      coords.push([c.lat, c.lon, p]);
+      const m = L.marker([c.lat, c.lon]).addTo(layerGroup);
+      m.bindPopup('<b>' + p + '</b>');
+    }
+
+    if(coords.length) {
+      const latlngs = coords.map(x => [x[0], x[1]]);
+      lastBounds = L.latLngBounds(latlngs);
+      map.fitBounds(lastBounds, { padding:[20,20] });
+    }
+
+    const openBtn = document.getElementById('openDayInGmaps');
+    const gUrl = buildGoogleDirectionsUrl(dayKey);
+    openBtn.href = gUrl || 'https://www.google.com/maps';
+  }
+
+  // Create buttons
+  dayList.forEach(d => {
+    const btn = document.createElement('button');
+    btn.textContent = d.label;
+    btn.dataset.key = d.key;
+    btn.addEventListener('click', () => renderDay(d.key));
+    dayBar.appendChild(btn);
+  });
+
+  // Initial render
+  renderDay(activeDayKey);
+
 })();
 </script>
 
