@@ -513,6 +513,14 @@
   margin-bottom: 14px;
 }
 
+.food-body {
+  margin-top: 10px;
+}
+
+.food-card.collapsed .food-body {
+  display: none;
+}
+
 .food-card-main {
   display: flex;
   justify-content: space-between;
@@ -595,6 +603,11 @@ function openLightbox(url) {
 
 function closeLightbox() {
   document.getElementById("lightbox").style.display = "none";
+}
+
+function toggleFood(el) {
+  const card = el.closest(".food-card");
+  card.classList.toggle("collapsed");
 }
 
 
@@ -1584,8 +1597,12 @@ async function loadFoods() {
         "beforeend",
         `
         <div class="food-card">
+        <div class="food-card-main" onclick="toggleFood(this)">
 
-          <div class="food-card-main">
+        <div class="food-body">
+  <!-- 原本的地址、分區、照片都在這 -->
+</div>
+
             <div class="food-text">
               <div class="food-name">${d.name}</div>
               <div class="food-address">${d.address}</div>
