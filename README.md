@@ -611,6 +611,8 @@ function toggleFood(el) {
 }
 
 
+
+
 .food-card.collapsed .food-body {
   display: none;
 }
@@ -646,6 +648,51 @@ function toggleFood(el) {
 .food-area-section.collapsed {
   display: none;
 }
+
+/* ===== Photo Viewer (Full Screen) ===== */
+.photo-viewer {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.9);
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+}
+
+.photo-viewer.hidden {
+  display: none;
+}
+
+.photo-viewer-header {
+  height: 56px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0 16px;
+  color: #fff;
+  font-size: 22px;
+}
+
+.photo-viewer-header span {
+  cursor: pointer;
+}
+
+.photo-viewer-body {
+  flex: 1;
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+}
+
+.photo-viewer-body img {
+  flex: 0 0 100%;
+  object-fit: contain;
+  scroll-snap-align: center;
+  max-width: 100%;
+}
+
+
+
 
   </style>
 </head>
@@ -1500,6 +1547,31 @@ const foodList = document.getElementById("foodList");
 const foodMap = document.getElementById("foodMap");
 const foodEditModal = document.getElementById("foodEditModal");
 
+
+function openPhotoViewer(urls = [], startIndex = 0) {
+  const viewer = document.getElementById("photoViewer");
+  const body = document.getElementById("photoViewerBody");
+
+  body.innerHTML = "";
+
+  urls.forEach(url => {
+    const img = document.createElement("img");
+    img.src = url;
+    body.appendChild(img);
+  });
+
+  viewer.classList.remove("hidden");
+
+  setTimeout(() => {
+    body.scrollLeft = body.clientWidth * startIndex;
+  }, 50);
+}
+
+document.getElementById("photoViewerClose").onclick = () => {
+  document.getElementById("photoViewer").classList.add("hidden");
+};
+
+
 function computeFoodArea(addr = "", name = "") {
   const s = (addr + " " + name).toLowerCase();
   // 銀座 / 丸之內 / 有樂町
@@ -1627,6 +1699,22 @@ foodList.appendChild(section);
 
     groups[area].forEach(d => {
       const photos = [d.photo1_url, d.photo2_url, d.photo3_url].filter(Boolean);
+
+const photosHTML = photos.length
+  ? `
+    <div class="food-photos-row">
+      ${photos
+        .map(
+          (url, idx) =>
+            `<img src="${url}" onclick="event.stopPropagation(); openPhotoViewer(${JSON.stringify(
+              photos
+            )}, ${idx})" />`
+        )
+        .join("")}
+    </div>
+  `
+  : "";
+
 
       section.insertAdjacentHTML(
         "beforeend",
@@ -2578,6 +2666,18 @@ function focusFoodOnMap(id, query) {
 <div id="lightbox" onclick="closeLightbox()" style="display:none">
   <img id="lightboxImg" />
 </div>
+
+<!-- ===== Photo Lightbox ===== -->
+<div id="photoViewer" class="photo-viewer hidden">
+  <div class="photo-viewer-header">
+    <span id="photoViewerClose">✕</span>
+  </div>
+
+  <div class="photo-viewer-body" id="photoViewerBody">
+    <!-- images injected here -->
+  </div>
+</div>
+
 
 </body>
 </html>
