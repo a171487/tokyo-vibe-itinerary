@@ -611,6 +611,26 @@ function toggleFood(el) {
 }
 
 
+.food-card.collapsed .food-body {
+  display: none;
+}
+
+#lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.85);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+#lightbox img {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 14px;
+}
+
   </style>
 </head>
 <body>
@@ -1555,7 +1575,7 @@ async function loadFoods() {
     return;
   }
 
-  // ===== 依區域分組 =====
+  // === 依區域分組 ===
   const groups = {};
   data.forEach(d => {
     const area = d.area || "其他";
@@ -1565,7 +1585,7 @@ async function loadFoods() {
 
   foodList.innerHTML = "";
 
-  // ===== 地圖：每家一個 pin =====
+  // === 地圖 pin（每家一個）===
   foodMap.src =
     "https://www.google.com/maps?q=" +
     encodeURIComponent(
@@ -1573,36 +1593,23 @@ async function loadFoods() {
     ) +
     "&output=embed";
 
-  // ===== 輸出列表（每家一張卡片）=====
   Object.keys(groups).forEach(area => {
     const h = document.createElement("h3");
     h.textContent = area;
-    h.style.margin = "18px 0 8px";
+    h.style.margin = "18px 0 10px";
     h.style.fontWeight = "700";
     foodList.appendChild(h);
 
     groups[area].forEach(d => {
       const photos = [d.photo1_url, d.photo2_url, d.photo3_url].filter(Boolean);
 
-      const photosHTML = photos.length
-        ? `
-          <div class="food-photos-row">
-            ${photos.map(url => `<img src="${url}" onclick="openLightbox('${url}')" />
-`).join("")}
-          </div>
-        `
-        : "";
-
       foodList.insertAdjacentHTML(
         "beforeend",
         `
-        <div class="food-card">
-        <div class="food-card-main" onclick="toggleFood(this)">
-
-        <div class="food-body">
-  <!-- 原本的地址、分區、照片都在這 -->
-</div>
-
+        <div class="food-card" id="food-${d.id}">
+          
+          <!-- 卡片主列（可點擊收合） -->
+          <div class="food-card-main" onclick="toggleFood(this)">
             <div class="food-text">
               <div class="food-name">${d.name}</div>
               <div class="food-address">${d.address}</div>
@@ -1610,12 +1617,27 @@ async function loadFoods() {
             </div>
 
             <div class="food-actions">
-              <button onclick="editFood(${d.id})">編輯</button>
-              <button onclick="deleteFood(${d.id})">刪除</button>
+              <button onclick="event.stopPropagation();editFood(${d.id})">編輯</button>
+              <button onclick="event.stopPropagation();deleteFood(${d.id})">刪除</button>
             </div>
           </div>
 
-          ${photosHTML}
+          <!-- 可收合內容 -->
+          <div class="food-body">
+            ${
+              photos.length
+                ? `
+                <div class="food-photos-row">
+                  ${photos
+                    .map(
+                      url =>
+                        `<img src="${url}" onclick="openLightbox('${url}')" />`
+                    )
+                    .join("")}
+                </div>`
+                : ""
+            }
+          </div>
 
         </div>
         `
@@ -1817,6 +1839,31 @@ tabButtons.forEach(btn => {
     if (btn.dataset.tab === "food") loadFoods();
   });
 });
+
+
+
+function toggleFood(el) {
+  const card = el.closest(".food-card");
+  card.classList.toggle("collapsed");
+}
+
+function openLightbox(url) {
+  let box = document.getElementById("lightbox");
+  if (!box) {
+    document.body.insertAdjacentHTML(
+      "beforeend",
+      `
+      <div id="lightbox" onclick="this.style.display='none'">
+        <img id="lightboxImg">
+      </div>
+      `
+    );
+    box = document.getElementById("lightbox");
+  }
+  document.getElementById("lightboxImg").src = url;
+  box.style.display = "flex";
+}
+
 
   // === 匯率試算 ===
   const rateTwdPerJpy = document.getElementById("rateTwdPerJpy");
