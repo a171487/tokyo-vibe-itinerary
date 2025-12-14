@@ -570,6 +570,25 @@
   border: 1px solid rgba(255,255,255,0.1);
 }
 
+/* ===== Embed box (YouTube / Google Maps) ===== */
+.embed-box {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%; /* 16:9 */
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+}
+
+.embed-box iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+
   </style>
 </head>
 <body>
@@ -649,12 +668,19 @@
       </div>
     </div>
 
-    <!-- 富士山直播 -->
     <div class="card">
-      <h2>富士山直播 🗻</h2>
-      <div class="small">
-        連線兩個 YouTube 富士山直播，建議在 Wi-Fi 環境下觀看。
-      </div>
+  <h3>富士山即時直播</h3>
+
+  <div class="embed-box">
+    <iframe
+      src="https://www.youtube.com/embed/bdUbACCWmoY"
+      title="富士山直播"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen
+    ></iframe>
+  </div>
+</div>
+
       <div class="video">
         <iframe src="https://www.youtube.com/embed/bdUbACCWmoY"
                 title="Mt. Fuji Live 1"
@@ -709,6 +735,15 @@
       <div class="small">
         2 Chome-18-18 Higashiueno, Taito City, Tokyo 110-0015 日本
       </div>
+
+<div class="embed-box" style="margin-top:12px;">
+  <iframe
+    src="https://www.google.com/maps?q=2%20Chome-18-18%20Higashiueno%20Taito%20City%20Tokyo%20110-0015&output=embed"
+    loading="lazy"
+    referrerpolicy="no-referrer-when-downgrade"
+  ></iframe>
+</div>
+
 
       <div class="label">入住 / 退房</div>
       <div class="small">
