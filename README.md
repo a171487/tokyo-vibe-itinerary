@@ -570,6 +570,34 @@
   border: 1px solid rgba(255,255,255,0.1);
 }
 
+#lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+#lightbox img {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 14px;
+}
+
+function openLightbox(url) {
+  const box = document.getElementById("lightbox");
+  const img = document.getElementById("lightboxImg");
+  img.src = url;
+  box.style.display = "flex";
+}
+
+function closeLightbox() {
+  document.getElementById("lightbox").style.display = "none";
+}
+
+
   </style>
 </head>
 <body>
@@ -1546,7 +1574,8 @@ async function loadFoods() {
       const photosHTML = photos.length
         ? `
           <div class="food-photos-row">
-            ${photos.map(url => `<img src="${url}" />`).join("")}
+            ${photos.map(url => `<img src="${url}" onclick="openLightbox('${url}')" />
+`).join("")}
           </div>
         `
         : "";
@@ -2414,5 +2443,10 @@ textDiv.innerHTML = `
   loadPrep();
   loadShop();
 </script>
+
+<div id="lightbox" onclick="closeLightbox()" style="display:none">
+  <img id="lightboxImg" />
+</div>
+
 </body>
 </html>
