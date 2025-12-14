@@ -601,18 +601,6 @@ function openLightbox(url) {
   box.style.display = "flex";
 }
 
-function closeLightbox() {
-  document.getElementById("lightbox").style.display = "none";
-}
-
-function toggleFood(el) {
-  const card = el.closest(".food-card");
-  card.classList.toggle("collapsed");
-}
-
-
-
-
 .food-card.collapsed .food-body {
   display: none;
 }
@@ -1963,27 +1951,6 @@ tabButtons.forEach(btn => {
 
 
 
-function toggleFood(el) {
-  const card = el.closest(".food-card");
-  card.classList.toggle("collapsed");
-}
-
-function openLightbox(url) {
-  let box = document.getElementById("lightbox");
-  if (!box) {
-    document.body.insertAdjacentHTML(
-      "beforeend",
-      `
-      <div id="lightbox" onclick="this.style.display='none'">
-        <img id="lightboxImg">
-      </div>
-      `
-    );
-    box = document.getElementById("lightbox");
-  }
-  document.getElementById("lightboxImg").src = url;
-  box.style.display = "flex";
-}
 
 
   // === 匯率試算 ===
@@ -2660,6 +2627,29 @@ function focusFoodOnMap(id, query) {
   // 同步更新 hash（不會 reload）
   history.replaceState(null, "", "#food-" + id);
 }
+
+/* === Lightbox === */
+function openLightbox(url) {
+  const box = document.getElementById("lightbox");
+  const img = document.getElementById("lightboxImg");
+  img.src = url;
+  box.style.display = "flex";
+}
+
+function closeLightbox() {
+  document.getElementById("lightbox").style.display = "none";
+}
+
+/* === Food card collapse === */
+function toggleFood(el) {
+  const card = el.closest(".food-card");
+  if (card) card.classList.toggle("collapsed");
+}
+
+loadFoods();
+loadExpenses();
+loadShopping();
+
 
 </script>
 
