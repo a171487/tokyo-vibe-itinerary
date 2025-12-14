@@ -571,6 +571,19 @@
 }
 
   </style>
+
+<style id="dayTabsStyle">
+/* ===== Trip day subtabs ===== */
+.day-tabs{display:flex;gap:8px;overflow-x:auto;padding:4px 2px;margin:0 0 10px 0;scrollbar-width:none}
+.day-tabs::-webkit-scrollbar{display:none}
+.day-tab-btn{flex:0 0 auto;border:1px solid #334155;background:#0b1220;color:#e5e7eb;border-radius:999px;padding:8px 12px;font-size:13px;font-weight:700}
+.day-tab-btn.active{border-color:#22c55e;background:rgba(34,197,94,.18);color:#bbf7d0}
+.day-map-wrap{margin-top:12px}
+.day-map-title{font-weight:800;margin:0 0 8px 0;font-size:14px;color:#e5e7eb}
+.day-map-box{width:100%;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#000;border:1px solid rgba(148,163,184,.25)}
+.day-map-box iframe{width:100%;height:100%;border:0}
+</style>
+
 </head>
 <body>
 <header>東京旅遊助理 v6.2</header>
@@ -2414,5 +2427,104 @@ textDiv.innerHTML = `
   loadPrep();
   loadShop();
 </script>
+
+<script id="dayTabsScript">
+(function(){
+  function ready(fn){
+    if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn);
+    else fn();
+  }
+
+  ready(function(){
+    var plan = document.getElementById('plan');
+    if(!plan) return;
+
+    // Find day cards by the presence of .day-card-title
+    var cards = Array.prototype.slice.call(plan.querySelectorAll('.card'));
+    var dayCards = cards.filter(function(c){ return c.querySelector('.day-card-title'); });
+    if(dayCards.length === 0) return;
+
+    // Build metadata
+    var days = dayCards.map(function(card, idx){
+      var t = (card.querySelector('.day-card-title')||{}).textContent || ('Day ' + (idx+1));
+      var m = t.match(/\d{1,2}\/\d{1,2}/);
+      var key = m ? m[0] : ('day'+idx);
+      return { key:key, label:key, title:t, card:card };
+    });
+
+    // Create tab bar
+    var tabBar = document.createElement('div');
+    tabBar.className = 'day-tabs';
+
+    days.forEach(function(d){
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'day-tab-btn';
+      btn.textContent = d.label;
+      btn.addEventListener('click', function(){ selectDay(d.key); });
+      tabBar.appendChild(btn);
+      d._btn = btn;
+    });
+
+    // Insert tab bar at top of plan section
+    plan.insertBefore(tabBar, plan.firstChild);
+
+    // Add per-day map (only once) and hide all initially
+    dayCards.forEach(function(card){
+      // Prevent double-inject
+      if(card.querySelector('.day-map-wrap')) return;
+
+      // Collect place names from schedule titles
+      var titles = Array.prototype.slice.call(card.querySelectorAll('.schedule-title'))
+        .map(function(el){ return (el.textContent||'').trim(); })
+        .filter(Boolean)
+        .map(function(s){
+          // remove bracketed notes
+          return s.replace(/（.*?）/g,'').replace(/\(.*?\)/g,'').trim();
+        });
+
+      // Unique, keep order
+      var uniq = [];
+      titles.forEach(function(s){ if(uniq.indexOf(s) === -1) uniq.push(s); });
+
+      // Build map query
+      var q = uniq.length ? uniq.join(' | ') : (card.querySelector('.day-card-title')?.textContent || 'Tokyo');
+
+      var wrap = document.createElement('div');
+      wrap.className = 'day-map-wrap';
+
+      var h = document.createElement('div');
+      h.className = 'day-map-title';
+      h.textContent = '當日地圖';
+      wrap.appendChild(h);
+
+      var box = document.createElement('div');
+      box.className = 'day-map-box';
+
+      var iframe = document.createElement('iframe');
+      iframe.loading = 'lazy';
+      iframe.referrerPolicy = 'no-referrer-when-downgrade';
+      iframe.src = 'https://www.google.com/maps?q=' + encodeURIComponent(q) + '&output=embed';
+
+      box.appendChild(iframe);
+      wrap.appendChild(box);
+
+      card.appendChild(wrap);
+    });
+
+    function selectDay(key){
+      days.forEach(function(d){
+        var show = (d.key === key);
+        d.card.style.display = show ? '' : 'none';
+        if(d._btn) d._btn.classList.toggle('active', show);
+      });
+    }
+
+    // Default select first day
+    selectDay(days[0].key);
+  });
+})();
+</script>
+
 </body>
 </html>
