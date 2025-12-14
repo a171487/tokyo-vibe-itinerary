@@ -594,14 +594,12 @@
   border-radius: 14px;
 }
 
-
-
-
-
-
-
-
-
+function openLightbox(url) {
+  const box = document.getElementById("lightbox");
+  const img = document.getElementById("lightboxImg");
+  img.src = url;
+  box.style.display = "flex";
+}
 
 .food-card.collapsed .food-body {
   display: none;
@@ -1781,7 +1779,8 @@ foodAddBtn?.addEventListener("click", async () => {
     foodName.value = "";
     foodAddress.value = "";
     foodImg.value = "";
-    await alert("新增成功！");
+    await loadFoods();
+    alert("新增成功！");
   } catch (e) {
     alert("新增失敗：" + (e?.message || e));
   }
@@ -1791,7 +1790,8 @@ async function deleteFood(id) {
   if (!confirm("確定刪除這筆美食？")) return;
   const { error } = await sb.from("food_places").delete().eq("id", id);
   if (error) alert("刪除失敗：" + error.message);
-  await }
+  await loadFoods();
+}
 
 function openModal(html) {
   foodEditModal.style.display = "block";
@@ -1932,7 +1932,8 @@ async function editFood(id) {
       if (error) throw error;
 
       closeModal();
-      await alert("已更新！");
+      await loadFoods();
+      alert("已更新！");
     } catch (e) {
       alert("更新失敗：" + (e?.message || e));
     } finally {
@@ -1944,32 +1945,12 @@ async function editFood(id) {
 // 切到美食頁時自動刷新（避免多人同步時看不到最新）
 tabButtons.forEach(btn => {
   btn.addEventListener("click", () => {
-    if (btn.dataset.tab === "food") });
+    if (btn.dataset.tab === "food") loadFoods();
+  });
 });
 
 
 
-function toggleFood(el) {
-  const card = el.closest(".food-card");
-  card.classList.toggle("collapsed");
-}
-
-function openLightbox(url) {
-  let box = document.getElementById("lightbox");
-  if (!box) {
-    document.body.insertAdjacentHTML(
-      "beforeend",
-      `
-      <div id="lightbox" onclick="this.style.display='none'">
-        <img id="lightboxImg">
-      </div>
-      `
-    );
-    box = document.getElementById("lightbox");
-  }
-  document.getElementById("lightboxImg").src = url;
-  box.style.display = "flex";
-}
 
 
   // === 匯率試算 ===
@@ -2251,7 +2232,8 @@ function openLightbox(url) {
         if (upErr) {
           alert("更新記帳資料失敗：" + upErr.message);
         } else {
-          }
+          loadExpenses();
+        }
       });
 
       const delBtn = document.createElement("button");
@@ -2264,7 +2246,8 @@ function openLightbox(url) {
         if (delErr) {
           alert("刪除記帳資料失敗：" + delErr.message);
         } else {
-          }
+          loadExpenses();
+        }
       });
 
       btnRow.appendChild(editBtn);
@@ -2338,7 +2321,8 @@ function openLightbox(url) {
         expAmount.value = "";
         expNote.value = "";
         expImg.value = "";
-        }
+        loadExpenses();
+      }
     } catch (e) {
       console.error(e);
       alert("上傳或儲存時發生錯誤：" + (e.message || e));
@@ -2607,6 +2591,7 @@ textDiv.innerHTML = `
   });
 
   // === 初始化載入雲端資料 ===
+  loadExpenses();
   loadPrep();
   loadShop();
 
@@ -2643,6 +2628,29 @@ function focusFoodOnMap(id, query) {
   history.replaceState(null, "", "#food-" + id);
 }
 
+/* === Lightbox === */
+function openLightbox(url) {
+  const box = document.getElementById("lightbox");
+  const img = document.getElementById("lightboxImg");
+  img.src = url;
+  box.style.display = "flex";
+}
+
+function closeLightbox() {
+  document.getElementById("lightbox").style.display = "none";
+}
+
+/* === Food card collapse === */
+function toggleFood(el) {
+  const card = el.closest(".food-card");
+  if (card) card.classList.toggle("collapsed");
+}
+
+loadFoods();
+loadExpenses();
+loadShopping();
+
+
 </script>
 
 <div id="lightbox" onclick="closeLightbox()" style="display:none">
@@ -2660,42 +2668,6 @@ function focusFoodOnMap(id, query) {
   </div>
 </div>
 
-
-
-<script>
-/* === Lightbox === */
-function openLightbox(url) {
-  const box = document.getElementById("lightbox");
-  const img = document.getElementById("lightboxImg");
-  if (!box || !img) return;
-  img.src = url;
-  box.style.display = "flex";
-}
-function closeLightbox() {
-  const box = document.getElementById("lightbox");
-  if (box) box.style.display = "none";
-}
-/* === Food card collapse === */
-function toggleFood(el) {
-  const card = el.closest(".food-card");
-  if (card) card.classList.toggle("collapsed");
-}
-</script>
-
-
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  console.log("DOM ready, loading Supabase data");
-
-  try {
-    if (typeof loadFoods === "function") loadFoods();
-    if (typeof loadExpenses === "function") loadExpenses();
-    if (typeof loadShopping === "function") loadShopping();
-  } catch (e) {
-    console.error("Init error:", e);
-  }
-});
-</script>
 
 </body>
 </html>
