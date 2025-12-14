@@ -726,7 +726,6 @@
         2 Chome-18-18 Higashiueno, Taito City, Tokyo 110-0015 日本
       </div>
 
-<div class="embed-box" style="margin-top:12px;">
   
 </div>
 
@@ -738,6 +737,8 @@
       </div>
 
       <div class="map-embed">
+
+<div class="embed-box" style="margin-top:12px;">
         <iframe
     src="https://www.google.com/maps?q=2%20Chome-18-18%20Higashiueno%20Taito%20City%20Tokyo%20110-0015&output=embed"
     loading="lazy"
