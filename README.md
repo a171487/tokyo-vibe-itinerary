@@ -631,6 +631,22 @@ function toggleFood(el) {
   border-radius: 14px;
 }
 
+
+.food-card.highlight {
+  outline: 2px solid #6bbcff;
+  box-shadow: 0 0 0 3px rgba(107,188,255,.35);
+}
+
+.food-area-title {
+  cursor: pointer;
+  user-select: none;
+  margin: 18px 0 10px;
+}
+
+.food-area-section.collapsed {
+  display: none;
+}
+
   </style>
 </head>
 <body>
@@ -1587,23 +1603,32 @@ async function loadFoods() {
 
   // === 地圖 pin（每家一個）===
   foodMap.src =
-    "https://www.google.com/maps?q=" +
-    encodeURIComponent(
-      data.map(d => `${d.name} ${d.address}`).join(" | ")
-    ) +
-    "&output=embed";
+  "https://www.google.com/maps?q=" +
+  encodeURIComponent(
+    data.map(d => `${d.name} ${d.address}`).join(" | ")
+  ) +
+  "&output=embed&hl=zh-TW";
 
   Object.keys(groups).forEach(area => {
     const h = document.createElement("h3");
-    h.textContent = area;
-    h.style.margin = "18px 0 10px";
-    h.style.fontWeight = "700";
-    foodList.appendChild(h);
+h.className = "food-area-title";
+h.innerHTML = `▶ ${area}`;
+h.onclick = () => {
+  section.classList.toggle("collapsed");
+  h.innerHTML = section.classList.contains("collapsed")
+    ? `▶ ${area}`
+    : `▼ ${area}`;
+};
+foodList.appendChild(h);
+
+const section = document.createElement("div");
+section.className = "food-area-section";
+foodList.appendChild(section);
 
     groups[area].forEach(d => {
       const photos = [d.photo1_url, d.photo2_url, d.photo3_url].filter(Boolean);
 
-      foodList.insertAdjacentHTML(
+      section.insertAdjacentHTML(
         "beforeend",
         `
         <div class="food-card" id="food-${d.id}">
@@ -2506,6 +2531,27 @@ textDiv.innerHTML = `
   loadExpenses();
   loadPrep();
   loadShop();
+
+
+
+window.addEventListener("hashchange", () => {
+  const id = location.hash.replace("#", "");
+  if (!id) return;
+
+  const el = document.getElementById(id);
+  if (el) {
+    el.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+
+    // 高亮提示
+    el.classList.add("highlight");
+    setTimeout(() => el.classList.remove("highlight"), 1500);
+  }
+});
+
+
 </script>
 
 <div id="lightbox" onclick="closeLightbox()" style="display:none">
