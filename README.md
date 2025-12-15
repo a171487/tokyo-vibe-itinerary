@@ -843,156 +843,138 @@
 
   <!-- 行程 -->
   <section id="plan">
+    
     <!-- 12/26 -->
     <div class="card">
-      <div class="day-card-title">12/26（五） 台北 → 東京・上野</div>
+      <div class="day-card-title">12/26（五） 上野</div>
 
       <div class="schedule-item">
         <div class="schedule-header">
           <div class="schedule-time">10:10</div>
-          <div class="schedule-title">桃園國際機場 TPE T1（JX802 起飛）</div>
+          <div class="schedule-title">桃園國際機場 TPE T1（JX802）</div>
         </div>
         <div class="schedule-desc">
-          搭乘星宇航空 JX802 前往東京，建議於起飛前 2–3 小時抵達機場，預留辦理托運、安檢與登機時間。
+          星宇航空 JX802 前往東京，建議起飛前 2–3 小時抵達機場完成報到與安檢。
         </div>
-        <div class="schedule-hours">溫馨提醒：出發前確認護照、機票、隨身行李體積與重量。</div>
-        <div class="schedule-nav">
-          <a class="nav-link" target="_blank"
-             href="https://www.google.com/maps/search/?api=1&query=Taoyuan+International+Airport+Terminal+1">
-            📍 導航到 桃園國際機場 T1
-          </a>
-        </div>
+        <div class="schedule-hours">溫馨提醒：護照、登機證與隨身行李請再次確認。</div>
       </div>
 
       <div class="schedule-item">
         <div class="schedule-header">
           <div class="schedule-time">14:20</div>
-          <div class="schedule-title">抵達成田機場 (NRT) T2</div>
+          <div class="schedule-title">成田機場 NRT T2</div>
         </div>
         <div class="schedule-desc">
-          抵達東京成田機場第二航廈，辦理入境、領行李，準備前往市區。可在機場購買交通票券或儲值 Suica / PASMO。
+          抵達成田第二航廈，可購買 Skyliner 或 JR 車票前往市區。
         </div>
-        <div class="schedule-hours">航班：JX802，實際降落時間以航空公司公告為準。</div>
-        <div class="schedule-nav">
-          <a class="nav-link" target="_blank"
-             href="https://www.google.com/maps/search/?api=1&query=Narita+Airport+Terminal+2">
-            📍 導航到 成田機場 T2
-          </a>
-        </div>
+        <div class="schedule-hours">市區交通時間約 45–60 分鐘。</div>
       </div>
 
       <div class="schedule-item">
         <div class="schedule-header">
-          <div class="schedule-time">16:00</div>
-          <div class="schedule-title">飯店 Check-in：上野站前1號遊客酒店</div>
-        </div>
-        <div class="schedule-desc">抵達上野站附近飯店放行李，熟悉周邊便利商店與車站出入口。</div>
-        <div class="schedule-hours">Check-in：15:00 起，依飯店公告為準。</div>
-        <div class="schedule-nav">
-          <a class="nav-link" target="_blank"
-             href="https://www.google.com/maps/search/?api=1&query=2+Chome-18-18+Higashiueno,+Taito+City,+Tokyo+110-0015+Japan">
-            📍 導航到 飯店
-          </a>
-        </div>
-      </div>
-
-      <div class="schedule-item">
-        <div class="schedule-header">
-          <div class="schedule-time">18:00</div>
+          <div class="schedule-time">17:00</div>
           <div class="schedule-title">晚餐：阿美橫丁</div>
         </div>
-        <div class="schedule-desc">阿美橫丁商店街聚集居酒屋、拉麵、海鮮丼與小吃，是感受庶民風情的好地方。</div>
-        <div class="schedule-hours">營業時間：多數店家約 11:00–22:00（依各店為準）。</div>
-        <div class="schedule-nav">
-          <a class="nav-link" target="_blank"
-             href="https://www.google.com/maps/search/?api=1&query=Ameya-Yokocho+Market+Tokyo">
-            📍 導航到 阿美橫丁
-          </a>
+        <div class="schedule-desc">
+          上野最熱鬧的商店街，串燒、拉麵、海鮮丼選擇豐富，是旅程第一晚感受東京氣氛的好地方。
         </div>
+        <div class="schedule-hours">多數店家營業至 22:00 左右。</div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-time">19:00</div>
+          <div class="schedule-title">GU 御徒町店（ジーユー 御徒町店）</div>
+        </div>
+        <div class="schedule-desc">
+          日本平價服飾品牌，外套、發熱衣與基本款單品非常受歡迎。
+        </div>
+        <div class="schedule-hours">營業時間約 10:00–21:00。</div>
       </div>
 
       <div class="schedule-item">
         <div class="schedule-header">
           <div class="schedule-time">20:00</div>
-          <div class="schedule-title">購物：無印良品 上野丸井店、OS Drug 藥妝店</div>
+          <div class="schedule-title">3 COINS 上野店 / OS Drug / 無印良品 上野丸井店</div>
         </div>
-        <div class="schedule-desc">採買生活用品、保養品、藥妝與零食，順便觀察物價與貨品種類。</div>
-        <div class="schedule-hours">營業時間：百貨與藥妝多為 10:00–21:00 左右。</div>
-        <div class="schedule-nav">
-          <a class="nav-link" target="_blank"
-             href="https://www.google.com/maps/search/?api=1&query=Muji+Ueno+Marui">
-            📍 導航到 無印良品 上野丸井店
-          </a>
+        <div class="schedule-desc">
+          3 COINS 主打日系雜貨；OS Drug 補齊藥妝；無印良品可購買「自然醒睡衣」等人氣商品。
         </div>
+        <div class="schedule-hours">百貨與藥妝多營業至 21:00。</div>
       </div>
     </div>
 
     <!-- 12/27 -->
     <div class="card">
-      <div class="day-card-title">12/27（六） 東京・銀座</div>
+      <div class="day-card-title">12/27（六） 原宿・澀谷</div>
 
       <div class="schedule-item">
         <div class="schedule-header">
-          <div class="schedule-time">09:00</div>
-          <div class="schedule-title">Tricolore coffee（早餐）</div>
+          <div class="schedule-time">08:00</div>
+          <div class="schedule-title">早餐（自由）：Tricolore Coffee</div>
         </div>
-        <div class="schedule-desc">老牌咖啡店，搭配蘋果派、閃電泡芙享用早餐，感受銀座復古氛圍。</div>
-        <div class="schedule-hours">營業時間：多為 8:00–22:00，依店鋪公告為準。</div>
-        <div class="schedule-nav">
-          <a class="nav-link" target="_blank"
-             href="https://www.google.com/maps/search/?api=1&query=Tricolore+Coffee+Ginza">
-            📍 導航到 Tricolore Coffee
-          </a>
+        <div class="schedule-desc">
+          老字號咖啡店，以蘋果派與閃電泡芙聞名，適合悠閒早晨。
         </div>
+        <div class="schedule-hours">營業時間約 8:00–22:00。</div>
       </div>
 
       <div class="schedule-item">
         <div class="schedule-header">
-          <div class="schedule-time">12:00</div>
-          <div class="schedule-title">牛たんの檸檬 有楽町店</div>
+          <div class="schedule-time">10:00</div>
+          <div class="schedule-title">早餐（自由）：egg baby café</div>
         </div>
-        <div class="schedule-desc">品嚐炭烤厚切牛舌或套餐，鹽味與檸檬風味是人氣選擇。</div>
-        <div class="schedule-hours">營業時間：午餐 11:00–15:00、晚餐 17:00–22:00 左右。</div>
-        <div class="schedule-nav">
-          <a class="nav-link" target="_blank"
-             href="https://www.google.com/maps/search/?api=1&query=%E7%89%9B%E3%81%9F%E3%82%93%E3%81%AE%E6%AA%AC+%E6%9C%89%E6%A5%BD%E7%94%BA">
-            📍 導航到 牛たんの檸檬 有楽町店
-          </a>
+        <div class="schedule-desc">
+          人氣咖啡廳，蛋料理與吐司系列在社群平台相當熱門。
         </div>
+        <div class="schedule-hours">營業時間約 8:00–16:00。</div>
       </div>
 
       <div class="schedule-item">
         <div class="schedule-header">
-          <div class="schedule-time">15:00</div>
-          <div class="schedule-title">MARLOWE 焦糖布丁</div>
+          <div class="schedule-time">11:00</div>
+          <div class="schedule-title">3 COINS 原宿旗艦店</div>
         </div>
-        <div class="schedule-desc">以玻璃杯裝盛的焦糖布丁著名，也適合作為伴手禮帶回飯店冰起來吃。</div>
-        <div class="schedule-hours">營業時間：多為 10:00–20:00 左右。</div>
-        <div class="schedule-nav">
-          <a class="nav-link" target="_blank"
-             href="https://www.google.com/maps/search/?api=1&query=MARLOWE+Pudding+Ginza">
-            📍 導航到 MARLOWE 銀座店附近
-          </a>
+        <div class="schedule-desc">
+          規模最大的旗艦店，雜貨與期間限定商品最齊全。
         </div>
+        <div class="schedule-hours">營業時間約 10:00–21:00。</div>
       </div>
 
       <div class="schedule-item">
         <div class="schedule-header">
-          <div class="schedule-time">20:30</div>
-          <div class="schedule-title">台場花火 / 惠比壽花園廣場燈飾</div>
+          <div class="schedule-time">17:00</div>
+          <div class="schedule-title">晚餐：Sake to Yakiniku Nyutomi（已訂位）</div>
         </div>
-        <div class="schedule-desc">可依當天狀況選擇台場海濱公園欣賞花火，或前往惠比壽花園廣場看燈光秀。</div>
-        <div class="schedule-hours">活動時間依官方公告為準。</div>
-        <div class="schedule-nav">
-          <a class="nav-link" target="_blank"
-             href="https://www.google.com/maps/search/?api=1&query=Odaiba+Seaside+Park">
-            📍 導航到 台場海濱公園
-          </a>
+        <div class="schedule-desc">
+          結合清酒與高品質燒肉的名店，厚切和牛與搭酒套餐深受好評。
         </div>
+        <div class="schedule-hours">晚餐時段熱門，需事前訂位。</div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-time">19:00</div>
+          <div class="schedule-title">惠比壽花園廣場燈光秀</div>
+        </div>
+        <div class="schedule-desc">
+          冬季限定燈飾，水晶吊燈點燈後非常夢幻。
+        </div>
+        <div class="schedule-hours">點燈時間 17:00–23:00，建議二樓欣賞。</div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-time">20:00</div>
+          <div class="schedule-title">目黑川</div>
+        </div>
+        <div class="schedule-desc">
+          即使非櫻花季，夜晚沿河散步氣氛依然迷人。
+        </div>
+        <div class="schedule-hours">全天開放。</div>
       </div>
     </div>
-
-    <!-- 12/28 -->
+<!-- 12/28 -->
     <div class="card">
       <div class="day-card-title">12/28（日） 富士山一日遊</div>
 
@@ -1087,57 +1069,116 @@
       </div>
     </div>
 
+    
     <!-- 12/29 -->
     <div class="card">
-      <div class="day-card-title">12/29（一） 東京・澀谷</div>
+      <div class="day-card-title">12/29（一） 東京・銀座</div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-title">東京站 🚉</div>
+        </div>
+        <div class="schedule-desc">
+          東京主要轉運樞紐，可順道逛地下街與一番街。
+        </div>
+      </div>
 
       <div class="schedule-item">
         <div class="schedule-header">
           <div class="schedule-time">11:30</div>
-          <div class="schedule-title">壽喜燒：Sukiyaki Juni Ten</div>
+          <div class="schedule-title">午餐：Sukiyaki Juni Ten</div>
         </div>
-        <div class="schedule-desc">品嚐日式壽喜燒，可選擇和牛套餐，適合悠閒用餐。</div>
-        <div class="schedule-hours">營業時間：約 11:00–22:00，依店家公告為準。</div>
-        <div class="schedule-nav">
-          <a class="nav-link" target="_blank"
-             href="https://www.google.com/maps/search/?api=1&query=Sukiyaki+Juni+Ten+Tokyo">
-            📍 導航到 Sukiyaki Juni Ten
-          </a>
+        <div class="schedule-desc">
+          以高品質和牛壽喜燒聞名，午餐時段較容易訂位。
+        </div>
+        <div class="schedule-hours">營業時間約 11:00–22:00。</div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-time">13:00</div>
+          <div class="schedule-title">KITTE 百貨（自由）</div>
+        </div>
+        <div class="schedule-desc">
+          6 樓空中花園可俯瞰東京站紅磚建築。
+        </div>
+        <div class="schedule-hours">營業時間約 11:00–20:00。</div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-title">銀座站 🚉</div>
+        </div>
+        <div class="schedule-desc">
+          銀座購物與美食中心，步行即可抵達多個景點。
         </div>
       </div>
 
       <div class="schedule-item">
         <div class="schedule-header">
-          <div class="schedule-time">14:30</div>
-          <div class="schedule-title">東急 Plaza 表參道原宿</div>
+          <div class="schedule-time">14:00</div>
+          <div class="schedule-title">UNIQLO 銀座旗艦店（12F）</div>
         </div>
-        <div class="schedule-desc">時尚購物商場，可逛設計選物、服飾品牌與咖啡廳。</div>
-        <div class="schedule-hours">營業時間：約 11:00–21:00。</div>
-        <div class="schedule-nav">
-          <a class="nav-link" target="_blank"
-             href="https://www.google.com/maps/search/?api=1&query=Tokyu+Plaza+Omotesando+Harajuku">
-            📍 導航到 東急 Plaza 表參道原宿
-          </a>
+        <div class="schedule-desc">
+          全球最大 UNIQLO，限定款式與尺寸齊全。
+        </div>
+        <div class="schedule-hours">營業時間約 10:00–21:00。</div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-time">15:30</div>
+          <div class="schedule-title">MARLOWE 焦糖布丁</div>
+        </div>
+        <div class="schedule-desc">
+          玻璃杯裝布丁是招牌商品，口感濃郁滑順。
+        </div>
+        <div class="schedule-hours">營業時間約 10:00–20:00。</div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-title">芝公園站 🚉</div>
+        </div>
+        <div class="schedule-desc">
+          前往芝公園拍攝東京鐵塔的最佳地鐵站。
         </div>
       </div>
 
       <div class="schedule-item">
         <div class="schedule-header">
-          <div class="schedule-time">19:30</div>
-          <div class="schedule-title">中目黑 散步與晚餐</div>
+          <div class="schedule-time">16:30</div>
+          <div class="schedule-title">芝公園</div>
         </div>
-        <div class="schedule-desc">沿著目黑川散步，感受夜晚街景與小店氣氛，找一間喜歡的餐廳用餐。</div>
-        <div class="schedule-hours">多數店家 17:00–23:00 左右營業。</div>
-        <div class="schedule-nav">
-          <a class="nav-link" target="_blank"
-             href="https://www.google.com/maps/search/?api=1&query=Nakameguro+Station">
-            📍 導航到 中目黑站附近
-          </a>
+        <div class="schedule-desc">
+          拍攝東京鐵塔與楓葉的經典景點，黃昏時分光線最美。
         </div>
+        <div class="schedule-hours">公園全天開放。</div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-time">17:30</div>
+          <div class="schedule-title">Stellar Garden Sky Bar & Dining</div>
+        </div>
+        <div class="schedule-desc">
+          高樓層酒吧，可邊小酌邊欣賞東京夜景。
+        </div>
+        <div class="schedule-hours">營業時間約 17:00–23:00。</div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-time">19:00</div>
+          <div class="schedule-title">麻布台 Hills 森 JP Tower</div>
+        </div>
+        <div class="schedule-desc">
+          東京最新地標之一，結合建築、藝術與商業空間。
+        </div>
+        <div class="schedule-hours">多數設施營業至 21:00。</div>
       </div>
     </div>
-
-    <!-- 12/30 -->
+<!-- 12/30 -->
     <div class="card">
       <div class="day-card-title">12/30（二） 新宿・秋葉原</div>
 
