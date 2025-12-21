@@ -1,722 +1,2571 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TOKYO VIBE | 鮮明配色儀表板</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        /* 品牌配色定義 */
-        :root {
-            --color-dark-navy: #1D2A35;
-            --color-cream: #F7FCF5;
-            --color-teal: #2CBBAD;
-            --color-red: #D83D4F;
-        }
+  <meta charset="UTF-8" />
+  <title>東京旅遊助理 v6.2</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
+      background: #020617;
+      color: #e5e7eb;
+      font-size: 18px;
+    }
+    header {
+      background: linear-gradient(135deg, #14532d, #15803d);
+      color: #ecfdf5;
+      padding: 14px 16px;
+      font-size: 22px;
+      font-weight: 700;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+    nav {
+      display: flex;
+      background: #020617;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.6);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    nav button {
+      flex: 1;
+      padding: 10px 6px;
+      border: none;
+      background: #020617;
+      color: #9ca3af;
+      font-size: 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+    }
+    nav button.active {
+      background: #14532d;
+      color: #f9fafb;
+      font-weight: 600;
+    }
+    main {
+      padding: 12px;
+      max-width: 820px;
+      margin: 0 auto 30px;
+    }
+    section { display: none; }
+    section.active { display: block; }
 
-        /* 全局樣式：深色基底，淺色字體 */
-        body {
-            font-family: 'Inter', 'Noto Sans TC', sans-serif;
-            background-color: var(--color-dark-navy); 
-            color: var(--color-cream);
-            min-height: 100vh;
-        }
+    .card {
+      background: #020617;
+      border-radius: 16px;
+      padding: 14px 14px 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.7);
+      border: 1px solid #1f2937;
+    }
+    .card h2 {
+      margin: 0 0 6px;
+      font-size: 20px;
+      font-weight: 700;
+    }
+    .card h3 {
+      margin: 0 0 6px;
+      font-size: 18px;
+      font-weight: 700;
+      color: #bfdbfe;
+    }
+    .day-card-title {
+      font-size: 19px;
+      font-weight: 700;
+      color: #bfdbfe;
+      margin-bottom: 6px;
+    }
+    .label {
+      font-size: 14px;
+      color: #cbd5f5;
+      margin-top: 6px;
+    }
+    .small {
+      font-size: 13px;
+      color: #9ca3af;
+    }
+    .highlight-number {
+      font-size: 22px;
+      font-weight: 700;
+      color: #facc15;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid #4b5563;
+      background: #020617;
+      color: #e5e7eb;
+    }
+    .pill-accent {
+      border-color: #22c55e;
+      background: rgba(34,197,94,0.15);
+      color: #bbf7d0;
+    }
 
-        /* 主要卡片面板 - 使用淺色搭配深色邊框和陰影，實現高對比 */
-        .flat-panel {
-            background-color: var(--color-cream); /* 淺色卡片 */
-            color: var(--color-dark-navy); /* 卡片內使用深色文字 */
-            border: 1px solid rgba(44, 187, 173, 0.2); /* 柔和的 Teal 邊框 */
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        }
+    input, select, textarea {
+      width: 100%;
+      padding: 8px 10px;
+      margin-top: 4px;
+      border-radius: 10px;
+      border: 1px solid #374151;
+      background: #020617;
+      color: #e5e7eb;
+      font-size: 16px;
+    }
+    textarea {
+      min-height: 70px;
+      resize: vertical;
+    }
+    input::placeholder, textarea::placeholder {
+      color: #6b7280;
+    }
 
-        /* 主要強調色 1：Teal (青色) */
-        .teal-accent {
-            color: var(--color-teal);
-        }
-        
-        /* 主要強調色 2：Red (紅色) */
-        .red-accent {
-            color: var(--color-red);
-        }
+    .btn-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    button.primary {
+      flex: 1;
+      border: none;
+      border-radius: 999px;
+      padding: 8px 10px;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #022c22;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button.secondary {
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid #4b5563;
+      background: #020617;
+      color: #e5e7eb;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    button.tiny-btn, .tiny-btn {
+      border-radius: 999px;
+      border: 1px solid #4b5563;
+      background: #020617;
+      color: #e5e7eb;
+      font-size: 12px;
+      padding: 2px 6px;
+      cursor: pointer;
+    }
+    .tiny-btn.danger {
+      border-color: #f87171;
+      color: #fecaca;
+    }
+    button:disabled {
+      opacity: 0.6;
+      cursor: default;
+    }
 
-        /* 按鈕基礎樣式 */
-        .modern-btn {
-             @apply transition-all duration-300 border text-left font-medium flex-shrink-0 min-w-[120px] rounded-lg p-3;
-        }
+    .rate-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
 
-        /* 專家提示區塊 - 使用深色背景搭配 Teal 邊條 */
-        .expert-tip-box {
-            background-color: #273746; /* 比主背景稍淺 */
-            border-left: 3px solid var(--color-teal);
-            color: var(--color-cream);
-        }
+    .weather-now-main {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    .weather-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 6px;
+      margin-top: 6px;
+    }
+    .weather-grid-item {
+      font-size: 13px;
+      color: #e5e7eb;
+      background: #020617;
+      border-radius: 10px;
+      padding: 6px 8px;
+      border: 1px solid #1f2937;
+    }
+    .weather-grid-item span {
+      color: #facc15;
+      font-weight: 600;
+    }
+    .table-scroll {
+      overflow-x: auto;
+      margin-top: 8px;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 13px;
+      min-width: 520px;
+    }
+    thead {
+      background: #d1d5db; /* 淺灰表頭 */
+    }
+    th, td {
+      padding: 4px 6px;
+      text-align: center;
+      white-space: nowrap;
+    }
+    th {
+      color: #111827;
+      border-bottom: 1px solid #9ca3af;
+    }
+    tbody tr:nth-child(odd) {
+      background: #e5e7eb;
+    }
+    tbody tr:nth-child(even) {
+      background: #f3f4f6;
+    }
+    td {
+      color: #111827;
+      border-bottom: 1px solid #d1d5db;
+    }
 
-        /* 固定側邊欄位 */
-        @media (min-width: 1024px) {
-            .sticky-col {
-                position: sticky;
-                top: 1.5rem;
-                height: calc(100vh - 3rem);
-                overflow-y: auto;
-                -ms-overflow-style: none;
-                scrollbar-width: none;
-            }
-            .sticky-col::-webkit-scrollbar { display: none; }
-        }
+    iframe { border: 0; }
+    .video {
+      width: 100%;
+      height: 220px;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .map-embed {
+      width: 100%;
+      height: 220px;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-top: 10px;
+      border: 1px solid #1f2937;
+    }
 
-        /* 覆寫 Tailwind 滾動條 (手機端導覽列) */
-        #nav-container-wrapper::-webkit-scrollbar {
-            height: 3px;
-        }
-        #nav-container-wrapper::-webkit-scrollbar-thumb {
-            background-color: #4A5568; 
-            border-radius: 1.5px;
-        }
-    </style>
+    .schedule-item {
+      border-radius: 12px;
+      border: 1px solid #1f2937;
+      padding: 8px 10px;
+      margin-top: 6px;
+      background: #020617;
+    }
+    .schedule-header {
+      display: flex;
+      gap: 8px;
+      align-items: baseline;
+      margin-bottom: 4px;
+    }
+    .schedule-time {
+      font-size: 16px;
+      font-weight: 700;
+      color: #f97316;
+      min-width: 58px;
+    }
+    .schedule-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #e5e7eb;
+    }
+    .schedule-desc {
+      font-size: 14px;
+      color: #d1d5db;
+      margin-top: 2px;
+    }
+    .schedule-hours {
+      font-size: 13px;
+      color: #9ca3af;
+      margin-top: 2px;
+    }
+    .schedule-nav {
+      margin-top: 6px;
+    }
+    .nav-link {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #14532d;
+      color: #bbf7d0;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .nav-link:hover {
+      background: #166534;
+    }
+
+    .expense-item {
+      border-radius: 12px;
+      border: 1px solid #1f2937;
+      padding: 8px 10px;
+      margin-top: 6px;
+      background: #020617;
+      font-size: 14px;
+    }
+    .expense-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    .expense-title {
+      font-weight: 600;
+      font-size: 15px;
+    }
+    .expense-amount {
+      font-weight: 700;
+      color: #facc15;
+    }
+
+    
+    .shop-item-title {
+      font-size: 15px;
+      font-weight: 600;
+    }
+    .shop-item-amount {
+      font-size: 14px;
+      font-weight: 700;
+      color: #7dd3fc;
+      margin-top: 2px;
+    }
+.prep-item, .shop-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 6px 8px;
+      border-radius: 10px;
+      border: 1px solid #1f2937;
+      background: #020617;
+      margin-top: 6px;
+      font-size: 14px;
+    }
+    .prep-check {
+      width: 16px;
+      height: 16px;
+      margin-top: 4px;
+    }
+    .prep-text, .shop-text {
+      flex: 1;
+    }
+    .prep-text.done, .shop-text.done {
+      text-decoration: line-through;
+      opacity: 0.6;
+    }
+
+    .tag {
+      font-size: 12px;
+      padding: 1px 6px;
+      border-radius: 999px;
+      background: #14532d;
+      color: #bbf7d0;
+      margin-left: 4px;
+    }
+
+    .jp-category {
+      font-size: 15px;
+      font-weight: 600;
+      margin-top: 6px;
+      color: #bfdbfe;
+    }
+    .phrase-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 0;
+      border-bottom: 1px dashed #1f2937;
+      font-size: 14px;
+    }
+    .phrase-main {
+      flex: 1;
+    }
+    .phrase-jp {
+      color: #a5b4fc;
+      font-weight: 600;
+    }
+
+    @media (max-width: 480px) {
+      body { font-size: 17px; }
+      .card h2 { font-size: 19px; }
+      .day-card-title { font-size: 18px; }
+      nav button { font-size: 15px; padding: 8px 4px; }
+    }
+
+/* =========================
+   [PATCH v9-UI] 美食清單卡片：照片在左、編輯/刪除在右
+   只改排版，不動功能
+   ========================= */
+
+/* 容錯：有些版本 class 可能不同，先讓 food-item 都變成左右結構 */
+.food-item,
+.foodPlaceItem,
+.food-place-item {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+  gap: 14px !important;
+}
+
+/* 左側文字區（若你的版本是 food-info / foodInfo / placeInfo 都吃得到） */
+.food-info,
+.foodInfo,
+.placeInfo,
+.food-item .info,
+.foodPlaceItem .info,
+.food-place-item .info {
+  flex: 1 1 auto !important;
+  min-width: 0 !important; /* 防止長地址把右側擠爆 */
+}
+
+/* 右側整塊：照片 + 按鈕（Part2 會把 HTML 結構包進這個容器） */
+.food-right,
+.foodRight,
+.food-actions-wrap {
+  display: flex !important;
+  flex-direction: row !important; /* 照片在左、按鈕在右 */
+  align-items: flex-start !important;
+  gap: 12px !important;
+  flex: 0 0 auto !important;
+}
+
+/* 照片區：直排 */
+.food-photos,
+.foodPhotos,
+.food-thumbs,
+.foodThumbs {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+/* 照片縮圖尺寸（跟你截圖感覺一致） */
+.food-photos img,
+.foodPhotos img,
+.food-thumbs img,
+.foodThumbs img,
+.food-photo-thumb {
+  width: 74px !important;
+  height: 74px !important;
+  object-fit: cover !important;
+  border-radius: 12px !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  display: block !important;
+}
+
+/* 編輯/刪除：固定在最右側直排 */
+.food-actions,
+.foodActions,
+.food-btns,
+.foodBtns {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  align-items: stretch !important;
+}
+
+/* 讓按鈕寬度一致，不會被照片擠壓 */
+.food-actions button,
+.foodActions button,
+.food-btns button,
+.foodBtns button,
+.food-item button,
+.foodPlaceItem button,
+.food-place-item button {
+  min-width: 76px !important;
+  white-space: nowrap !important;
+}
+
+/* 防止照片把卡片撐得過寬（小螢幕更穩） */
+@media (max-width: 430px) {
+  .food-photos img,
+  .foodPhotos img,
+  .food-thumbs img,
+  .foodThumbs img,
+  .food-photo-thumb {
+    width: 68px !important;
+    height: 68px !important;
+  }
+  .food-actions button,
+  .foodActions button,
+  .food-btns button,
+  .foodBtns button,
+  .food-item button,
+  .foodPlaceItem button,
+  .food-place-item button {
+    min-width: 72px !important;
+  }
+}
+
+.food-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 14px;
+}
+
+.food-card-main {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.food-text {
+  flex: 1;
+}
+
+.food-name {
+  font-weight: 700;
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+
+.food-address {
+  font-size: 13px;
+  opacity: 0.85;
+  line-height: 1.4;
+}
+
+.food-area {
+  font-size: 12px;
+  opacity: 0.6;
+  margin-top: 4px;
+}
+
+.food-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.food-actions button {
+  padding: 6px 14px;
+  border-radius: 10px;
+  border: none;
+  background: #f0f0f0;
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.food-photos-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.food-photos-row img {
+  width: 90px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+  </style>
+
+<style id="dayTabsStyle">
+/* ===== Trip day subtabs ===== */
+.day-tabs{display:flex;gap:8px;overflow-x:auto;padding:4px 2px;margin:0 0 10px 0;scrollbar-width:none}
+.day-tabs::-webkit-scrollbar{display:none}
+.day-tab-btn{flex:0 0 auto;border:1px solid #334155;background:#0b1220;color:#e5e7eb;border-radius:999px;padding:8px 12px;font-size:13px;font-weight:700}
+.day-tab-btn.active{border-color:#22c55e;background:rgba(34,197,94,.18);color:#bbf7d0}
+.day-map-wrap{margin-top:12px}
+.day-map-title{font-weight:800;margin:0 0 8px 0;font-size:14px;color:#e5e7eb}
+.day-map-box{width:100%;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#000;border:1px solid rgba(148,163,184,.25)}
+.day-map-box iframe{width:100%;height:100%;border:0}
+</style>
+
 </head>
-<body class="p-3 lg:p-6 text-sm lg:text-base">
+<body>
+<header>東京旅遊助理 v6.2</header>
 
-    <!-- 頂部 Header -->
-    <header class="max-w-[1400px] mx-auto mb-6 p-6 border-b-2 border-opacity-30 flex items-center justify-between"
-            style="background-color: var(--color-dark-navy); border-color: var(--color-teal);">
-        <div class="z-10">
-            <h1 class="text-2xl lg:text-3xl font-black tracking-widest text-white">
-                TOKYO VIBE 2025
-            </h1>
-            <p class="text-gray-400 text-xs lg:text-sm font-medium mt-1 flex gap-3">
-                <span class="teal-accent"><i data-lucide="calendar" class="w-3 h-3 inline mr-1"></i>12/26 - 12/31</span>
-                <span><i data-lucide="compass" class="w-3 h-3 inline mr-1"></i>鮮明配色儀表板</span>
-            </p>
+<nav>
+  <button class="active" data-tab="home">🏠 首頁</button>
+  <button data-tab="plan">🗺️ 行程</button>
+  <button data-tab="food">🍜 美食</button>
+  <button data-tab="expense">💰 記帳</button>
+  <button data-tab="list">📝 清單</button>
+</nav>
+
+<main>
+  <!-- 首頁 -->
+  <section id="home" class="active">
+    <!-- 匯率試算 -->
+    <div class="card">
+      <h2>匯率試算 💱</h2>
+      <div class="small">手動輸入今日匯率：1 日圓 = 幾元台幣？</div>
+      <label class="label">1 日圓 = 幾元台幣</label>
+      <input id="rateTwdPerJpy" type="number" step="0.0001" placeholder="例如：0.22" />
+
+      <div class="rate-grid">
+        <div>
+          <label class="label">日圓金額（JPY）→ 台幣</label>
+          <input id="rateJpyInput" type="number" placeholder="例如：5000" />
         </div>
-        <div class="hidden lg:block">
-            <i data-lucide="map" class="w-8 h-8 text-[#4A5568]"></i>
+        <div>
+          <div class="label">換算結果（TWD）</div>
+          <div class="highlight-number" id="rateResult">—</div>
+          <div class="small">依上方匯率即時計算</div>
         </div>
-    </header>
+      </div>
 
-    <!-- 主內容 Grid -->
-    <div class="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-
-        <!-- [左欄] Col-2: 導覽 (日期 + 工具切換按鈕) -->
-        <nav class="lg:col-span-2 pb-2 lg:pb-0 z-20 sticky-col h-auto lg:h-auto">
-            <div id="nav-container-wrapper" class="flex flex-row lg:flex-col gap-2 overflow-x-auto lg:overflow-visible">
-                <!-- 日期導覽區 + 工具按鈕 (全部在此容器內生成) -->
-                <div id="nav-container" class="flex flex-row lg:flex-col gap-2 w-full lg:flex-shrink">
-                    <!-- JS 動態生成所有按鈕 -->
-                </div>
-            </div>
-        </nav>
-
-        <!-- [右欄] Col-10: 動態內容區 (行程 OR 工具) -->
-        <main class="lg:col-span-10 space-y-6">
-
-            <!-- 1. 行程內容區 (ITINERARY) - 預設顯示 -->
-            <div id="itinerary-view" class="space-y-6">
-                <!-- 天氣看板 (淺色卡片，高對比) -->
-                <div id="weather-card" class="flat-panel p-5 relative overflow-hidden transition-all duration-500 shadow-lg">
-                    <div class="relative z-10 flex justify-between items-center">
-                        <div class="flex items-center gap-4">
-                            <div class="text-4xl" id="weather-icon"></div>
-                            <div>
-                                <div class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-0.5">WEATHER</div>
-                                <div id="weather-condition" class="text-lg font-bold text-gray-900"></div>
-                                <div id="weather-note" class="text-xs text-gray-600 opacity-90"></div>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <div id="weather-location" class="text-xs font-bold teal-accent uppercase tracking-widest mb-0.5">TOKYO</div>
-                            <div class="text-2xl font-black text-gray-900">
-                                <span id="weather-high" class="red-accent"></span>
-                                <span class="text-gray-400 text-base mx-1">/</span>
-                                <span id="weather-low" class="teal-accent"></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 標題 -->
-                <div class="flex items-end gap-3 pb-2 border-b border-opacity-50" style="border-color: var(--color-teal);">
-                    <!-- 日數使用深色，與背景色區分但不過於突兀 -->
-                    <h2 id="day-number" class="text-4xl font-black text-gray-600 leading-none select-none">DAY 1</h2>
-                    <!-- 標題使用紅色強調 -->
-                    <h3 id="day-title" class="text-xl lg:text-2xl font-bold red-accent leading-tight mb-1"></h3>
-                </div>
-
-                <!-- 行程列表容器 -->
-                <div id="itinerary-list" class="space-y-5">
-                    <!-- JS 動態插入行程卡片 -->
-                </div>
-            </div>
-
-
-            <!-- 2. 匯率試算區 (CURRENCY) - 預設隱藏 -->
-            <div id="currency-view" class="hidden flat-panel rounded-xl p-8 lg:p-12 h-full min-h-[500px]">
-                <h3 class="text-3xl font-bold red-accent mb-8 pb-3 border-b border-gray-300 flex items-center">
-                    <i data-lucide="coins" class="w-8 h-8 mr-3"></i> 日幣匯率試算中心
-                </h3>
-                
-                <div class="max-w-md mx-auto space-y-6">
-                    <!-- 匯率輸入框 -->
-                    <div class="mb-6 flex items-center justify-between bg-gray-100 p-4 rounded-lg border" style="border-color: var(--color-teal);">
-                        <span class="text-sm text-gray-600 font-medium">目前匯率 (1 TWD =)</span>
-                        <div class="flex items-center">
-                            <input type="number" id="rateInput" value="4.80" step="0.01" oninput="convert('TWD')" 
-                                class="w-20 bg-transparent text-right font-mono font-bold text-xl focus:outline-none red-accent">
-                            <span class="text-sm text-gray-500 ml-2">JPY</span>
-                        </div>
-                    </div>
-
-                    <!-- TWD 輸入 -->
-                    <div class="relative group">
-                        <label class="absolute left-4 top-3 text-[10px] font-bold text-gray-500 group-focus-within:teal-accent">TWD (台幣)</label>
-                        <input type="number" id="twdInput" placeholder="0" oninput="convert('TWD')"
-                            class="w-full bg-gray-100 border border-gray-300 rounded-lg p-4 pt-8 text-2xl font-mono text-gray-900 focus:border-teal-accent transition-all outline-none">
-                    </div>
-                    
-                    <div class="flex justify-center py-2">
-                        <div class="rounded-full p-2" style="background-color: var(--color-teal);"><i data-lucide="arrow-down-up" class="w-5 h-5 text-white"></i></div>
-                    </div>
-                    
-                    <!-- JPY 輸入 -->
-                    <div class="relative group">
-                        <label class="absolute left-4 top-3 text-[10px] font-bold text-gray-500 group-focus-within:red-accent">JPY (日幣)</label>
-                        <input type="number" id="jpyInput" placeholder="0" oninput="convert('JPY')"
-                            class="w-full bg-gray-100 border border-gray-300 rounded-lg p-4 pt-8 text-2xl font-mono red-accent focus:border-red-accent transition-all outline-none">
-                    </div>
-                </div>
-            </div>
-
-            <!-- 3. 飯店/緊急聯絡區 (HOTEL) - 預設隱藏 -->
-            <div id="hotel-view-main" class="hidden flat-panel rounded-xl p-8 lg:p-12 h-full min-h-[500px]">
-                <h3 class="text-3xl font-bold red-accent mb-8 pb-3 border-b border-gray-300 flex items-center">
-                    <i data-lucide="map-pin" class="w-8 h-8 mr-3"></i> 緊急聯絡/飯店地址卡
-                </h3>
-                
-                <div class="max-w-xl mx-auto space-y-6">
-                    <!-- 顯示模式 -->
-                    <div id="hotel-display-mode">
-                        <div class="mb-4">
-                            <div class="text-xs text-gray-500 uppercase tracking-widest mb-1">飯店名稱 (HOTEL NAME)</div>
-                            <div id="h-name" class="font-black text-gray-900 text-2xl leading-tight">未設定飯店</div>
-                        </div>
-
-                        <!-- 地址卡片，使用強調色邊框和背景 -->
-                        <div class="p-6 bg-gray-100 rounded-lg border-2 border-teal-accent mb-6 relative group cursor-pointer shadow-xl" 
-                             style="border-color: var(--color-teal);" onclick="copyAddr()">
-                            <div class="text-xs teal-accent uppercase mb-2 flex justify-between items-center font-medium">
-                                <span>地址 (ADDRESS - JP) <span class="text-gray-500">(給司機或路人看)</span></span>
-                                <i data-lucide="copy" class="w-4 h-4 teal-accent opacity-80 group-hover:opacity-100 transition-opacity"></i>
-                            </div>
-                            <div id="h-addr" class="font-mono text-base text-gray-900 break-all leading-relaxed">請點擊下方按鈕設定地址</div>
-                            <div class="text-xs text-gray-500 mt-3 border-t border-gray-300 pt-2">
-                                電話: <span id="h-phone">無資料</span>
-                            </div>
-                        </div>
-                        
-                        <div class="grid grid-cols-2 gap-4">
-                            <button onclick="copyAddr()" class="bg-teal-accent hover:bg-opacity-80 text-white font-bold py-3 rounded-lg text-base transition-colors flex items-center justify-center shadow-lg"
-                                    style="background-color: var(--color-teal);">
-                                <i data-lucide="clipboard-check" class="w-5 h-5 mr-2"></i> 複製日文地址
-                            </button>
-                            <button onclick="toggleEdit()" class="bg-gray-400 hover:bg-gray-500 text-gray-900 font-medium py-3 rounded-lg text-base transition-colors flex items-center justify-center">
-                                <i data-lucide="settings-2" class="w-5 h-5 mr-2"></i> 設定/修改資料
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- 編輯模式 (預設隱藏) -->
-                    <div id="hotel-edit-mode" class="hidden space-y-4">
-                        <input type="text" id="in-name" placeholder="飯店名稱" class="w-full bg-gray-100 border border-gray-300 rounded-lg p-3 text-sm text-gray-900 focus:border-teal-accent outline-none">
-                        <textarea id="in-addr" rows="4" placeholder="日文地址 (最重要)" class="w-full bg-gray-100 border border-gray-300 rounded-lg p-3 text-sm text-gray-900 focus:border-teal-accent outline-none"></textarea>
-                        <input type="text" id="in-phone" placeholder="飯店電話" class="w-full bg-gray-100 border border-gray-300 rounded-lg p-3 text-sm text-gray-900 focus:border-teal-accent outline-none">
-                        <div class="grid grid-cols-2 gap-4 mt-4">
-                            <button onclick="saveHotel()" class="bg-red-accent text-white py-3 rounded-lg text-base font-bold hover:bg-opacity-80 shadow-lg"
-                                    style="background-color: var(--color-red);">儲存</button>
-                            <button onclick="toggleEdit()" class="bg-gray-400 text-gray-900 py-3 rounded-lg text-base hover:bg-gray-500">取消</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="h-12"></div> <!-- 底部留白 -->
-        </main>
-
+      <div class="rate-grid" style="margin-top:10px;">
+        <div>
+          <label class="label">台幣金額（TWD）→ 日圓</label>
+          <input id="rateTwdInput" type="number" placeholder="例如：1000" />
+        </div>
+        <div>
+          <div class="label">換算結果（JPY）</div>
+          <div class="highlight-number" id="rateResultJpy">—</div>
+          <div class="small">依上方匯率即時計算</div>
+        </div>
+      </div>
     </div>
 
-    <!-- JavaScript 邏輯 (保持不變) -->
-    <script>
-        // --- 1. 詳細行程資料 (與上次版本相同) ---
-        const itineraryData = [
-            {
-                day: 1, date: "12/26 (四)", title: "抵達與高輪新區",
-                weather: { icon: "☀️", cond: "晴朗乾冷", temp: "3° / 10°", loc: "東京", alert: false },
-                slots: [
-                    { 
-                        time: "Morning", title: "抵達與入住 Takanawa Gateway", icon: "plane",
-                        desc: "前往飯店辦理入住或寄放行李。Takanawa Gateway 是隈研吾設計的新車站，以「折紙」為靈感的屋頂結構非常值得一看。",
-                        hours: "車站全日開放 / 飯店通常 15:00 入住",
-                        expert: "【建築迷必看】車站的挑高玻璃帷幕在早晨光影下非常美。如果行李不多，建議走去二樓的無人商店體驗一下高科技結帳。"
-                    },
-                    { 
-                        time: "Lunch", title: "NEWoMan 高輪/品川", icon: "coffee",
-                        desc: "為了避開人潮，建議在站內的麵包店或 NEWoMan 的輕食區用餐。",
-                        hours: "11:00 - 21:00 (餐廳區)",
-                        expert: "【避雷指南】品川站中午人潮非常恐怖，建議避開「品達麵達」拉麵街，改去 NEWoMan 的 Blue Bottle 或麵包名店，環境舒服很多。"
-                    },
-                    { 
-                        time: "Afternoon", title: "KITTE 丸之內", icon: "shopping-bag",
-                        desc: "由舊東京中央郵局改建的商場，保留了昭和時代的現代主義風格。",
-                        hours: "11:00 - 20:00",
-                        expert: "【攝影點】務必上 6F 的屋頂花園「KITTE Garden」。這裡是免費拍攝東京車站丸之內紅磚站舍「全景」的最佳位置，不用人擠人。"
-                    },
-                    { 
-                        time: "Dinner", title: "品川周邊在地居酒屋", icon: "beer",
-                        desc: "探索品川港南口巷弄內的傳統居酒屋，感受上班族下班後的氛圍。",
-                        hours: "17:00 - 23:00",
-                        expert: "【點餐攻略】找掛有紅燈籠的店準沒錯。推薦點「煮込み (內臟燉煮)」配生啤酒。如果不會日文，用 Google 翻譯圖片菜單通常沒問題。"
-                    }
-                ]
-            },
-            {
-                day: 2, date: "12/27 (五)", title: "丸之內與八重洲",
-                weather: { icon: "🌤️", cond: "多雲轉晴", temp: "4° / 11°", loc: "東京", alert: false },
-                slots: [
-                    { 
-                        time: "Morning", title: "皇居外苑散策", icon: "camera",
-                        desc: "清晨的皇居外苑空氣清新，是東京市中心的綠洲。",
-                        hours: "全日開放",
-                        expert: "【歷史小知識】必拍的「二重橋」其實平常是關閉的，只有新年或天皇即位等大典才會開放。清晨來可以看到最美的倒影。"
-                    },
-                    { 
-                        time: "Lunch", title: "KITTE 美食街", icon: "utensils",
-                        desc: "選擇 B1 的根室花丸迴轉壽司(需排隊) 或 5F 的特色餐廳。",
-                        hours: "11:00 - 22:00",
-                        expert: "【省時技巧】根室花丸通常要排 2 小時。若不想等，直接去 5F 的蕎麥麵店，視野好且翻桌快。記得選靠窗位可以看到東京站火車進出。"
-                    },
-                    { 
-                        time: "Afternoon", title: "東京車站畫廊 / 銀座", icon: "map",
-                        desc: "位於東京車站紅磚建築內的精緻美術館，保留了百年前的紅磚牆。",
-                        hours: "10:00 - 18:00 (週一休)",
-                        expert: "【文青推薦】這裡的展覽通常很有品味且人少。看完展覽沿著八重洲地下街走到銀座，一路上有很多日本各地的「物產館」(Antenna Shop) 可以買伴手禮。"
-                    },
-                    { 
-                        time: "Dinner", title: "Sumiyaki Unafuji (八重洲)", icon: "star", highlight: true,
-                        desc: "來自名古屋的特級鰻魚飯，炭火直烤，皮脆肉嫩。",
-                        hours: "11:00 - 22:00 (需預約)",
-                        expert: "【饕客吃法】這裡有名的是「Hitsumabushi (鰻魚三吃)」。第一碗吃原味，第二碗加蔥花芥末，第三碗加高湯變茶泡飯。這是名古屋流的正宗吃法！"
-                    }
-                ]
-            },
-            {
-                day: 3, date: "12/28 (六)", title: "下町懷舊日",
-                weather: { icon: "☀️", cond: "晴朗", temp: "2° / 9°", loc: "東京", alert: false },
-                slots: [
-                    { 
-                        time: "Morning", title: "築地場外市場", icon: "sun",
-                        desc: "雖然市場搬去豐洲，但場外的美食街依然熱鬧非凡。",
-                        hours: "05:00 - 14:00 (各店不同)",
-                        expert: "【行家指南】絕對要在 8:30 前到。必吃「玉子燒」串和「狐狸屋」的牛雜丼(Horumon Don)。牛雜丼味道很重，不喜歡內臟的可以改吃海鮮丼。"
-                    },
-                    { 
-                        time: "Lunch", title: "月島文字燒街", icon: "flame",
-                        desc: "整條街都是文字燒店，自己動手煎非常有樂趣。",
-                        hours: "11:00 - 22:00",
-                        expert: "【操作教學】如果不熟練，大膽請店員幫忙煎(Sumimasen, help!)。推薦點「明太子麻糬起司」口味，這是絕對不會失敗的經典組合。"
-                    },
-                    { 
-                        time: "Afternoon", title: "清澄白河", icon: "coffee",
-                        desc: "東京的咖啡激戰區，擁有Blue Bottle一號店和許多獨立烘豆所。",
-                        hours: "10:00 - 18:00",
-                        expert: "【散步路線】從東京都現代美術館開始，沿路逛 fukadaso (舊公寓改建的雜貨店)。氣氛非常悠閒，適合買咖啡豆當伴手禮。"
-                    },
-                    { 
-                        time: "Dinner", title: "門前仲町", icon: "utensils",
-                        desc: "充滿江戶風情的街區，是當地人下班喝酒的聖地。",
-                        hours: "17:00 - 深夜",
-                        expert: "【美食推薦】這裡的名物是「深川飯」(蛤蜊炊飯)。如果想吃肉，這裡也有很多高CP值的立食燒肉店，站著吃更便宜！"
-                    }
-                ]
-            },
-            {
-                day: 4, date: "12/29 (日)", title: "富士山一日遊",
-                weather: { icon: "🗻", cond: "極凍晴天", temp: "-5° / 1°", loc: "富士山", alert: true, note: "體感極低，務必穿著防風外套" },
-                slots: [
-                    { 
-                        time: "Morning", title: "富士山五合目", icon: "mountain",
-                        desc: "巴士直達富士山半山腰，最近距離感受神山的魄力。",
-                        hours: "道路視天候開放",
-                        expert: "【重要提醒】12月底五合目可能因積雪道路封閉，若無法上山，巴士通常會改去「富士山世界遺產中心」。記得去神社買「富士山御守」，很靈驗。"
-                    },
-                    { 
-                        time: "Lunch", title: "河口湖鄉土料理", icon: "soup",
-                        desc: "品嚐山梨縣名物「餺飥麵 (Houtou)」，蔬菜味噌湯底配寬麵。",
-                        hours: "11:00 - 15:00",
-                        expert: "【名店推薦】「不動茶屋 (Houtou Fudo)」很有名。如果不喜歡排隊，隨便一家家庭料理店的餺飥麵其實都很好吃，重點是加一點店家特製的辣醬。"
-                    },
-                    { 
-                        time: "Afternoon", title: "忍野八海", icon: "snowflake",
-                        desc: "富士山融雪形成的八個池塘，水質清澈見底。",
-                        hours: "全日開放",
-                        expert: "【冬季限定】冬天人稍微少一點，空氣乾燥讓富士山看起來更清晰。小心池邊木棧道結冰會滑。這裡的水豆腐和烤草餅是必吃小點心。"
-                    },
-                    { 
-                        time: "Dinner", title: "新宿西口晚餐", icon: "utensils",
-                        desc: "一日遊巴士回到新宿後，直接在西口大樓內用餐。",
-                        hours: "11:00 - 23:00",
-                        expert: "【避人潮】不要去歌舞伎町(東口)，人多又雜。西口的 Odakyu 或 Keio 百貨樓上餐廳街品質穩定，而且通常不用排太久。"
-                    }
-                ]
-            },
-            {
-                day: 5, date: "12/30 (一)", title: "代官山時尚",
-                weather: { icon: "☀️", cond: "晴朗", temp: "5° / 12°", loc: "東京", alert: false },
-                slots: [
-                    { 
-                        time: "Morning", title: "代官山 蔦屋書店", icon: "book",
-                        desc: "被譽為世界最美書店之一，在此享受高品質的閱讀時光。",
-                        hours: "09:00 - 22:00",
-                        expert: "【氛圍體驗】二樓的 Anjin Lounge 可以邊喝調酒邊看珍稀古書。早上去人最少，是拍照打卡的最佳時機，光線最好。"
-                    },
-                    { 
-                        time: "Lunch", title: "惠比壽巷弄午餐", icon: "utensils",
-                        desc: "這一帶有很多隱藏版的義式或法式小餐館。",
-                        hours: "11:30 - 14:30",
-                        expert: "【高CP值】尋找門口有寫「Lunch Menu 1000 yen」的小黑板。東京的午間套餐通常非常超值，能用便宜價格吃到精緻料理。"
-                    },
-                    { 
-                        time: "Afternoon", title: "裏原宿 / 貓街", icon: "shopping-bag",
-                        desc: "連接澀谷與原宿的步行街，充滿個性潮牌與古著店。",
-                        hours: "11:00 - 20:00",
-                        expert: "【逛街攻略】不要走竹下通(人太多)。走貓街(Cat Street)可以逛到很多限量球鞋店和設計師品牌。推薦去「RAGTAG」挖寶二手名牌。"
-                    },
-                    { 
-                        time: "Dinner", title: "惠比壽橫丁", icon: "beer",
-                        desc: "室內屋台街，集合了多家不同風格的居酒屋。",
-                        hours: "17:00 - 04:00",
-                        expert: "【社交聖地】這裡氣氛非常High，日本人很喜歡來這聯誼。如果想體驗熱鬧氣氛來這準沒錯，但記得要早點到，不然一位難求。"
-                    }
-                ]
-            },
-            {
-                day: 6, date: "12/31 (二)", title: "谷中銀座與返程",
-                weather: { icon: "🌥️", cond: "晴時多雲", temp: "1° / 8°", loc: "東京", alert: false },
-                slots: [
-                    { 
-                        time: "Morning", title: "谷中銀座商店街", icon: "shopping-bag",
-                        desc: "倖存於二戰空襲的老街，保有昭和時代的懷舊感。",
-                        hours: "10:00 - 18:00",
-                        expert: "【貓奴必去】這裡被稱為「貓町」，雖然真貓不一定多，但有很多貓咪造型的甜點和雜貨。必吃「肉之鈴木」的元氣炸肉餅 (Menchi Katsu)。"
-                    },
-                    { 
-                        time: "Lunch", title: "谷中蕎麥麵", icon: "utensils",
-                        desc: "在老宅改建的麵店享用最後的日式午餐。",
-                        hours: "11:00 - 15:00",
-                        expert: "【過年習俗】12/31 日本人有吃「年越蕎麥麵」的習慣，象徵斬斷今年的厄運。所以今天的蕎麥麵店可能會大排長龍，建議提早用餐！"
-                    },
-                    { 
-                        time: "Afternoon", title: "前往機場", icon: "plane",
-                        desc: "搭乘 Skyliner (從日暮里) 或 NEX 前往機場。",
-                        hours: "-",
-                        expert: "【最後採購】如果還沒買夠，機場免稅店的「Tokyo Banana」和「白色戀人」雖然老套但絕對受歡迎。記得預留至少 3 小時到機場。"
-                    },
-                    { 
-                        time: "Dinner", title: "機上/機場晚餐", icon: "home",
-                        desc: "結束美好的旅程。",
-                        hours: "-",
-                        expert: "【回家小心】檢查護照、錢包。期待下次再來日本！"
-                    }
-                ]
-            }
-        ];
+    <!-- 東京天氣 -->
+    <div class="card">
+      <h2>東京天氣 🌤️</h2>
+      <div id="weatherNow" class="weather-now-main">正在取得東京即時天氣…</div>
+      <div id="weatherExtra" class="weather-grid"></div>
+      <div class="small" id="airNow" style="margin-top:6px;">空氣品質資料讀取中…</div>
 
-        let currentDay = 1;
-        // 追蹤目前的顯示模式: 'ITINERARY', 'CURRENCY', 'HOTEL'
-        let viewMode = 'ITINERARY'; 
+      <div class="label" style="margin-top:8px;">未來一週（高低溫 / 日落 / UV / 下雪機率 / AQI）</div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+          <tr>
+            <th>日期</th>
+            <th>天氣</th>
+            <th>最高 / 最低</th>
+            <th>日落</th>
+            <th>UV 最大值</th>
+            <th>下雪機率</th>
+            <th>AQI</th>
+          </tr>
+          </thead>
+          <tbody id="weatherWeekBody">
+          <tr><td colspan="7">讀取中…</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="small" style="margin-top:6px;">
+        ※ 下雪機率以降水機率與預測降雪量估算，僅供參考。
+      </div>
+    </div>
+
+    <!-- 富士山直播 -->
+    <div class="card">
+      <h2>富士山直播 🗻</h2>
+      <div class="small">
+        連線兩個 YouTube 富士山直播，建議在 Wi-Fi 環境下觀看。
+      </div>
+      <div class="video">
+        <iframe src="https://www.youtube.com/embed/bdUbACCWmoY"
+                title="Mt. Fuji Live 1"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen></iframe>
+      </div>
+      <div class="video">
+        <iframe src="https://www.youtube.com/embed/Gn2CJjzY068"
+                title="Mt. Fuji Live 2"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen></iframe>
+      </div>
+      <div class="label" style="margin-top:8px;">富士山能見度預報</div>
+      <a class="pill pill-accent" href="https://fuji-san.info/zh-tw/index.html" target="_blank" rel="noopener">
+        🔗 開啟 fuji-san.info 能見度預報
+      </a>
+    </div>
+
+    <!-- 緊急電話 & 線上醫療 -->
+    <div class="card">
+      <h2>緊急電話 & 線上醫療 🚑</h2>
+      <div class="label">日本緊急電話</div>
+      <div class="small">
+        ・110：警察<br />
+        ・119：救護車 / 火警
+      </div>
+
+      <div class="label" style="margin-top:8px;">台灣駐日單位（參考）</div>
+      <div class="small">
+        ・台北駐日經濟文化代表處：+81-3-3280-7811<br />
+        ・急難救助專線：+81-80-1009-5909
+      </div>
+
+      <div class="label" style="margin-top:8px;">OHDr. 中文線上門診</div>
+      <div class="small">
+        旅途中若身體不適，可透過 LINE 連線中文醫師線上看診。
+      </div>
+      <a class="pill pill-accent" href="https://line.me/R/ti/p/@406vicce" target="_blank" rel="noopener">
+        🔗 加入 OHDr. LINE 中文官方帳號
+      </a>
+    </div>
+
+    <!-- 飯店資訊 -->
+    <div class="card">
+      <h2>飯店資訊 🏨</h2>
+      <div class="label">飯店名稱</div>
+      <div style="font-size:16px;font-weight:600;">
+        上野站前1號遊客酒店（Hotel Guest 1 Ueno Station）
+      </div>
+
+      <div class="label">地址</div>
+      <div class="small">
+        2 Chome-18-18 Higashiueno, Taito City, Tokyo 110-0015 日本
+      </div>
+
+      <div class="label">入住 / 退房</div>
+      <div class="small">
+        Check-in：<b>15:00</b> 後<br />
+        Check-out：<b>10:00 之前</b>
+      </div>
+
+      <div class="map-embed">
+        <iframe
+          loading="lazy"
+          src="https://www.google.com/maps?q=2+Chome-18-18+Higashiueno,+Taito+City,+Tokyo+110-0015+Japan&output=embed">
+        </iframe>
+      </div>
+    </div>
+
+    <!-- 常用日語 -->
+    <div class="card">
+      <h2>常用日語 🎧（點擊發音 / 複製）</h2>
+
+      <div class="jp-category">🍽 餐廳</div>
+      <div class="phrase-row">
+        <div class="phrase-main">
+          <div>請問有兩位的座位嗎？</div>
+          <div class="phrase-jp">二人ですが、席は空いていますか。</div>
+        </div>
+        <button class="tiny-btn" onclick="speakJP('二人ですが、席は空いていますか。')">🔊</button>
+        <button class="tiny-btn" onclick="copyJP('二人ですが、席は空いていますか。')">📋</button>
+      </div>
+      <div class="phrase-row">
+        <div class="phrase-main">
+          <div>可以給我菜單嗎？</div>
+          <div class="phrase-jp">メニューを見せてください。</div>
+        </div>
+        <button class="tiny-btn" onclick="speakJP('メニューを見せてください。')">🔊</button>
+        <button class="tiny-btn" onclick="copyJP('メニューを見せてください。')">📋</button>
+      </div>
+      <div class="phrase-row">
+        <div class="phrase-main">
+          <div>這道有沒有含酒精？</div>
+          <div class="phrase-jp">この料理にアルコールは入っていますか。</div>
+        </div>
+        <button class="tiny-btn" onclick="speakJP('この料理にアルコールは入っていますか。')">🔊</button>
+        <button class="tiny-btn" onclick="copyJP('この料理にアルコールは入っていますか。')">📋</button>
+      </div>
+
+      <div class="jp-category">🚆 交通</div>
+      <div class="phrase-row">
+        <div class="phrase-main">
+          <div>請問這班電車有到○○嗎？</div>
+          <div class="phrase-jp">この電車は○○に行きますか。</div>
+        </div>
+        <button class="tiny-btn" onclick="speakJP('この電車は○○に行きますか。')">🔊</button>
+        <button class="tiny-btn" onclick="copyJP('この電車は○○に行きますか。')">📋</button>
+      </div>
+      <div class="phrase-row">
+        <div class="phrase-main">
+          <div>請問要在哪一站轉車？</div>
+          <div class="phrase-jp">どの駅で乗り換えればいいですか。</div>
+        </div>
+        <button class="tiny-btn" onclick="speakJP('どの駅で乗り換えればいいですか。')">🔊</button>
+        <button class="tiny-btn" onclick="copyJP('どの駅で乗り換えればいいですか。')">📋</button>
+      </div>
+
+      <div class="jp-category">🆘 緊急</div>
+      <div class="phrase-row">
+        <div class="phrase-main">
+          <div>請幫我叫救護車。</div>
+          <div class="phrase-jp">救急車を呼んでください。</div>
+        </div>
+        <button class="tiny-btn" onclick="speakJP('救急車を呼んでください。')">🔊</button>
+        <button class="tiny-btn" onclick="copyJP('救急車を呼んでください。')">📋</button>
+      </div>
+      <div class="phrase-row">
+        <div class="phrase-main">
+          <div>我身體不舒服，哪裡可以看醫生？</div>
+          <div class="phrase-jp">体調が悪いので、どこで診察を受けられますか。</div>
+        </div>
+        <button class="tiny-btn" onclick="speakJP('体調が悪いので、どこで診察を受けられますか。')">🔊</button>
+        <button class="tiny-btn" onclick="copyJP('体調が悪いので、どこで診察を受けられますか。')">📋</button>
+      </div>
+
+      <div class="jp-category">🛍 購物</div>
+      <div class="phrase-row">
+        <div class="phrase-main">
+          <div>這個可以免稅嗎？</div>
+          <div class="phrase-jp">これは免税になりますか。</div>
+        </div>
+        <button class="tiny-btn" onclick="speakJP('これは免税になりますか。')">🔊</button>
+        <button class="tiny-btn" onclick="copyJP('これは免税になりますか。')">📋</button>
+      </div>
+      <div class="phrase-row">
+        <div class="phrase-main">
+          <div>可以給我收據嗎？</div>
+          <div class="phrase-jp">領収書をください。</div>
+        </div>
+        <button class="tiny-btn" onclick="speakJP('領収書をください。')">🔊</button>
+        <button class="tiny-btn" onclick="copyJP('領収書をください。')">📋</button>
+      </div>
+
+      <div class="jp-category">🏨 旅館 / 飯店</div>
+      <div class="phrase-row">
+        <div class="phrase-main">
+          <div>我要辦理入住。</div>
+          <div class="phrase-jp">チェックインをお願いします。</div>
+        </div>
+        <button class="tiny-btn" onclick="speakJP('チェックインをお願いします。')">🔊</button>
+        <button class="tiny-btn" onclick="copyJP('チェックインをお願いします。')">📋</button>
+      </div>
+      <div class="phrase-row">
+        <div class="phrase-main">
+          <div>可以延遲退房嗎？</div>
+          <div class="phrase-jp">レイトチェックアウトはできますか。</div>
+        </div>
+        <button class="tiny-btn" onclick="speakJP('レイトチェックアウトはできますか。')">🔊</button>
+        <button class="tiny-btn" onclick="copyJP('レイトチェックアウトはできますか。')">📋</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 行程 -->
+  <section id="plan">
+    
+    <!-- 12/26 -->
+    <div class="card">
+      <div class="day-card-title">12/26（五） 上野</div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-time">10:10</div>
+          <div class="schedule-title">桃園國際機場 TPE T1（JX802）</div>
+        </div>
+        <div class="schedule-desc">
+          星宇航空 JX802 前往東京，建議起飛前 2–3 小時抵達機場完成報到與安檢。
+        </div>
+        <div class="schedule-hours">溫馨提醒：護照、登機證與隨身行李請再次確認。</div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-time">14:20</div>
+          <div class="schedule-title">成田機場 NRT T2</div>
+        </div>
+        <div class="schedule-desc">
+          抵達成田第二航廈，可購買 Skyliner 或 JR 車票前往市區。
+        </div>
+        <div class="schedule-hours">市區交通時間約 45–60 分鐘。</div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-time">17:00</div>
+          <div class="schedule-title">晚餐：阿美橫丁</div>
+        </div>
+        <div class="schedule-desc">
+          上野最熱鬧的商店街，串燒、拉麵、海鮮丼選擇豐富，是旅程第一晚感受東京氣氛的好地方。
+        </div>
+        <div class="schedule-hours">多數店家營業至 22:00 左右。</div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-time">19:00</div>
+          <div class="schedule-title">GU 御徒町店（ジーユー 御徒町店）</div>
+        </div>
+        <div class="schedule-desc">
+          日本平價服飾品牌，外套、發熱衣與基本款單品非常受歡迎。
+        </div>
+        <div class="schedule-hours">營業時間約 10:00–21:00。</div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-time">20:00</div>
+          <div class="schedule-title">3 COINS 上野店 / OS Drug / 無印良品 上野丸井店</div>
+        </div>
+        <div class="schedule-desc">
+          3 COINS 主打日系雜貨；OS Drug 補齊藥妝；無印良品可購買「自然醒睡衣」等人氣商品。
+        </div>
+        <div class="schedule-hours">百貨與藥妝多營業至 21:00。</div>
+      </div>
+    </div>
+
+    <!-- 12/27 -->
+    <div class="card">
+      <div class="day-card-title">12/27（六） 原宿・澀谷</div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-time">08:00</div>
+          <div class="schedule-title">早餐（自由）：Tricolore Coffee</div>
+        </div>
+        <div class="schedule-desc">
+          老字號咖啡店，以蘋果派與閃電泡芙聞名，適合悠閒早晨。
+        </div>
+        <div class="schedule-hours">營業時間約 8:00–22:00。</div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-time">10:00</div>
+          <div class="schedule-title">早餐（自由）：egg baby café</div>
+        </div>
+        <div class="schedule-desc">
+          人氣咖啡廳，蛋料理與吐司系列在社群平台相當熱門。
+        </div>
+        <div class="schedule-hours">營業時間約 8:00–16:00。</div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-time">11:00</div>
+          <div class="schedule-title">3 COINS 原宿旗艦店</div>
+        </div>
+        <div class="schedule-desc">
+          規模最大的旗艦店，雜貨與期間限定商品最齊全。
+        </div>
+        <div class="schedule-hours">營業時間約 10:00–21:00。</div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-time">17:00</div>
+          <div class="schedule-title">晚餐：Sake to Yakiniku Nyutomi（已訂位）</div>
+        </div>
+        <div class="schedule-desc">
+          結合清酒與高品質燒肉的名店，厚切和牛與搭酒套餐深受好評。
+        </div>
+        <div class="schedule-hours">晚餐時段熱門，需事前訂位。</div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-time">19:00</div>
+          <div class="schedule-title">惠比壽花園廣場燈光秀</div>
+        </div>
+        <div class="schedule-desc">
+          冬季限定燈飾，水晶吊燈點燈後非常夢幻。
+        </div>
+        <div class="schedule-hours">點燈時間 17:00–23:00，建議二樓欣賞。</div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-time">20:00</div>
+          <div class="schedule-title">目黑川</div>
+        </div>
+        <div class="schedule-desc">
+          即使非櫻花季，夜晚沿河散步氣氛依然迷人。
+        </div>
+        <div class="schedule-hours">全天開放。</div>
+      </div>
+    </div>
+<!-- 12/28 -->
+    <div class="card">
+      <div class="day-card-title">12/28（日） 富士山一日遊</div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-time">08:00</div>
+          <div class="schedule-title">東京站 丸之內南口集合</div>
+        </div>
+        <div class="schedule-desc">搭乘一日遊巴士前往富士山地區，建議提早抵達避免錯過集合。</div>
+        <div class="schedule-hours">集合時間依旅行社行程表為準。</div>
+        <div class="schedule-nav">
+          <a class="nav-link" target="_blank"
+             href="https://www.google.com/maps/search/?api=1&query=Tokyo+Station+Marunouchi+South+Exit">
+            📍 導航到 東京站丸之內南口
+          </a>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-time">10:30</div>
+          <div class="schedule-title">新倉山淺間公園</div>
+        </div>
+        <div class="schedule-desc">經典「五重塔 + 富士山」構圖拍照點，氣候良好時景色非常壯觀。</div>
+        <div class="schedule-hours">公園全天開放，夜間請注意安全。</div>
+        <div class="schedule-nav">
+          <a class="nav-link" target="_blank"
+             href="https://www.google.com/maps/search/?api=1&query=Arakurayama+Sengen+Park">
+            📍 導航到 新倉山淺間公園
+          </a>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-time">11:45</div>
+          <div class="schedule-title">日川時計店</div>
+        </div>
+        <div class="schedule-desc">在地老字號鐘錶店，因富士山背景拍照而走紅，是頗具味道的小鎮街景。</div>
+        <div class="schedule-hours">營業時間：約 9:00–18:00（依店家為準）。</div>
+        <div class="schedule-nav">
+          <a class="nav-link" target="_blank"
+             href="https://www.google.com/maps/search/?api=1&query=%E6%97%A5%E5%B7%9D%E6%99%82%E8%A8%88%E5%BA%97">
+            📍 導航到 日川時計店
+          </a>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-time">12:30</div>
+          <div class="schedule-title">忍野八海（含午餐）</div>
+        </div>
+        <div class="schedule-desc">以清澈湧泉池聞名，可邊散步邊品嚐蕎麥麵、烤仙貝等在地美食。</div>
+        <div class="schedule-hours">店家營業多為 9:00–17:00 左右。</div>
+        <div class="schedule-nav">
+          <a class="nav-link" target="_blank"
+             href="https://www.google.com/maps/search/?api=1&query=Oshino+Hakkai">
+            📍 導航到 忍野八海
+          </a>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-time">15:20</div>
+          <div class="schedule-title">大石公園</div>
+        </div>
+        <div class="schedule-desc">河口湖畔賞花與拍攝富士山的熱門地點，天氣晴朗時視野極佳。</div>
+        <div class="schedule-hours">公園全天開放，咖啡廳多營業至傍晚。</div>
+        <div class="schedule-nav">
+          <a class="nav-link" target="_blank"
+             href="https://www.google.com/maps/search/?api=1&query=Oishi+Park+Kawaguchiko">
+            📍 導航到 大石公園
+          </a>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-time">18:50</div>
+          <div class="schedule-title">返回東京站</div>
+        </div>
+        <div class="schedule-desc">傍晚返程回東京站，結束一整天的富士山行程，回飯店休息或自由活動。</div>
+        <div class="schedule-hours">抵達時間依交通狀況可能略有變動。</div>
+        <div class="schedule-nav">
+          <a class="nav-link" target="_blank"
+             href="https://www.google.com/maps/search/?api=1&query=Tokyo+Station">
+            📍 導航到 東京站
+          </a>
+        </div>
+      </div>
+    </div>
+
+    
+    <!-- 12/29 -->
+    <div class="card">
+      <div class="day-card-title">12/29（一） 東京・銀座</div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-title">東京站 🚉</div>
+        </div>
+        <div class="schedule-desc">
+          東京主要轉運樞紐，可順道逛地下街與一番街。
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-time">11:30</div>
+          <div class="schedule-title">午餐：Sukiyaki Juni Ten</div>
+        </div>
+        <div class="schedule-desc">
+          以高品質和牛壽喜燒聞名，午餐時段較容易訂位。
+        </div>
+        <div class="schedule-hours">營業時間約 11:00–22:00。</div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-time">13:00</div>
+          <div class="schedule-title">KITTE 百貨（自由）</div>
+        </div>
+        <div class="schedule-desc">
+          6 樓空中花園可俯瞰東京站紅磚建築。
+        </div>
+        <div class="schedule-hours">營業時間約 11:00–20:00。</div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-title">銀座站 🚉</div>
+        </div>
+        <div class="schedule-desc">
+          銀座購物與美食中心，步行即可抵達多個景點。
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-time">14:00</div>
+          <div class="schedule-title">UNIQLO 銀座旗艦店（12F）</div>
+        </div>
+        <div class="schedule-desc">
+          全球最大 UNIQLO，限定款式與尺寸齊全。
+        </div>
+        <div class="schedule-hours">營業時間約 10:00–21:00。</div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-time">15:30</div>
+          <div class="schedule-title">MARLOWE 焦糖布丁</div>
+        </div>
+        <div class="schedule-desc">
+          玻璃杯裝布丁是招牌商品，口感濃郁滑順。
+        </div>
+        <div class="schedule-hours">營業時間約 10:00–20:00。</div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-title">芝公園站 🚉</div>
+        </div>
+        <div class="schedule-desc">
+          前往芝公園拍攝東京鐵塔的最佳地鐵站。
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-time">16:30</div>
+          <div class="schedule-title">芝公園</div>
+        </div>
+        <div class="schedule-desc">
+          拍攝東京鐵塔與楓葉的經典景點，黃昏時分光線最美。
+        </div>
+        <div class="schedule-hours">公園全天開放。</div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-time">17:30</div>
+          <div class="schedule-title">Stellar Garden Sky Bar & Dining</div>
+        </div>
+        <div class="schedule-desc">
+          高樓層酒吧，可邊小酌邊欣賞東京夜景。
+        </div>
+        <div class="schedule-hours">營業時間約 17:00–23:00。</div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-time">19:00</div>
+          <div class="schedule-title">麻布台 Hills 森 JP Tower</div>
+        </div>
+        <div class="schedule-desc">
+          東京最新地標之一，結合建築、藝術與商業空間。
+        </div>
+        <div class="schedule-hours">多數設施營業至 21:00。</div>
+      </div>
+    </div>
+<!-- 12/30 -->
+    <div class="card">
+      <div class="day-card-title">12/30（二） 新宿・秋葉原</div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-time">11:00</div>
+          <div class="schedule-title">新宿：NEWoMan / 高島屋等百貨</div>
+        </div>
+        <div class="schedule-desc">逛新宿車站周邊百貨與商場，採買服飾、生活雜貨與伴手禮。</div>
+        <div class="schedule-hours">多數百貨 10:00–20:00 左右。</div>
+        <div class="schedule-nav">
+          <a class="nav-link" target="_blank"
+             href="https://www.google.com/maps/search/?api=1&query=NEWoMan+Shinjuku">
+            📍 導航到 NEWoMan 新宿
+          </a>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-time">18:30</div>
+          <div class="schedule-title">二木菓子（秋葉原買伴手禮）</div>
+        </div>
+        <div class="schedule-desc">大型零食店，可一次購入各種糖果、餅乾與伴手禮。</div>
+        <div class="schedule-hours">營業時間：約 10:00–20:00。</div>
+        <div class="schedule-nav">
+          <a class="nav-link" target="_blank"
+             href="https://www.google.com/maps/search/?api=1&query=Futabakashi+Akihabara">
+            📍 導航到 二木菓子 秋葉原
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 12/31 -->
+    <div class="card">
+      <div class="day-card-title">12/31（三） 成田市 & 回程</div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-time">09:30</div>
+          <div class="schedule-title">成田山新勝寺</div>
+        </div>
+        <div class="schedule-desc">關東著名寺院，新年參拜人氣景點，可感受日本寺院氛圍。</div>
+        <div class="schedule-hours">開門時間：約 6:00–17:00，依季節略有不同。</div>
+        <div class="schedule-nav">
+          <a class="nav-link" target="_blank"
+             href="https://www.google.com/maps/search/?api=1&query=Naritasan+Shinshoji+Temple">
+            📍 導航到 成田山新勝寺
+          </a>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-time">10:30</div>
+          <div class="schedule-title">成田山表參道</div>
+        </div>
+        <div class="schedule-desc">寺院前的商店街，聚集鰻魚飯老店、土產店與小吃店。</div>
+        <div class="schedule-hours">店家多為 10:00–17:00 左右。</div>
+        <div class="schedule-nav">
+          <a class="nav-link" target="_blank"
+             href="https://www.google.com/maps/search/?api=1&query=Naritasan+Omotesando">
+            📍 導航到 成田山表參道
+          </a>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-time">11:30</div>
+          <div class="schedule-title">成田夢牧場 門前店</div>
+        </div>
+        <div class="schedule-desc">可品嚐霜淇淋、乳製品與輕食，適合當回程前的小憩。</div>
+        <div class="schedule-hours">營業時間：約 10:00–17:00。</div>
+        <div class="schedule-nav">
+          <a class="nav-link" target="_blank"
+             href="https://www.google.com/maps/search/?api=1&query=Narita+Yume+Bokujo+Omotesando">
+            📍 導航到 成田夢牧場 門前店
+          </a>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-time">12:30</div>
+          <div class="schedule-title">成田機場 (NRT) 出境</div>
+        </div>
+        <div class="schedule-desc">預留時間辦理退稅、托運與安檢，準備搭機返家。</div>
+        <div class="schedule-hours">建議起飛前約 3 小時抵達機場。</div>
+        <div class="schedule-nav">
+          <a class="nav-link" target="_blank"
+             href="https://www.google.com/maps/search/?api=1&query=Narita+Airport+Terminal+2">
+            📍 導航到 成田機場 T2
+          </a>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-time">15:40</div>
+          <div class="schedule-title">成田機場 NRT T2（JX803 起飛）</div>
+        </div>
+        <div class="schedule-desc">
+          搭乘星宇航空 JX803 飛返桃園國際機場，請再次確認登機門與登機時間。
+        </div>
+        <div class="schedule-hours">溫馨提醒：起飛前 2–3 小時抵達機場，預留辦理出境與安檢時間。</div>
+        <div class="schedule-nav">
+          <a class="nav-link" target="_blank"
+             href="https://www.google.com/maps/search/?api=1&query=Narita+Airport+Terminal+2">
+            📍 導航到 成田機場 T2
+          </a>
+        </div>
+      </div>
+
+      <div class="schedule-item">
+        <div class="schedule-header">
+          <div class="schedule-time">18:45</div>
+          <div class="schedule-title">抵達 桃園國際機場 TPE T1</div>
+        </div>
+        <div class="schedule-desc">返回台灣，結束東京旅程。可於入境後領取托運行李並通關。</div>
+        <div class="schedule-hours">實際抵達時間以航班資訊為準。</div>
+        <div class="schedule-nav">
+          <a class="nav-link" target="_blank"
+             href="https://www.google.com/maps/search/?api=1&query=Taoyuan+International+Airport+Terminal+1">
+            📍 導航到 桃園國際機場 T1
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<!-- 美食 -->
+<section id="food">
+  <div class="card">
+    <h2>美食清單 🍜</h2>
+    <div class="small">新增你想去吃的店（最多 3 張照片）。新增後會自動依區域分組，並在地圖上以每家一個 pin 顯示。</div>
+
+    <label class="label">店名</label>
+    <input id="foodName" placeholder="例如：No.4 / 治一郎 KITTE 丸の內店" />
+
+    <label class="label">地址（或關鍵字）</label>
+    <input id="foodAddress" placeholder="例如：Marunouchi Tokyo / Ueno" />
+
+    <label class="label">照片（最多 3 張 / 10MB）</label>
+    <input id="foodImg" type="file" accept="image/*" multiple />
+    <div id="foodUploadStatus" class="small"></div>
+
+    <div class="btn-row">
+      <button class="primary" id="foodAddBtn">新增美食</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>地圖標記 📍</h2>
+    <div class="small">每家一個 pin（Google Maps 內嵌，不需 API Key）。</div>
+    <div class="map-embed" style="margin-top:10px;">
+      <iframe id="foodMap" loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        style="width:100%;height:300px;border:0;border-radius:14px;"
+        src="https://www.google.com/maps?q=Tokyo&output=embed"></iframe>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>想吃清單（自動分區）</h2>
+    <div id="foodList" style="margin-top:8px;"></div>
+  </div>
+
+  <!-- 編輯美食 Modal（動態注入） -->
+  <div id="foodEditModal" class="modal" style="display:none;"></div>
+</section>
+  <!-- 記帳 -->
+  <section id="expense">
+    <div class="card">
+      <h2>旅費記帳 💰</h2>
+      <div class="small">
+        照片會上傳到 Supabase Storage（bucket：<b>expense-photos</b>），每筆最多 3 張、總量 10MB。
+      </div>
+
+      <label class="label">日期</label>
+      <input type="date" id="expDate" />
+
+      <label class="label">時間</label>
+      <input type="time" id="expTime" />
+
+      <label class="label">項目名稱</label>
+      <input type="text" id="expName" placeholder="例如：晚餐、伴手禮、交通費" />
+
+      <label class="label">金額</label>
+      <input type="number" id="expAmount" placeholder="例如：1200" />
+
+      <label class="label">幣別</label>
+      <select id="expCurrency">
+        <option value="JPY">JPY（日圓）</option>
+        <option value="TWD">TWD（台幣）</option>
+      </select>
+
+      <label class="label">備註</label>
+      <textarea id="expNote" placeholder="可記錄店名、誰先付錢、分攤方式等"></textarea>
+
+      <label class="label">照片（最多 3 張 / 10MB）</label>
+      <input id="expImg" type="file" accept="image/*" multiple />
+      <div id="expUploadStatus" class="small"></div>
+
+      <div class="btn-row">
+        <button class="primary" id="expSubmitBtn">新增記帳</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>記帳列表</h3>
+      <div id="expenseList" class="small">正在讀取雲端記帳資料…</div>
+    </div>
+  </section>
+
+  <!-- 清單 -->
+  <section id="list">
+    <!-- 行前準備 -->
+    <div class="card">
+      <h2>行前準備清單 ✅</h2>
+      <div class="small">勾選代表已完成（會顯示刪除線），可隨時編輯與刪除。資料會同步儲存在 Supabase。</div>
+
+      <label class="label">新增項目</label>
+      <div class="btn-row">
+        <input id="prepInput" type="text" placeholder="例如：護照、外幣、行動電源…" />
+        <button class="secondary" id="prepAddBtn">新增</button>
+      </div>
+
+      <div id="prepList" style="margin-top:8px;"></div>
+    </div>
+
+    <!-- 購物清單 -->
+    <div class="card">
+      <h2>購物清單 🛍️</h2>
+      <div class="small">
+        照片會上傳到 Supabase Storage（bucket：<b>shopping-photos</b>），每筆最多 3 張、總量 10MB。
+      </div>
+
+      <label class="label">品項名稱</label>
+      <input id="shopName" type="text" placeholder="例如：藥妝、防曬、零食禮盒…" />
+
+      <label class="label">金額</label>
+      <input id="shopAmount" type="number" placeholder="例如：3000" />
+
+      <label class="label">幣別</label>
+      <select id="shopCurrency">
+        <option value="JPY">JPY（日圓）</option>
+        <option value="TWD">TWD（台幣）</option>
+      </select>
+
+      <label class="label">備註</label>
+      <textarea id="shopNote" placeholder="可記錄要買給誰、品牌、款式顏色等"></textarea>
+
+      <label class="label">照片（最多 3 張 / 10MB）</label>
+      <input id="shopImg" type="file" accept="image/*" multiple />
+      <div id="shopUploadStatus" class="small"></div>
+
+      <div class="btn-row">
+        <button class="primary" id="shopAddBtn">新增購物項目</button>
+      </div>
+
+      <div id="shopList" style="margin-top:8px;"></div>
+    </div>
+  </section>
+</main>
+
+<script>
+  // === Supabase 初始化 ===
+  const { createClient } = supabase;
+  const supabaseUrl = "https://jbfrwvmcvnctnfwknxtw.supabase.co";
+  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpiZnJ3dm1jdm5jdG5md2tueHR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUyMDI3ODYsImV4cCI6MjA4MDc3ODc4Nn0.H8vosru6poIlFcV7bGo28hRP9ukOGzh_eJ3Ba5dnXFM";
+  const sb = createClient(supabaseUrl, supabaseKey);
+
+  // === 頁籤切換（只用點擊，不使用左右滑動） ===
+  const tabButtons = document.querySelectorAll("nav button");
+  const sections = document.querySelectorAll("main section");
+  tabButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = btn.dataset.tab;
+      tabButtons.forEach(b => b.classList.toggle("active", b === btn));
+      sections.forEach(s => s.classList.toggle("active", s.id === id));
+    });
+  });
 
 
-        // --- 2. 介面渲染及切換邏輯 (Render and View Switching Logic) ---
-        
-        // 切換主內容區塊的顯示
-        function updateMainView() {
-            // 隱藏所有內容區塊
-            document.getElementById('itinerary-view').classList.add('hidden');
-            document.getElementById('currency-view').classList.add('hidden');
-            document.getElementById('hotel-view-main').classList.add('hidden');
+// =========================
+// 🍜 美食（Supabase：food_places）
+// =========================
+const foodName = document.getElementById("foodName");
+const foodAddress = document.getElementById("foodAddress");
+const foodImg = document.getElementById("foodImg");
+const foodAddBtn = document.getElementById("foodAddBtn");
+const foodUploadStatus = document.getElementById("foodUploadStatus");
+const foodList = document.getElementById("foodList");
+const foodMap = document.getElementById("foodMap");
+const foodEditModal = document.getElementById("foodEditModal");
 
-            // 顯示當前的區塊
-            if (viewMode === 'ITINERARY') {
-                document.getElementById('itinerary-view').classList.remove('hidden');
-                renderItinerary();
-            } else if (viewMode === 'CURRENCY') {
-                document.getElementById('currency-view').classList.remove('hidden');
-            } else if (viewMode === 'HOTEL') {
-                document.getElementById('hotel-view-main').classList.remove('hidden');
-            }
-            
-            // 更新導覽按鈕狀態
-            renderNav();
+function computeFoodArea(addr = "", name = "") {
+  const s = (addr + " " + name).toLowerCase();
+  // 銀座 / 丸之內 / 有樂町
+  if (s.includes("marunouchi") || s.includes("銀座") || s.includes("ginza") || s.includes("有楽町") || s.includes("yurakucho")) return "銀座";
+  // 上野
+  if (s.includes("ueno") || s.includes("上野") || s.includes("taito") || s.includes("台東")) return "上野";
+  // 澀谷（含原宿/表參道）
+  if (s.includes("shibuya") || s.includes("渋谷") || s.includes("澀谷") || s.includes("jingumae") || s.includes("原宿") || s.includes("harajuku") || s.includes("omotesando") || s.includes("表參道")) return "澀谷";
+  return "其他";
+}
+
+function bytesToMB(n) { return Math.round((n / (1024*1024)) * 100) / 100; }
+
+async function uploadFoodPhotos(files, folder = "food") {
+  const urls = [];
+  if (!files || !files.length) return urls;
+
+  const selected = Array.from(files).slice(0, 3);
+  const totalBytes = selected.reduce((a,f)=>a+f.size, 0);
+  if (bytesToMB(totalBytes) > 10) {
+    throw new Error("照片總量超過 10MB，請改用較小檔案或減少張數。");
+  }
+
+  // 逐張上傳（沿用 shopping-photos bucket）
+  for (let i = 0; i < selected.length; i++) {
+    const file = selected[i];
+    const safeName = file.name.replace(/\s+/g, "_");
+    const path = `${folder}/${Date.now()}_${Math.random().toString(16).slice(2)}_${safeName}`;
+
+    foodUploadStatus.textContent = `上傳第 ${i+1}/${selected.length} 張：0%`;
+    // supabase-js 不提供原生進度事件（fetch），因此這裡以「開始/完成」提示為主
+    const { error: upErr } = await sb.storage
+      .from("shopping-photos")
+      .upload(path, file, { upsert: true });
+
+    if (upErr) throw upErr;
+
+    const { data } = sb.storage.from("shopping-photos").getPublicUrl(path);
+    urls.push(data.publicUrl);
+    foodUploadStatus.textContent = `上傳第 ${i+1}/${selected.length} 張：100%（完成）`;
+  }
+  setTimeout(()=>{ foodUploadStatus.textContent = ""; }, 800);
+  return urls;
+}
+
+function renderFoodItem(f) {
+  const photos = [f.photo1_url, f.photo2_url, f.photo3_url]
+    .filter(Boolean)
+    .map(url => `
+      <a href="${url}" target="_blank" rel="noreferrer">
+        <img src="${url}" class="thumb" style="width:70px;height:70px;object-fit:cover;border-radius:10px;border:1px solid rgba(148,163,184,.35);margin-right:6px;" />
+      </a>
+    `).join("");
+
+  const area = f.area || computeFoodArea(f.address, f.name);
+
+  return `
+    <div class="shop-item" style="padding:12px;border-radius:16px;border:1px solid rgba(148,163,184,.18);background:rgba(15,23,42,.55);">
+      <div style="display:flex;justify-content:space-between;gap:10px;">
+        <div>
+          <div class="shop-item-title" style="font-weight:800;">${f.name || "(未命名)"}</div>
+          <div class="small">${f.address || ""}</div>
+          <div class="small" style="margin-top:4px;">分區：<b>${area}</b></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;min-width:84px;">
+          <button class="secondary" style="padding:8px;border-radius:10px;" onclick="editFood(${f.id})">編輯</button>
+          <button class="danger" style="padding:8px;border-radius:10px;" onclick="deleteFood(${f.id})">刪除</button>
+        </div>
+      </div>
+      ${photos ? `<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;">${photos}</div>` : ""}
+    </div>
+  `;
+}
+
+async function loadFoods() {
+  const { data, error } = await sb
+    .from("food_places")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    foodList.textContent = error.message;
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    foodList.textContent = "尚未新增美食";
+    foodMap.src = "https://www.google.com/maps?q=Tokyo&output=embed";
+    return;
+  }
+
+  // ===== 依區域分組 =====
+  const groups = {};
+  data.forEach(d => {
+    const area = d.area || "其他";
+    if (!groups[area]) groups[area] = [];
+    groups[area].push(d);
+  });
+
+  foodList.innerHTML = "";
+
+  // ===== 地圖：每家一個 pin =====
+  foodMap.src =
+    "https://www.google.com/maps?q=" +
+    encodeURIComponent(
+      data.map(d => `${d.name} ${d.address}`).join(" | ")
+    ) +
+    "&output=embed";
+
+  // ===== 輸出列表（每家一張卡片）=====
+  Object.keys(groups).forEach(area => {
+    const h = document.createElement("h3");
+    h.textContent = area;
+    h.style.margin = "18px 0 8px";
+    h.style.fontWeight = "700";
+    foodList.appendChild(h);
+
+    groups[area].forEach(d => {
+      const photos = [d.photo1_url, d.photo2_url, d.photo3_url].filter(Boolean);
+
+      const photosHTML = photos.length
+        ? `
+          <div class="food-photos-row">
+            ${photos.map(url => `<img src="${url}" />`).join("")}
+          </div>
+        `
+        : "";
+
+      foodList.insertAdjacentHTML(
+        "beforeend",
+        `
+        <div class="food-card">
+
+          <div class="food-card-main">
+            <div class="food-text">
+              <div class="food-name">${d.name}</div>
+              <div class="food-address">${d.address}</div>
+              <div class="food-area">分區：${d.area || "其他"}</div>
+            </div>
+
+            <div class="food-actions">
+              <button onclick="editFood(${d.id})">編輯</button>
+              <button onclick="deleteFood(${d.id})">刪除</button>
+            </div>
+          </div>
+
+          ${photosHTML}
+
+        </div>
+        `
+      );
+    });
+  });
+}
+
+
+foodAddBtn?.addEventListener("click", async () => {
+  if (!foodName.value.trim() || !foodAddress.value.trim()) {
+    alert("請填寫店名與地址。");
+    return;
+  }
+  try {
+    const urls = await uploadFoodPhotos(foodImg.files, "food");
+    const area = computeFoodArea(foodAddress.value, foodName.value);
+
+    const { error } = await sb.from("food_places").insert({
+      name: foodName.value.trim(),
+      address: foodAddress.value.trim(),
+      area,
+      photo1_url: urls[0] || null,
+      photo2_url: urls[1] || null,
+      photo3_url: urls[2] || null
+    });
+
+    if (error) throw error;
+
+    foodName.value = "";
+    foodAddress.value = "";
+    foodImg.value = "";
+    await loadFoods();
+    alert("新增成功！");
+  } catch (e) {
+    alert("新增失敗：" + (e?.message || e));
+  }
+});
+
+async function deleteFood(id) {
+  if (!confirm("確定刪除這筆美食？")) return;
+  const { error } = await sb.from("food_places").delete().eq("id", id);
+  if (error) alert("刪除失敗：" + error.message);
+  await loadFoods();
+}
+
+function openModal(html) {
+  foodEditModal.style.display = "block";
+  foodEditModal.innerHTML = `
+    <div class="modal-backdrop" style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;">
+      <div class="modal-card" style="width:min(520px, 100%);background:#0b1220;border:1px solid rgba(148,163,184,.25);border-radius:16px;padding:14px;">
+        ${html}
+      </div>
+    </div>
+  `;
+  foodEditModal.querySelector(".modal-backdrop").addEventListener("click", (ev) => {
+    if (ev.target.classList.contains("modal-backdrop")) closeModal();
+  });
+}
+function closeModal() {
+  foodEditModal.style.display = "none";
+  foodEditModal.innerHTML = "";
+}
+
+async function editFood(id) {
+  const { data, error } = await sb.from("food_places").select("*").eq("id", id).single();
+  if (error) { alert("讀取失敗：" + error.message); return; }
+
+  const current = {
+    photo1_url: data.photo1_url || null,
+    photo2_url: data.photo2_url || null,
+    photo3_url: data.photo3_url || null
+  };
+
+  const photoSlots = ["photo1_url", "photo2_url", "photo3_url"];
+
+  const renderCurrentPhotos = () => {
+    return photoSlots.map(slot => {
+      const url = current[slot];
+      if (!url) return "";
+      return `
+        <div style="position:relative;">
+          <a href="${url}" target="_blank" rel="noreferrer">
+            <img src="${url}" style="width:74px;height:74px;border-radius:12px;object-fit:cover;border:1px solid rgba(148,163,184,.35);" />
+          </a>
+          <button data-slot="${slot}" style="position:absolute;top:-8px;right:-8px;background:#ef4444;color:#fff;border:0;border-radius:999px;width:26px;height:26px;cursor:pointer;">✕</button>
+        </div>
+      `;
+    }).join("");
+  };
+
+  openModal(`
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+      <div style="font-weight:900;font-size:16px;">編輯美食</div>
+      <button id="foodEditClose" class="secondary" style="padding:8px 10px;border-radius:10px;">關閉</button>
+    </div>
+
+    <div style="margin-top:10px;">
+      <label class="label">店名</label>
+      <input id="efName" value="${(data.name||"").replace(/"/g,"&quot;")}" />
+    </div>
+
+    <div style="margin-top:10px;">
+      <label class="label">地址</label>
+      <input id="efAddr" value="${(data.address||"").replace(/"/g,"&quot;")}" />
+    </div>
+
+    <div style="margin-top:12px;">
+      <div class="label">目前照片（點右上角 ✕ 刪除）</div>
+      <div id="efPhotoGrid" style="margin-top:8px;display:flex;gap:10px;flex-wrap:wrap;">
+        ${renderCurrentPhotos() || '<div class="small">目前沒有照片</div>'}
+      </div>
+    </div>
+
+    <div style="margin-top:12px;">
+      <div class="label">新增 / 替換照片（最多補到 3 張）</div>
+      <input id="efNewPhotos" type="file" accept="image/*" multiple />
+      <div id="efUploadStatus" class="small" style="margin-top:6px;"></div>
+    </div>
+
+    <div style="margin-top:14px;display:flex;gap:10px;">
+      <button id="foodEditSave" class="primary" style="width:100%;">儲存</button>
+    </div>
+  `);
+
+  document.getElementById("foodEditClose").onclick = closeModal;
+
+  const grid = document.getElementById("efPhotoGrid");
+  grid.querySelectorAll("button[data-slot]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const slot = btn.dataset.slot;
+      current[slot] = null;
+      // 重新渲染
+      grid.innerHTML = renderCurrentPhotos() || '<div class="small">目前沒有照片</div>';
+    });
+  });
+
+  const efUploadStatus = document.getElementById("efUploadStatus");
+
+  document.getElementById("foodEditSave").onclick = async () => {
+    try {
+      const newName = document.getElementById("efName").value.trim();
+      const newAddr = document.getElementById("efAddr").value.trim();
+      if (!newName || !newAddr) { alert("店名與地址不可空白"); return; }
+
+      // 將 current 的空 slot 補上新照片
+      const files = document.getElementById("efNewPhotos").files;
+      const selected = Array.from(files || []).slice(0, 3);
+
+      // 先組 update payload（保留已刪除後的 null）
+      const update = {
+        name: newName,
+        address: newAddr,
+        area: computeFoodArea(newAddr, newName),
+        photo1_url: current.photo1_url,
+        photo2_url: current.photo2_url,
+        photo3_url: current.photo3_url
+      };
+
+      // 找空位
+      const emptySlots = photoSlots.filter(s => !update[s]);
+
+      if (selected.length && emptySlots.length) {
+        const totalBytes = selected.reduce((a,f)=>a+f.size, 0);
+        if (bytesToMB(totalBytes) > 10) throw new Error("照片總量超過 10MB，請改用較小檔案或減少張數。");
+
+        for (let i = 0; i < selected.length; i++) {
+          const slot = emptySlots[i];
+          if (!slot) break;
+          const file = selected[i];
+          const safeName = file.name.replace(/\s+/g, "_");
+          const path = `food/${Date.now()}_${Math.random().toString(16).slice(2)}_${safeName}`;
+          efUploadStatus.textContent = `上傳第 ${i+1}/${selected.length} 張…`;
+          const { error: upErr } = await sb.storage.from("shopping-photos").upload(path, file, { upsert: true });
+          if (upErr) throw upErr;
+          const { data: pub } = sb.storage.from("shopping-photos").getPublicUrl(path);
+          update[slot] = pub.publicUrl;
+          efUploadStatus.textContent = `上傳第 ${i+1}/${selected.length} 張：完成`;
         }
+      }
 
-        // 設置新的視圖模式
-        function setView(mode) {
-            viewMode = mode;
-            // 如果從工具頁面切回行程，則預設回到 DAY 1
-            if (mode === 'ITINERARY' && currentDay === 'TOOL') {
-                currentDay = 1;
-            }
-            updateMainView();
+      const { error } = await sb.from("food_places").update(update).eq("id", id);
+      if (error) throw error;
+
+      closeModal();
+      await loadFoods();
+      alert("已更新！");
+    } catch (e) {
+      alert("更新失敗：" + (e?.message || e));
+    } finally {
+      efUploadStatus.textContent = "";
+    }
+  };
+}
+
+// 切到美食頁時自動刷新（避免多人同步時看不到最新）
+tabButtons.forEach(btn => {
+  btn.addEventListener("click", () => {
+    if (btn.dataset.tab === "food") loadFoods();
+  });
+});
+
+  // === 匯率試算 ===
+  const rateTwdPerJpy = document.getElementById("rateTwdPerJpy");
+  const rateJpyInput = document.getElementById("rateJpyInput");
+  const rateResult = document.getElementById("rateResult");
+  const rateTwdInput = document.getElementById("rateTwdInput");
+  const rateResultJpy = document.getElementById("rateResultJpy");
+
+  function updateFromJpy() {
+    const r = parseFloat(rateTwdPerJpy.value);
+    const j = parseFloat(rateJpyInput.value);
+    if (!isNaN(r) && !isNaN(j)) {
+      const twd = j * r;
+      rateResult.textContent = twd.toFixed(0) + " 元";
+    } else {
+      rateResult.textContent = "—";
+    }
+  }
+  function updateFromTwd() {
+    const r = parseFloat(rateTwdPerJpy.value);
+    const t = parseFloat(rateTwdInput.value);
+    if (!isNaN(r) && !isNaN(t) && r > 0) {
+      const jpy = t / r;
+      rateResultJpy.textContent = jpy.toFixed(0) + " 日圓";
+    } else {
+      rateResultJpy.textContent = "—";
+    }
+  }
+  rateTwdPerJpy.addEventListener("input", () => { updateFromJpy(); updateFromTwd(); });
+  rateJpyInput.addEventListener("input", updateFromJpy);
+  rateTwdInput.addEventListener("input", updateFromTwd);
+
+  // === 東京天氣 + 空氣品質 ===
+  const weatherNowEl = document.getElementById("weatherNow");
+  const weatherExtraEl = document.getElementById("weatherExtra");
+  const airNowEl = document.getElementById("airNow");
+  const weatherWeekBody = document.getElementById("weatherWeekBody");
+
+  const weatherCodeMap = {
+    0: "晴朗", 1: "幾乎晴朗", 2: "多雲", 3: "陰天",
+    45: "有霧", 48: "霧凇", 51: "毛毛雨",
+    61: "小雨", 63: "中雨", 65: "大雨",
+    71: "小雪", 73: "中雪", 75: "大雪",
+    95: "雷雨"
+  };
+
+  async function loadWeather() {
+    const lat = 35.6895;
+    const lon = 139.6917;
+
+    const forecastUrl =
+      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
+      `&current_weather=true` +
+      `&daily=weathercode,temperature_2m_max,temperature_2m_min,sunset,uv_index_max,precipitation_probability_max,snowfall_sum` +
+      `&timezone=Asia%2FTokyo`;
+
+    const airUrl =
+      `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}` +
+      `&hourly=european_aqi,pm2_5&timezone=Asia%2FTokyo&forecast_days=1`;
+
+    let aqiValue = null;
+
+    try {
+      const airRes = await fetch(airUrl);
+      if (airRes.ok) {
+        const airData = await airRes.json();
+        const h = airData.hourly || {};
+        const aqArr = h.european_aqi || [];
+        const pmArr = h.pm2_5 || [];
+        if (aqArr.length) {
+          const idx = aqArr.length - 1;
+          aqiValue = aqArr[idx];
+          const pm = pmArr[idx];
+          let level = "";
+          if (aqiValue <= 50) level = "（良好）";
+          else if (aqiValue <= 100) level = "（普通）";
+          else if (aqiValue <= 150) level = "（對敏感族群不健康）";
+          else level = "（較差，注意防護）";
+
+          airNowEl.innerHTML =
+            `空氣品質 AQI：<b>${aqiValue}</b> ${level}<br>` +
+            `PM2.5：約 <b>${pm != null ? pm.toFixed(1) : "—"}</b> μg/m³`;
+        } else {
+          airNowEl.textContent = "空氣品質：暫時無法取得資料";
         }
+      } else {
+        airNowEl.textContent = "空氣品質：暫時無法取得資料";
+      }
+    } catch (e) {
+      console.error(e);
+      airNowEl.textContent = "空氣品質：暫時無法取得資料";
+    }
 
-        // 渲染左側導覽列 (包含日期和工具按鈕的選中狀態)
-        function renderNav() {
-            const container = document.getElementById('nav-container');
-            container.innerHTML = '';
-            
-            // 統一的按鈕樣式基礎 (從深藍變為淺色/紅色的高對比)
-            const baseClass = 'modern-btn group flex items-center justify-between';
-            // 活躍狀態: 紅色背景，深色文字 (使用紅色作為主要活躍/選中狀態)
-            const activeClass = 'bg-red-accent text-white font-extrabold shadow-lg border-transparent';
-            // 非活躍狀態: 深色背景，淺色文字，Teal 邊框
-            const inactiveClass = 'bg-dark-navy text-cream border-teal-500 hover:bg-opacity-90';
+    try {
+      const res = await fetch(forecastUrl);
+      if (!res.ok) throw new Error("weather fetch failed");
+      const data = await res.json();
+      const cw = data.current_weather;
+      const d = data.daily;
+
+      const nowDesc = weatherCodeMap[cw.weathercode] || "天氣";
+      weatherNowEl.textContent = `東京現在：${nowDesc}，約 ${cw.temperature}°C`;
+
+      const todayUv = d.uv_index_max?.[0];
+      const todaySunset = d.sunset?.[0]?.substring(11, 16) || "—";
+      const todaySnow = d.snowfall_sum?.[0] || 0;
+      const todayPop = d.precipitation_probability_max?.[0] || 0;
+
+      weatherExtraEl.innerHTML = `
+        <div class="weather-grid-item">🌇 今日日落時間：<span>${todaySunset}</span></div>
+        <div class="weather-grid-item">🌞 今日 UV 最大值：約 <span>${todayUv != null ? todayUv.toFixed(1) : "—"}</span></div>
+        <div class="weather-grid-item">❄️ 今日下雪機率：約 <span>${todayPop}%${todaySnow > 0 ? "（可能有積雪）" : ""}</span></div>
+        <div class="weather-grid-item">🌡️ 體感：依風速與濕度可能略有不同</div>
+      `;
+
+      weatherWeekBody.innerHTML = "";
+      const len = (d.time || []).length;
+      for (let i = 0; i < len; i++) {
+        const date = d.time[i];
+        const code = d.weathercode[i];
+        const maxT = d.temperature_2m_max[i];
+        const minT = d.temperature_2m_min[i];
+        const sunset = d.sunset[i]?.substring(11, 16) || "—";
+        const uv = d.uv_index_max[i];
+        const snow = d.snowfall_sum[i] || 0;
+        const pop = d.precipitation_probability_max[i] || 0;
+        const desc = weatherCodeMap[code] || "—";
+        const snowStr = snow > 0 ? `${pop}%（可能）` : `${pop}%`;
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${date}</td>
+          <td>${desc}</td>
+          <td>${maxT.toFixed(1)}° / ${minT.toFixed(1)}°</td>
+          <td>${sunset}</td>
+          <td>${uv != null ? uv.toFixed(1) : "—"}</td>
+          <td>${snowStr}</td>
+          <td>${aqiValue != null ? aqiValue : "—"}</td>
+        `;
+        weatherWeekBody.appendChild(tr);
+      }
+    } catch (e) {
+      console.error(e);
+      weatherNowEl.textContent = "東京天氣更新失敗，請稍後再試。";
+      weatherWeekBody.innerHTML = `<tr><td colspan="7">天氣資料暫時無法取得</td></tr>`;
+    }
+  }
+  loadWeather();
+
+  // === 常用日語：發音 & 複製 ===
+  function speakJP(text) {
+    if (!("speechSynthesis" in window)) {
+      alert("此瀏覽器不支援語音播放。");
+      return;
+    }
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = "ja-JP";
+    window.speechSynthesis.speak(utter);
+  }
+  function copyJP(text) {
+    navigator.clipboard?.writeText(text).then(
+      () => {},
+      () => { alert("複製失敗，請再試一次。"); }
+    );
+  }
+
+  // === 共用：上傳檔案到 Storage，支援進度回報 ===
+  async function uploadFilesToBucket(bucket, files, progressCallback) {
+    const urls = [];
+    const total = files.length || 1;
+    for (let i = 0; i < files.length; i++) {
+      const f = files[i];
+      const path = `${Date.now()}-${Math.random().toString(36).slice(2)}-${f.name}`;
+      if (progressCallback) {
+        const percent = Math.round((i / total) * 100);
+        progressCallback(percent);
+      }
+      const { error: upErr } = await sb.storage.from(bucket).upload(path, f);
+      if (upErr) {
+        console.error("upload error", upErr);
+        throw upErr;
+      }
+      const { data } = sb.storage.from(bucket).getPublicUrl(path);
+      urls.push(data.publicUrl);
+    }
+    if (progressCallback) {
+      progressCallback(100);
+    }
+    return urls;
+  }
+
+  // === 記帳 ===
+  const expDate = document.getElementById("expDate");
+  const expTime = document.getElementById("expTime");
+  const expName = document.getElementById("expName");
+  const expAmount = document.getElementById("expAmount");
+  const expCurrency = document.getElementById("expCurrency");
+  const expNote = document.getElementById("expNote");
+  const expImg = document.getElementById("expImg");
+  const expSubmitBtn = document.getElementById("expSubmitBtn");
+  const expenseListEl = document.getElementById("expenseList");
+  const expUploadStatus = document.getElementById("expUploadStatus");
+
+  async function loadExpenses() {
+    const { data, error } = await sb
+      .from("expenses")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error(error);
+      expenseListEl.textContent = "讀取記帳資料失敗：" + error.message;
+      return;
+    }
+    if (!data.length) {
+      expenseListEl.textContent = "目前尚無記帳紀錄。";
+      return;
+    }
+    expenseListEl.innerHTML = "";
+    data.forEach(e => {
+      const div = document.createElement("div");
+      div.className = "expense-item";
+
+      const created = e.created_at ? new Date(e.created_at) : null;
+      const createdStr = created
+        ? created.toLocaleString("zh-TW", { timeZone: "Asia/Tokyo" })
+        : "";
+
+      const photos = [e.photo1_url, e.photo2_url, e.photo3_url]
+  .filter(Boolean)
+  .map(url => `
+    <a href="${url}" target="_blank">
+      <img src="${url}" 
+           style="width:70px;height:70px;object-fit:cover;border-radius:8px;margin-right:6px;border:1px solid #555;" />
+    </a>
+  `)
+  .join("");
 
 
-            // --- A. 渲染日期按鈕 ---
-            itineraryData.forEach(d => {
-                const btn = document.createElement('button');
-                const active = d.day === currentDay && viewMode === 'ITINERARY';
-                
-                // 應用動態顏色類
-                btn.className = `${baseClass} ${active ? activeClass : inactiveClass}`;
-                btn.style.backgroundColor = active ? 'var(--color-red)' : 'var(--color-dark-navy)';
-                btn.style.color = active ? 'var(--color-cream)' : 'var(--color-cream)';
-                btn.style.borderColor = 'var(--color-teal)';
-                
-                btn.innerHTML = `
-                    <div>
-                        <span class="block text-[10px] font-bold uppercase tracking-wider text-gray-400">DAY ${d.day}</span>
-                        <span class="font-bold text-sm lg:text-base">${d.date.split(' ')[0]}</span>
-                    </div>
-                    ${active ? '<i data-lucide="chevron-right" class="w-5 h-5 hidden lg:block text-white"></i>' : ''}
-                `;
-                btn.onclick = () => { currentDay = d.day; setView('ITINERARY'); }; 
-                container.appendChild(btn);
-            });
-            
-            // --- B. 渲染分隔線 (僅電腦上顯示) ---
-            const separator = document.createElement('div');
-            separator.className = "hidden lg:block h-px my-2";
-            separator.style.backgroundColor = 'rgba(44, 187, 173, 0.4)'; /* Teal 半透明分隔線 */
-            container.appendChild(separator);
+      const contentHtml = `
+        <div class="expense-header">
+          <div>
+            <div class="expense-title">${e.title || "(未命名)"}</div>
+            <div class="small">${createdStr}</div>
+          </div>
+          <div class="expense-amount">
+            ${(e.amount ?? 0).toLocaleString?.() || e.amount || 0} ${e.currency || ""}
+          </div>
+        </div>
+        ${e.note ? `<div class="small">備註：${e.note}</div>` : ""}
+        ${photos ? `<div style="margin-top:6px;">${photos}</div>` : ""}
 
+      `;
+      div.innerHTML = contentHtml;
 
-            // --- C. 渲染工具按鈕 (整合到導覽列末端) ---
+      // 編輯 & 刪除按鈕
+      const btnRow = document.createElement("div");
+      btnRow.style.marginTop = "4px";
+      const editBtn = document.createElement("button");
+      editBtn.className = "tiny-btn";
+      editBtn.textContent = "編輯";
+      editBtn.addEventListener("click", async () => {
+        const newTitle = prompt("項目名稱：", e.title || "");
+        if (newTitle === null) return;
+        const newAmtStr = prompt("金額：", e.amount || 0);
+        if (newAmtStr === null) return;
+        const newCurrency = prompt("幣別（例如 JPY / TWD）：", e.currency || "JPY");
+        if (newCurrency === null) return;
+        const newNote = prompt("備註：", e.note || "");
+        const newAmt = parseFloat(newAmtStr || "0") || 0;
 
-            // 1. 日幣匯率試算
-            const btnCurrency = document.createElement('button');
-            const activeCurrency = viewMode === 'CURRENCY';
-            btnCurrency.className = `${baseClass} flex items-center justify-center lg:justify-start ${activeCurrency ? activeClass : inactiveClass}`;
-            btnCurrency.style.backgroundColor = activeCurrency ? 'var(--color-red)' : 'var(--color-dark-navy)';
-            btnCurrency.style.color = activeCurrency ? 'var(--color-cream)' : 'var(--color-cream)';
-            btnCurrency.style.borderColor = 'var(--color-teal)';
-            
-            btnCurrency.innerHTML = `<i data-lucide="coins" class="w-5 h-5 mr-0 lg:mr-2"></i> 
-                                     <span class="hidden lg:inline font-medium">日幣試算</span>`;
-            btnCurrency.onclick = () => setView('CURRENCY');
-            container.appendChild(btnCurrency);
-
-            // 2. 緊急聯絡/飯店地址卡
-            const btnHotel = document.createElement('button');
-            const activeHotel = viewMode === 'HOTEL';
-            btnHotel.className = `${baseClass} flex items-center justify-center lg:justify-start ${activeHotel ? activeClass : inactiveClass}`;
-            btnHotel.style.backgroundColor = activeHotel ? 'var(--color-red)' : 'var(--color-dark-navy)';
-            btnHotel.style.color = activeHotel ? 'var(--color-cream)' : 'var(--color-cream)';
-            btnHotel.style.borderColor = 'var(--color-teal)';
-            
-            btnHotel.innerHTML = `<i data-lucide="map-pin" class="w-5 h-5 mr-0 lg:mr-2"></i> 
-                                  <span class="hidden lg:inline font-medium">緊急聯絡卡</span>`;
-            btnHotel.onclick = () => setView('HOTEL');
-            container.appendChild(btnHotel);
-
-            lucide.createIcons(); // 重新渲染新加入的 icon
+        const { error: upErr } = await sb.from("expenses").update({
+          title: newTitle.trim(),
+          amount: newAmt,
+          currency: newCurrency.trim() || "JPY",
+          note: (newNote || "").trim() || null
+        }).eq("id", e.id);
+        if (upErr) {
+          alert("更新記帳資料失敗：" + upErr.message);
+        } else {
+          loadExpenses();
         }
-        
-        // 渲染中間的行程內容 (只有在 viewMode = 'ITINERARY' 時被呼叫)
-        function renderItinerary() {
-            const data = itineraryData.find(d => d.day === currentDay);
-            
-            // 1. 更新天氣卡片... 
-            document.getElementById('weather-icon').textContent = data.weather.icon;
-            document.getElementById('weather-condition').textContent = data.weather.cond;
-            document.getElementById('weather-note').textContent = data.weather.note || '';
-            document.getElementById('weather-location').textContent = data.weather.loc;
-            
-            const [low, high] = data.weather.temp.split(' / ');
-            document.getElementById('weather-low').textContent = low;
-            document.getElementById('weather-high').textContent = high;
+      });
 
-            const wCard = document.getElementById('weather-card');
-            // 警報狀態使用紅色邊框
-            if(data.weather.alert) {
-                wCard.className = "flat-panel rounded-lg p-5 relative overflow-hidden transition-all duration-500 border-2 shadow-lg";
-                wCard.style.borderColor = 'var(--color-red)';
-            } else {
-                wCard.className = "flat-panel rounded-lg p-5 relative overflow-hidden transition-all duration-500";
-                wCard.style.borderColor = 'rgba(44, 187, 173, 0.2)';
-            }
-
-            // 2. 更新標題 (文字顏色已在 HTML 中使用 red-accent 和深灰色)
-            document.getElementById('day-number').textContent = `DAY ${data.day}`;
-            document.getElementById('day-title').textContent = data.title;
-
-            // 3. 更新行程列表 
-            const list = document.getElementById('itinerary-list');
-            list.innerHTML = '';
-            
-            data.slots.forEach(slot => {
-                const el = document.createElement('div');
-                const isHigh = slot.highlight;
-                
-                // 圖標和邊框的顏色
-                const slotIconBg = isHigh ? 'var(--color-red)' : 'var(--color-teal)';
-                const slotIconColor = isHigh ? 'white' : 'white';
-                const slotBorderClass = isHigh ? 'border-2 border-red-accent shadow-lg' : 'border-gray-300';
-                
-                el.innerHTML = `
-                    <div class="flat-panel p-5 rounded-xl ${slotBorderClass} hover:border-teal-accent transition-colors duration-300">
-                        <div class="flex gap-4 mb-4">
-                            <div class="flex-shrink-0">
-                                <div class="w-12 h-12 rounded-full flex items-center justify-center shadow-md" style="background-color: ${slotIconBg}; color: ${slotIconColor};">
-                                    <i data-lucide="${slot.icon}" class="w-6 h-6"></i>
-                                </div>
-                            </div>
-                            <div class="flex-grow">
-                                <div class="flex flex-wrap justify-between items-start mb-1">
-                                    <span class="text-[10px] font-bold uppercase tracking-wider text-white px-2 py-0.5 rounded-sm" style="background-color: var(--color-teal);">
-                                        ${slot.time}
-                                    </span>
-                                    <span class="text-[10px] text-gray-600 flex items-center bg-gray-200 border border-gray-300 px-2 py-0.5 rounded-sm">
-                                        <i data-lucide="clock" class="w-3 h-3 mr-1 text-gray-500"></i> ${slot.hours}
-                                    </span>
-                                </div>
-                                <h4 class="text-lg font-bold text-gray-900 mb-1">${slot.title}</h4>
-                                <p class="text-sm text-gray-700 leading-relaxed">${slot.desc}</p>
-                            </div>
-                        </div>
-                        
-                        <!-- 專家/導遊提示區塊 -->
-                        <div class="expert-tip-box rounded-lg p-3 text-xs lg:text-sm text-white flex gap-3 shadow-inner">
-                            <i data-lucide="lightbulb" class="w-4 h-4 teal-accent flex-shrink-0 mt-0.5"></i>
-                            <div>
-                                <span class="font-bold teal-accent block mb-0.5">VIBE TIP:</span>
-                                ${slot.expert}
-                            </div>
-                        </div>
-                    </div>
-                `;
-                list.appendChild(el);
-            });
-
-            lucide.createIcons();
+      const delBtn = document.createElement("button");
+      delBtn.className = "tiny-btn danger";
+      delBtn.textContent = "刪除";
+      delBtn.style.marginLeft = "6px";
+      delBtn.addEventListener("click", async () => {
+        if (!confirm("確定刪除此記帳項目？")) return;
+        const { error: delErr } = await sb.from("expenses").delete().eq("id", e.id);
+        if (delErr) {
+          alert("刪除記帳資料失敗：" + delErr.message);
+        } else {
+          loadExpenses();
         }
+      });
 
-        // --- 3. 工具箱邏輯 (Tools Logic) ---
-        
-        // 匯率換算
-        function convert(source) {
-            const rate = parseFloat(document.getElementById('rateInput').value) || 4.8;
-            const twdEl = document.getElementById('twdInput');
-            const jpyEl = document.getElementById('jpyInput');
+      btnRow.appendChild(editBtn);
+      btnRow.appendChild(delBtn);
+      div.appendChild(btnRow);
 
-            if (source === 'TWD') {
-                const val = parseFloat(twdEl.value);
-                jpyEl.value = isNaN(val) ? '' : (val * rate).toFixed(0);
-            } else {
-                const val = parseFloat(jpyEl.value);
-                twdEl.value = isNaN(val) ? '' : (val / rate).toFixed(2);
-            }
-        }
+      expenseListEl.appendChild(div);
+    });
+  }
 
-        // 飯店卡資料讀取 (LocalStorage)
-        function loadHotel() {
-            const name = localStorage.getItem('trip_h_name') || '未設定飯店';
-            const addr = localStorage.getItem('trip_h_addr') || '請點擊下方按鈕設定地址';
-            const phone = localStorage.getItem('trip_h_phone') || '無資料';
-            
-            document.getElementById('h-name').textContent = name;
-            document.getElementById('h-addr').textContent = addr;
-            document.getElementById('h-phone').textContent = phone;
-            
-            // 同步填入編輯框
-            document.getElementById('in-name').value = name === '未設定飯店' ? '' : name;
-            document.getElementById('in-addr').value = addr === '請點擊下方按鈕設定地址' ? '' : addr;
-            document.getElementById('in-phone').value = phone === '無資料' ? '' : phone;
-        }
+  expSubmitBtn.addEventListener("click", async () => {
+    try {
+      expUploadStatus.textContent = "";
+      const files = expImg.files;
+      if (files.length > 3) {
+        alert("最多僅能上傳 3 張照片。");
+        return;
+      }
+      const totalSize = Array.from(files).reduce((s,f)=>s+f.size,0);
+      const max = 10 * 1024 * 1024;
+      if (totalSize > max) {
+        alert("照片總大小超過 10MB，請刪減或壓縮後再試。");
+        return;
+      }
+      const amount = parseFloat(expAmount.value || "0");
+      if (!expName.value.trim() || !amount) {
+        alert("請至少填寫項目名稱與金額。");
+        return;
+      }
 
-        // 飯店卡資料儲存
-        function saveHotel() {
-            localStorage.setItem('trip_h_name', document.getElementById('in-name').value || '未設定飯店');
-            localStorage.setItem('trip_h_addr', document.getElementById('in-addr').value || '請點擊下方按鈕設定地址');
-            localStorage.setItem('trip_h_phone', document.getElementById('in-phone').value || '無資料');
-            toggleEdit();
-            loadHotel();
-            // 在儲存後停留在飯店卡頁面
-            setView('HOTEL');
-        }
+      expSubmitBtn.disabled = true;
+      expSubmitBtn.textContent = "上傳中…";
 
-        // 切換飯店卡編輯/顯示模式
-        function toggleEdit() {
-            const view = document.getElementById('hotel-display-mode');
-            const edit = document.getElementById('hotel-edit-mode');
-            if (view.classList.contains('hidden')) {
-                view.classList.remove('hidden');
-                edit.classList.add('hidden');
-            } else {
-                // 從顯示切換到編輯時，確保輸入框載入最新資料
-                loadHotel(); 
-                view.classList.add('hidden');
-                edit.classList.remove('hidden');
-            }
-        }
+      // 日期 + 時間 合併進備註最前面
+      let noteFull = (expNote.value || "").trim();
+      const d = expDate.value;
+      const t = expTime.value;
+      if (d || t) {
+        noteFull = `[${d || ""} ${t || ""}] ${noteFull}`;
+      }
 
-        // 複製地址功能 (已強化提示)
-        function copyAddr() {
-            const text = document.getElementById('h-addr').textContent;
-            if(!text || text === '請點擊下方按鈕設定地址') {
-                const originalText = document.getElementById('h-addr').textContent;
-                document.getElementById('h-addr').textContent = "⚠️ 請先設定地址！";
-                document.getElementById('h-addr').classList.add('red-accent');
-                setTimeout(() => {
-                    document.getElementById('h-addr').textContent = originalText;
-                    document.getElementById('h-addr').classList.remove('red-accent');
-                }, 2000);
-                return;
-            }
-            
-            // 複製到剪貼簿
-            document.execCommand('copy', false, text);
+      let photoUrls = [];
+      if (files.length) {
+        expUploadStatus.textContent = "照片上傳中… 0%";
+        photoUrls = await uploadFilesToBucket("expense-photos", files, (p) => {
+          expUploadStatus.textContent = `照片上傳中… ${p}%`;
+        });
+        expUploadStatus.textContent = "照片上傳完成 ✅";
+      }
 
-            // 提供視覺回饋
-            const originalText = document.getElementById('h-addr').textContent;
-            document.getElementById('h-addr').textContent = "✅ 已複製到剪貼簿！ (1.5秒後恢復)";
-            document.getElementById('h-addr').classList.add('teal-accent'); 
-            setTimeout(() => {
-                document.getElementById('h-addr').textContent = originalText;
-                document.getElementById('h-addr').classList.remove('teal-accent');
-            }, 1500);
-        }
+      const p1 = photoUrls[0] || null;
+      const p2 = photoUrls[1] || null;
+      const p3 = photoUrls[2] || null;
 
-        // 程式初始化
-        window.onload = () => {
-            loadHotel(); // 初始化載入飯店資料
-            updateMainView(); // 顯示預設的 ITINERARY 視圖 (DAY 1)
-            
-            // 設定匯率輸入框預設值
-            document.getElementById('twdInput').value = 1000;
-            convert('TWD');
-        };
+      const { error } = await sb.from("expenses").insert({
+        title: expName.value.trim(),
+        amount,
+        currency: expCurrency.value,
+        note: noteFull || null,
+        photo1_url: p1,
+        photo2_url: p2,
+        photo3_url: p3
+      });
+      if (error) {
+        console.error(error);
+        alert("儲存記帳資料失敗：" + error.message);
+      } else {
+        expDate.value = "";
+        expTime.value = "";
+        expName.value = "";
+        expAmount.value = "";
+        expNote.value = "";
+        expImg.value = "";
+        loadExpenses();
+      }
+    } catch (e) {
+      console.error(e);
+      alert("上傳或儲存時發生錯誤：" + (e.message || e));
+    } finally {
+      expSubmitBtn.disabled = false;
+      expSubmitBtn.textContent = "新增記帳";
+    }
+  });
 
-    </script>
+  // === 行前準備清單 ===
+  const prepInput = document.getElementById("prepInput");
+  const prepAddBtn = document.getElementById("prepAddBtn");
+  const prepListEl = document.getElementById("prepList");
+  let prepItems = [];
+
+  async function loadPrep() {
+    const { data, error } = await sb
+      .from("prep_items")
+      .select("*")
+      .order("created_at", { ascending: true });
+
+    if (error) {
+      console.error(error);
+      prepListEl.innerHTML = `<div class="small">讀取行前準備清單失敗：${error.message}</div>`;
+      return;
+    }
+    prepItems = data;
+    renderPrep();
+  }
+
+  function renderPrep() {
+    if (!prepItems.length) {
+      prepListEl.innerHTML = `<div class="small">目前尚無行前準備項目。</div>`;
+      return;
+    }
+    prepListEl.innerHTML = "";
+    prepItems.forEach(item => {
+      const row = document.createElement("div");
+      row.className = "prep-item";
+
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.className = "prep-check";
+      checkbox.checked = item.checked;
+      checkbox.addEventListener("change", async () => {
+        item.checked = checkbox.checked;
+        renderPrep();
+        await sb.from("prep_items").update({ checked: item.checked }).eq("id", item.id);
+      });
+
+      const span = document.createElement("div");
+      span.className = "prep-text" + (item.checked ? " done" : "");
+      span.textContent = item.name;
+
+      const editBtn = document.createElement("button");
+      editBtn.className = "tiny-btn";
+      editBtn.textContent = "編輯";
+      editBtn.addEventListener("click", async () => {
+        const newText = prompt("編輯項目內容：", item.name || "");
+        if (newText === null) return;
+        const trimmed = newText.trim();
+        if (!trimmed) return;
+        item.name = trimmed;
+        renderPrep();
+        await sb.from("prep_items").update({ name: trimmed }).eq("id", item.id);
+      });
+
+      const delBtn = document.createElement("button");
+      delBtn.className = "tiny-btn danger";
+      delBtn.textContent = "刪除";
+      delBtn.addEventListener("click", async () => {
+        if (!confirm("確定刪除此項目？")) return;
+        await sb.from("prep_items").delete().eq("id", item.id);
+        prepItems = prepItems.filter(p => p.id !== item.id);
+        renderPrep();
+      });
+
+      row.appendChild(checkbox);
+      row.appendChild(span);
+      row.appendChild(editBtn);
+      row.appendChild(delBtn);
+      prepListEl.appendChild(row);
+    });
+  }
+
+  prepAddBtn.addEventListener("click", async () => {
+    const text = prepInput.value.trim();
+    if (!text) return;
+    const { data, error } = await sb
+      .from("prep_items")
+      .insert({ name: text })
+      .select()
+      .single();
+    if (error) {
+      console.error(error);
+      alert("新增行前準備項目失敗：" + error.message);
+      return;
+    }
+    prepInput.value = "";
+    prepItems.push(data);
+    renderPrep();
+  });
+
+  // === 購物清單 ===
+  const shopName = document.getElementById("shopName");
+  const shopAmount = document.getElementById("shopAmount");
+  const shopCurrency = document.getElementById("shopCurrency");
+  const shopNote = document.getElementById("shopNote");
+  const shopImg = document.getElementById("shopImg");
+  const shopAddBtn = document.getElementById("shopAddBtn");
+  const shopListEl = document.getElementById("shopList");
+  const shopUploadStatus = document.getElementById("shopUploadStatus");
+  let shopItems = [];
+
+  async function loadShop() {
+    const { data, error } = await sb
+      .from("shopping_items")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error(error);
+      shopListEl.innerHTML = `<div class="small">讀取購物清單失敗：${error.message}</div>`;
+      return;
+    }
+    shopItems = data;
+    renderShop();
+  }
+
+  function renderShop() {
+    if (!shopItems.length) {
+      shopListEl.innerHTML = `<div class="small">目前尚無購物清單項目。</div>`;
+      return;
+    }
+    shopListEl.innerHTML = "";
+    shopItems.forEach(item => {
+      const row = document.createElement("div");
+      row.className = "shop-item";
+
+      const textDiv = document.createElement("div");
+      textDiv.className = "shop-text";
+      const amountLabel = (item.price ?? 0).toLocaleString?.() || item.price || 0;
+
+const photos = [item.photo1_url, item.photo2_url, item.photo3_url]
+  .filter(Boolean)
+  .map(url => `
+    <a href="${url}" target="_blank">
+      <img src="${url}" 
+           style="width:70px;height:70px;object-fit:cover;border-radius:8px;margin-right:6px;border:1px solid #555;" />
+    </a>
+  `)
+  .join("");
+
+
+
+textDiv.innerHTML = `
+        <div class="shop-item-title">${item.name || "(未命名)"}</div>
+        <div class="shop-item-amount">${amountLabel} ${item.currency || ""}</div>
+        ${item.note ? `<div class="small">備註：${item.note}</div>` : ""}
+        ${photos ? `<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;">${photos}</div>` : ""}
+      `;
+
+
+      const editBtn = document.createElement("button");
+      editBtn.className = "tiny-btn";
+      editBtn.textContent = "編輯";
+      editBtn.addEventListener("click", async () => {
+        const newName = prompt("品項名稱：", item.name || "");
+        if (newName === null) return;
+        const newAmountStr = prompt("金額：", item.price || 0);
+        if (newAmountStr === null) return;
+        const newCur = prompt("幣別（JPY / TWD）：", item.currency || "JPY");
+        if (newCur === null) return;
+        const newNote = prompt("備註：", item.note || "");
+        item.name = newName.trim();
+        item.price = parseFloat(newAmountStr || "0") || 0;
+        item.currency = newCur.trim() || "JPY";
+        item.note = (newNote || "").trim();
+        renderShop();
+        await sb.from("shopping_items").update({
+          name: item.name,
+          price: item.price,
+          currency: item.currency,
+          note: item.note
+        }).eq("id", item.id);
+      });
+
+      const delBtn = document.createElement("button");
+      delBtn.className = "tiny-btn danger";
+      delBtn.textContent = "刪除";
+      delBtn.addEventListener("click", async () => {
+        if (!confirm("確定刪除此購物項目？")) return;
+        await sb.from("shopping_items").delete().eq("id", item.id);
+        shopItems = shopItems.filter(s => s.id !== item.id);
+        renderShop();
+      });
+
+      row.appendChild(textDiv);
+      row.appendChild(editBtn);
+      row.appendChild(delBtn);
+      shopListEl.appendChild(row);
+    });
+  }
+
+  shopAddBtn.addEventListener("click", async () => {
+    try {
+      shopUploadStatus.textContent = "";
+      const files = shopImg.files;
+      if (files.length > 3) {
+        alert("最多僅能上傳 3 張照片。");
+        return;
+      }
+      const totalSize = Array.from(files).reduce((s,f)=>s+f.size,0);
+      const max = 10 * 1024 * 1024;
+      if (totalSize > max) {
+        alert("照片總大小超過 10MB，請刪減或壓縮後再試。");
+        return;
+      }
+      if (!shopName.value.trim()) {
+        alert("請至少填寫品項名稱。");
+        return;
+      }
+      shopAddBtn.disabled = true;
+      shopAddBtn.textContent = "上傳中…";
+
+      let photoUrls = [];
+      if (files.length) {
+        shopUploadStatus.textContent = "照片上傳中… 0%";
+        photoUrls = await uploadFilesToBucket("shopping-photos", files, (p) => {
+          shopUploadStatus.textContent = `照片上傳中… ${p}%`;
+        });
+        shopUploadStatus.textContent = "照片上傳完成 ✅";
+      }
+
+      const p1 = photoUrls[0] || null;
+      const p2 = photoUrls[1] || null;
+      const p3 = photoUrls[2] || null;
+
+      const { data, error } = await sb.from("shopping_items").insert({
+        name: shopName.value.trim(),
+        price: parseFloat(shopAmount.value || "0") || 0,
+        currency: shopCurrency.value,
+        note: shopNote.value.trim() || null,
+        photo1_url: p1,
+        photo2_url: p2,
+        photo3_url: p3
+      }).select().single();
+      if (error) {
+        console.error(error);
+        alert("新增購物項目失敗：" + error.message);
+        return;
+      }
+      shopName.value = "";
+      shopAmount.value = "";
+      shopNote.value = "";
+      shopImg.value = "";
+      shopItems.unshift(data);
+      renderShop();
+    } catch (e) {
+      console.error(e);
+      alert("上傳或儲存購物項目時發生錯誤：" + (e.message || e));
+    } finally {
+      shopAddBtn.disabled = false;
+      shopAddBtn.textContent = "新增購物項目";
+    }
+  });
+
+  // === 初始化載入雲端資料 ===
+  loadExpenses();
+  loadPrep();
+  loadShop();
+</script>
+
+<script id="dayTabsScript">
+(function(){
+  function ready(fn){
+    if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn);
+    else fn();
+  }
+
+  ready(function(){
+    var plan = document.getElementById('plan');
+    if(!plan) return;
+
+    // Find day cards by the presence of .day-card-title
+    var cards = Array.prototype.slice.call(plan.querySelectorAll('.card'));
+    var dayCards = cards.filter(function(c){ return c.querySelector('.day-card-title'); });
+    if(dayCards.length === 0) return;
+
+    // Build metadata
+    var days = dayCards.map(function(card, idx){
+      var t = (card.querySelector('.day-card-title')||{}).textContent || ('Day ' + (idx+1));
+      var m = t.match(/\d{1,2}\/\d{1,2}/);
+      var key = m ? m[0] : ('day'+idx);
+      return { key:key, label:key, title:t, card:card };
+    });
+
+    // Create tab bar
+    var tabBar = document.createElement('div');
+    tabBar.className = 'day-tabs';
+
+    days.forEach(function(d){
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'day-tab-btn';
+      btn.textContent = d.label;
+      btn.addEventListener('click', function(){ selectDay(d.key); });
+      tabBar.appendChild(btn);
+      d._btn = btn;
+    });
+
+    // Insert tab bar at top of plan section
+    plan.insertBefore(tabBar, plan.firstChild);
+
+    // Add per-day map (only once) and hide all initially
+    dayCards.forEach(function(card){
+      // Prevent double-inject
+      if(card.querySelector('.day-map-wrap')) return;
+
+      // Collect place names from schedule titles
+      var titles = Array.prototype.slice.call(card.querySelectorAll('.schedule-title'))
+        .map(function(el){ return (el.textContent||'').trim(); })
+        .filter(Boolean)
+        .map(function(s){
+          // remove bracketed notes
+          return s.replace(/（.*?）/g,'').replace(/\(.*?\)/g,'').trim();
+        });
+
+      // Unique, keep order
+      var uniq = [];
+      titles.forEach(function(s){ if(uniq.indexOf(s) === -1) uniq.push(s); });
+
+      // Build map query
+      var q = uniq.length ? uniq.join(' | ') : (card.querySelector('.day-card-title')?.textContent || 'Tokyo');
+
+      var wrap = document.createElement('div');
+      wrap.className = 'day-map-wrap';
+
+      var h = document.createElement('div');
+      h.className = 'day-map-title';
+      h.textContent = '當日地圖';
+      wrap.appendChild(h);
+
+      var box = document.createElement('div');
+      box.className = 'day-map-box';
+
+      var iframe = document.createElement('iframe');
+      iframe.loading = 'lazy';
+      iframe.referrerPolicy = 'no-referrer-when-downgrade';
+      iframe.src = 'https://www.google.com/maps?q=' + encodeURIComponent(q) + '&output=embed';
+
+      box.appendChild(iframe);
+      wrap.appendChild(box);
+
+      card.appendChild(wrap);
+    });
+
+    function selectDay(key){
+      days.forEach(function(d){
+        var show = (d.key === key);
+        d.card.style.display = show ? '' : 'none';
+        if(d._btn) d._btn.classList.toggle('active', show);
+      });
+    }
+
+    // Default select first day
+    selectDay(days[0].key);
+  });
+})();
+</script>
+
 </body>
 </html>
