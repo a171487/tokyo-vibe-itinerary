@@ -570,20 +570,7 @@
   border: 1px solid rgba(255,255,255,0.1);
 }
 
-  
-/* ===== Itinerary image (hand-drawn maps) ===== */
-.it-map-block{ margin:12px 0 14px; padding:10px; border:1px solid rgba(255,255,255,.10); border-radius:14px; background:rgba(0,0,0,.18); }
-.it-map-block .it-toggle{ display:inline-flex; align-items:center; gap:8px; margin-bottom:10px; }
-.itinerary-img{ width:100%; height:auto; display:block; border-radius:12px; cursor:zoom-in; box-shadow:0 10px 25px rgba(0,0,0,.25); }
-.itinerary-img.is-hidden{ display:none; }
-
-/* Lightbox */
-.img-lightbox{ position:fixed; inset:0; display:none; align-items:center; justify-content:center;
-  background:rgba(0,0,0,.75); z-index:9999; padding:22px; }
-.img-lightbox.show{ display:flex; }
-.img-lightbox img{ max-width:min(1100px, 96vw); max-height:92vh; width:auto; height:auto; border-radius:16px; box-shadow:0 18px 45px rgba(0,0,0,.45); cursor:zoom-out; }
-
-</style>
+  </style>
 
 <style id="dayTabsStyle">
 /* ===== Trip day subtabs ===== */
@@ -860,10 +847,6 @@
     <!-- 12/26 -->
     <div class="card">
       <div class="day-card-title">12/26（五） 上野</div>
-  <div class="it-map-block">
-    <button class="tiny-btn it-toggle" type="button" data-target="itimg-1226">🗂️ 顯示／隱藏 行程圖</button>
-    <img id="itimg-1226" class="itinerary-img" src="assets/itinerary_1226.png" alt="12/26 行程圖" loading="lazy" />
-  </div>
 
       <div class="schedule-item">
         <div class="schedule-header">
@@ -924,10 +907,6 @@
     <!-- 12/27 -->
     <div class="card">
       <div class="day-card-title">12/27（六） 原宿・澀谷</div>
-  <div class="it-map-block">
-    <button class="tiny-btn it-toggle" type="button" data-target="itimg-1227">🗂️ 顯示／隱藏 行程圖</button>
-    <img id="itimg-1227" class="itinerary-img" src="assets/itinerary_1227.png" alt="12/27 行程圖" loading="lazy" />
-  </div>
 
       <div class="schedule-item">
         <div class="schedule-header">
@@ -998,10 +977,6 @@
 <!-- 12/28 -->
     <div class="card">
       <div class="day-card-title">12/28（日） 富士山一日遊</div>
-  <div class="it-map-block">
-    <button class="tiny-btn it-toggle" type="button" data-target="itimg-1228">🗂️ 顯示／隱藏 行程圖</button>
-    <img id="itimg-1228" class="itinerary-img" src="assets/itinerary_1228.png" alt="12/28 行程圖" loading="lazy" />
-  </div>
 
       <div class="schedule-item">
         <div class="schedule-header">
@@ -1098,10 +1073,6 @@
     <!-- 12/29 -->
     <div class="card">
       <div class="day-card-title">12/29（一） 東京・銀座</div>
-  <div class="it-map-block">
-    <button class="tiny-btn it-toggle" type="button" data-target="itimg-1229">🗂️ 顯示／隱藏 行程圖</button>
-    <img id="itimg-1229" class="itinerary-img" src="assets/itinerary_1229.png" alt="12/29 行程圖" loading="lazy" />
-  </div>
 
       <div class="schedule-item">
         <div class="schedule-header">
@@ -1210,10 +1181,6 @@
 <!-- 12/30 -->
     <div class="card">
       <div class="day-card-title">12/30（二） 新宿・秋葉原</div>
-  <div class="it-map-block">
-    <button class="tiny-btn it-toggle" type="button" data-target="itimg-1230">🗂️ 顯示／隱藏 行程圖</button>
-    <img id="itimg-1230" class="itinerary-img" src="assets/itinerary_1230.png" alt="12/30 行程圖" loading="lazy" />
-  </div>
 
       <div class="schedule-item">
         <div class="schedule-header">
@@ -1249,10 +1216,6 @@
     <!-- 12/31 -->
     <div class="card">
       <div class="day-card-title">12/31（三） 成田市 & 回程</div>
-  <div class="it-map-block">
-    <button class="tiny-btn it-toggle" type="button" data-target="itimg-1231">🗂️ 顯示／隱藏 行程圖</button>
-    <img id="itimg-1231" class="itinerary-img" src="assets/itinerary_1231.png" alt="12/31 行程圖" loading="lazy" />
-  </div>
 
       <div class="schedule-item">
         <div class="schedule-header">
@@ -2372,8 +2335,22 @@ tabButtons.forEach(btn => {
       const row = document.createElement("div");
       row.className = "shop-item";
 
+      // ✅ 購物清單：勾選同步到 Supabase（checked）
+      const cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.className = "shop-check";
+      cb.checked = !!item.checked;
+      cb.addEventListener("change", async () => {
+        // 先更新 UI
+        item.checked = cb.checked;
+        textDiv.classList.toggle("done", cb.checked);
+        // 再同步到 Supabase
+        const { error } = await sb.from("shopping_items").update({ checked: cb.checked }).eq("id", item.id);
+        if (error) console.error("更新勾選狀態失敗：", error);
+      });
+
       const textDiv = document.createElement("div");
-      textDiv.className = "shop-text";
+      textDiv.className = "shop-text" + (item.checked ? " done" : "");
       const amountLabel = (item.price ?? 0).toLocaleString?.() || item.price || 0;
 
 const photos = [item.photo1_url, item.photo2_url, item.photo3_url]
@@ -2430,6 +2407,7 @@ textDiv.innerHTML = `
         renderShop();
       });
 
+      row.appendChild(cb);
       row.appendChild(textDiv);
       row.appendChild(editBtn);
       row.appendChild(delBtn);
@@ -2504,6 +2482,9 @@ textDiv.innerHTML = `
   loadExpenses();
   loadPrep();
   loadShop();
+  // 讓不同裝置/旅伴更新更即時：每 20 秒自動同步一次（僅刷新清單資料）
+  setInterval(loadShop, 20000);
+
 </script>
 
 <script id="dayTabsScript">
@@ -2568,8 +2549,26 @@ textDiv.innerHTML = `
       // Build map query
       var q = uniq.length ? uniq.join(' | ') : (card.querySelector('.day-card-title')?.textContent || 'Tokyo');
 
-      /* 當日地圖已改為手繪行程圖（上方圖片） */
+      var wrap = document.createElement('div');
+      wrap.className = 'day-map-wrap';
 
+      var h = document.createElement('div');
+      h.className = 'day-map-title';
+      h.textContent = '當日地圖';
+      wrap.appendChild(h);
+
+      var box = document.createElement('div');
+      box.className = 'day-map-box';
+
+      var iframe = document.createElement('iframe');
+      iframe.loading = 'lazy';
+      iframe.referrerPolicy = 'no-referrer-when-downgrade';
+      iframe.src = 'https://www.google.com/maps?q=' + encodeURIComponent(q) + '&output=embed';
+
+      box.appendChild(iframe);
+      wrap.appendChild(box);
+
+      card.appendChild(wrap);
     });
 
     function selectDay(key){
@@ -2584,70 +2583,7 @@ textDiv.innerHTML = `
     selectDay(days[0].key);
   });
 })();
-
-  // ===== Hand-drawn itinerary images: toggle + lightbox =====
-  (function(){
-    const lb = document.getElementById('imgLightbox');
-    const lbImg = document.getElementById('imgLightboxImg');
-
-    function openLightbox(src, alt){
-      if(!lb || !lbImg) return;
-      lbImg.src = src;
-      lbImg.alt = alt || 'preview';
-      lb.classList.add('show');
-      lb.setAttribute('aria-hidden','false');
-      document.documentElement.style.overflow = 'hidden';
-    }
-    function closeLightbox(){
-      if(!lb || !lbImg) return;
-      lb.classList.remove('show');
-      lb.setAttribute('aria-hidden','true');
-      lbImg.src = '';
-      document.documentElement.style.overflow = '';
-    }
-
-    document.addEventListener('click', function(e){
-      const t = e.target;
-
-      // Toggle show/hide for a day's itinerary image
-      const btn = t && t.closest ? t.closest('.it-toggle') : null;
-      if(btn){
-        const id = btn.getAttribute('data-target');
-        if(id){
-          const img = document.getElementById(id);
-          if(img){
-            img.classList.toggle('is-hidden');
-          }
-        }
-        return;
-      }
-
-      // Click to zoom (lightbox)
-      if(t && t.classList && t.classList.contains('itinerary-img')){
-        openLightbox(t.currentSrc || t.src, t.alt);
-        return;
-      }
-
-      // Click to close lightbox (background or image)
-      if(lb && (t === lb || t === lbImg)){
-        closeLightbox();
-        return;
-      }
-    });
-
-    document.addEventListener('keydown', function(e){
-      if(e.key === 'Escape') closeLightbox();
-    });
-  })();
-
 </script>
-
-
-  <!-- Itinerary Image Lightbox -->
-  <div id="imgLightbox" class="img-lightbox" aria-hidden="true">
-    <img id="imgLightboxImg" alt="preview" />
-  </div>
 
 </body>
 </html>
-
