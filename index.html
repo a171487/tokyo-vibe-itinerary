@@ -1,1070 +1,1639 @@
-<!-- 首爾 4 天 3 夜行程規劃 (更新版) -->
-# 首爾 4 天 3 夜行程規劃 (根據圖片內容更新)
-
-## 基本資訊
-- **飯店**：首爾車站德塞納爾斯酒店 (The Designer's Hotel Seoul Station)
-- **日期**：4/7 (二) - 4/10 (五)
-
-## 行程內容
-### Day 1: 4/7 (二)
-- **下午**：16:30 抵達仁川機場 (ICN) -> 17:25 搭乘 T2 AREX -> 18:17 抵達首爾站。
-- **晚上**：前往首爾塔 (N Seoul Tower) 欣賞夜景。
-
-### Day 2: 4/8 (三)
-- **早上**：10:30 LOVAE。
-- **下午**：望遠市場買草莓 -> 汝矣島看櫻花。
-- **晚上**：弘大商圈 (Nyu Nyu 購物) -> Mandong Bakery (買大蒜麵包)。
-
-### Day 3: 4/9 (四)
-- **早上**：10:00 mods。
-- **下午**：江南 Jeju Rooftop Black BBQ -> 星空圖書館 (Starfield Library)。
-- **晚上**：石村湖看櫻花。
-
-### Day 4: 4/10 (五)
-- **中午**：12:10 從首爾出發 -> 13:01 抵達 T2 AREX。
-- **下午**：16:10 仁川機場 (ICN) 起飛回程。
-
-## 必吃美食與清單 (保留並更新)
-- **美食**：Jeju Rooftop Black BBQ、Mandong Bakery、望遠市場草莓、弘大美食。
-- **購物**：Nyu Nyu (弘大)、Olive Young、HBAF 杏仁。
-- **準備**：K-ETA、T-money 卡、AREX 預約。
-
-<!-- 首爾旅遊儀表板 (4天版) -->
 <!DOCTYPE html>
-
-<html lang="en"><head>
+<html lang="zh-TW">
+<head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<title>Seoul Travel Assistant</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            colors: {
-              "error-dim": "#770326",
-              "on-error": "#fff7f7",
-              "outline-variant": "#aeb3b5",
-              "primary-fixed-dim": "#ff978a",
-              "on-tertiary": "#e9ffe7",
-              "inverse-surface": "#0c0f10",
-              "tertiary-container": "#d3f4d3",
-              "on-primary-container": "#800005",
-              "surface-dim": "#d5dbdd",
-              "surface-container-low": "#f2f4f5",
-              "error": "#ac3149",
-              "surface-tint": "#c1000d",
-              "on-secondary-fixed-variant": "#00647d",
-              "inverse-on-surface": "#9b9d9e",
-              "on-error-container": "#68001f",
-              "outline": "#767c7e",
-              "secondary-fixed-dim": "#95dffc",
-              "error-container": "#f76a80",
-              "on-primary-fixed-variant": "#900007",
-              "tertiary-fixed-dim": "#c5e5c5",
-              "surface": "#f8f9fa",
-              "on-tertiary-container": "#415d44",
-              "on-surface": "#2e3335",
-              "surface-variant": "#dee3e5",
-              "surface-container": "#ebeef0",
-              "inverse-primary": "#ff5446",
-              "primary": "#c1000d",
-              "primary-container": "#ffaca1",
-              "on-secondary-container": "#005970",
-              "on-tertiary-fixed-variant": "#4b684e",
-              "secondary": "#036881",
-              "on-surface-variant": "#5a6062",
-              "secondary-fixed": "#b9eaff",
-              "on-tertiary-fixed": "#304b33",
-              "secondary-dim": "#005b72",
-              "on-secondary": "#f2faff",
-              "tertiary-dim": "#3e5a41",
-              "surface-bright": "#f8f9fa",
-              "primary-dim": "#ab000a",
-              "tertiary": "#4a664c",
-              "on-primary": "#fff7f6",
-              "on-background": "#2e3335",
-              "secondary-container": "#b9eaff",
-              "primary-fixed": "#ffaca1",
-              "on-secondary-fixed": "#004558",
-              "background": "#f8f9fa",
-              "surface-container-high": "#e5e9eb",
-              "surface-container-lowest": "#ffffff",
-              "on-primary-fixed": "#580002",
-              "surface-container-highest": "#dee3e5",
-              "tertiary-fixed": "#d3f4d3"
-            },
-            fontFamily: {
-              "headline": ["Plus Jakarta Sans"],
-              "body": ["Manrope"],
-              "label": ["Plus Jakarta Sans"]
-            },
-            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
-          },
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "error-dim": "#770326",
+          "on-error": "#fff7f7",
+          "outline-variant": "#aeb3b5",
+          "primary-fixed-dim": "#ff978a",
+          "on-tertiary": "#e9ffe7",
+          "inverse-surface": "#0c0f10",
+          "tertiary-container": "#d3f4d3",
+          "on-primary-container": "#800005",
+          "surface-dim": "#d5dbdd",
+          "surface-container-low": "#f2f4f5",
+          "error": "#ac3149",
+          "surface-tint": "#c1000d",
+          "on-secondary-fixed-variant": "#00647d",
+          "inverse-on-surface": "#9b9d9e",
+          "on-error-container": "#68001f",
+          "outline": "#767c7e",
+          "secondary-fixed-dim": "#95dffc",
+          "error-container": "#f76a80",
+          "on-primary-fixed-variant": "#900007",
+          "tertiary-fixed-dim": "#c5e5c5",
+          "surface": "#f8f9fa",
+          "on-tertiary-container": "#415d44",
+          "on-surface": "#2e3335",
+          "surface-variant": "#dee3e5",
+          "surface-container": "#ebeef0",
+          "inverse-primary": "#ff5446",
+          "primary": "#c1000d",
+          "primary-container": "#ffaca1",
+          "on-secondary-container": "#005970",
+          "on-tertiary-fixed-variant": "#4b684e",
+          "secondary": "#036881",
+          "on-surface-variant": "#5a6062",
+          "secondary-fixed": "#b9eaff",
+          "on-tertiary-fixed": "#304b33",
+          "secondary-dim": "#005b72",
+          "on-secondary": "#f2faff",
+          "tertiary-dim": "#3e5a41",
+          "surface-bright": "#f8f9fa",
+          "primary-dim": "#ab000a",
+          "tertiary": "#4a664c",
+          "on-primary": "#fff7f6",
+          "on-background": "#2e3335",
+          "secondary-container": "#b9eaff",
+          "primary-fixed": "#ffaca1",
+          "on-secondary-fixed": "#004558",
+          "background": "#f8f9fa",
+          "surface-container-high": "#e5e9eb",
+          "surface-container-lowest": "#ffffff",
+          "on-primary-fixed": "#580002",
+          "surface-container-highest": "#dee3e5",
+          "tertiary-fixed": "#d3f4d3"
         },
-      }
-    </script>
+        fontFamily: {
+          "headline": ["Plus Jakarta Sans"],
+          "body": ["Manrope"],
+          "label": ["Plus Jakarta Sans"]
+        },
+        borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+      },
+    },
+  }
+</script>
 <style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    </style>
-<style>
-    body {
-      min-height: max(884px, 100dvh);
-    }
-  </style>
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+  .fill-icon { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  .editorial-shadow { box-shadow: 0 8px 32px rgba(46,51,53,0.06); }
+  .neon-glow { box-shadow: 0 0 20px rgba(193,0,13,0.18); }
+  .ambient-shadow { box-shadow: 0 -8px 32px rgba(46,51,53,0.06); }
+  .page { display: none; }
+  .page.active { display: block; }
+  body { min-height: 100dvh; background: #f8f9fa; }
+
+  /* Animated gradient hero */
+  .hero-gradient {
+    background: linear-gradient(135deg, #c1000d 0%, #ff5446 40%, #ffaca1 100%);
+  }
+  /* Seoul skyline silhouette via CSS */
+  .skyline-decoration::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 80px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 80'%3E%3Cpath fill='rgba(255,255,255,0.08)' d='M0,80 L0,50 L20,50 L20,30 L30,30 L30,20 L40,20 L40,10 L50,10 L50,20 L60,20 L60,15 L65,15 L65,20 L70,20 L70,40 L80,40 L80,30 L90,30 L90,50 L100,50 L100,35 L105,35 L105,25 L115,25 L115,35 L120,35 L120,50 L140,50 L140,40 L145,40 L145,20 L150,15 L155,20 L155,40 L160,40 L160,50 L180,50 L180,45 L185,45 L185,30 L190,25 L195,30 L195,45 L200,45 L200,50 L220,50 L220,35 L230,35 L230,20 L235,15 L240,20 L240,35 L250,35 L250,50 L270,50 L270,40 L280,40 L280,25 L285,20 L285,10 L290,5 L295,10 L295,20 L300,25 L300,40 L310,40 L310,50 L330,50 L330,35 L340,35 L340,50 L360,50 L360,40 L370,40 L370,50 L400,50 L400,80 Z'/%3E%3C/svg%3E") no-repeat bottom center / cover;
+  }
+
+  /* Scroll animations */
+  @keyframes fadeSlideUp {
+    from { opacity:0; transform: translateY(20px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+  .animate-in { animation: fadeSlideUp 0.5s ease forwards; }
+  .delay-1 { animation-delay: 0.1s; opacity:0; }
+  .delay-2 { animation-delay: 0.2s; opacity:0; }
+  .delay-3 { animation-delay: 0.3s; opacity:0; }
+  .delay-4 { animation-delay: 0.4s; opacity:0; }
+  .delay-5 { animation-delay: 0.5s; opacity:0; }
+
+  /* Map placeholder */
+  .map-placeholder {
+    background: linear-gradient(135deg, #ebeef0 0%, #dee3e5 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .map-placeholder::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 30px, rgba(174,179,181,0.3) 30px, rgba(174,179,181,0.3) 31px),
+                repeating-linear-gradient(90deg, transparent, transparent 30px, rgba(174,179,181,0.3) 30px, rgba(174,179,181,0.3) 31px);
+  }
+
+  /* Expense progress bars */
+  .progress-bar {
+    height: 6px;
+    border-radius: 9999px;
+    background: #ebeef0;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 9999px;
+    transition: width 1s ease;
+  }
+
+  /* Tag pill hover */
+  .tag-pill { transition: all 0.2s ease; cursor: pointer; }
+  .tag-pill:hover { transform: scale(1.05); }
+  .tag-pill.selected { background: #c1000d !important; color: #fff7f6 !important; }
+
+  /* Toast notification */
+  #toast {
+    position: fixed; bottom: 6rem; left: 50%; transform: translateX(-50%);
+    background: #2e3335; color: #f8f9fa;
+    padding: 0.6rem 1.2rem; border-radius: 9999px;
+    font-size: 0.75rem; font-weight: 600; font-family: 'Manrope', sans-serif;
+    opacity: 0; transition: opacity 0.3s ease; pointer-events: none;
+    z-index: 200; white-space: nowrap;
+  }
+  #toast.show { opacity: 1; }
+
+  /* Nav active state */
+  .nav-item.nav-active { color: #c1000d; }
+  .nav-item.nav-active .nav-dot { opacity: 1; }
+  .nav-dot { width: 4px; height: 4px; border-radius: 9999px; background: #c1000d; opacity: 0; transition: opacity 0.2s; }
+
+  /* Itinerary timeline */
+  .timeline-line {
+    position: absolute; left: 19px; top: 40px; bottom: 0;
+    width: 2px; background: linear-gradient(to bottom, #c1000d, #ffaca1, transparent);
+  }
+
+  /* Rating stars */
+  .star-filled { color: #f59e0b; }
+
+  /* Modal */
+  #modal-overlay {
+    position: fixed; inset: 0; background: rgba(46,51,53,0.4);
+    backdrop-filter: blur(4px); z-index: 100;
+    display: none; align-items: flex-end; justify-content: center;
+  }
+  #modal-overlay.open { display: flex; }
+  #modal-sheet {
+    background: #f8f9fa; border-radius: 3rem 3rem 0 0;
+    width: 100%; max-width: 42rem; padding: 2rem;
+    animation: slideUp 0.35s ease;
+    max-height: 85dvh; overflow-y: auto;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to   { transform: translateY(0); }
+  }
+</style>
 </head>
-<body class="bg-surface font-body text-on-surface antialiased min-h-screen pb-32">
-<!-- TopAppBar -->
-<header class="fixed top-0 w-full z-50 bg-[#f8f9fa]/70 dark:bg-[#2e3335]/70 backdrop-blur-xl">
-<div class="flex justify-between items-center px-6 h-16 w-full">
-<div class="flex items-center gap-4">
-<button class="text-on-surface hover:opacity-80 transition-opacity active:scale-95 duration-200">
-<span class="material-symbols-outlined">menu</span>
-</button>
-<h1 class="text-xl font-plus-jakarta font-extrabold tracking-tight text-[#2e3335] dark:text-[#f8f9fa]">Seoul Travel Assistant</h1>
-</div>
-<div class="h-8 w-8 rounded-full bg-surface-container-high overflow-hidden">
-<img class="w-full h-full object-cover" data-alt="User profile portrait photo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwnFs8Auy6yEnKS734fbC3fjnDSI-w6Y2Y-THG20OcEn0X3PMZ2ilxOtSxKcy9-t_oNfVJJDj6FKu7xxYpG_OxomFke_fKGuWbWeFvTaTH2ecpbYAkavlB6t4YExGqZHzlWD-GlVGIycrRRKWzNdARxzJZi8guJFsspN7GYj3euWWdfyDMutm5Kc57mtlSeKA2RBBaoq5khJcTmCZSIewrg0IvvbUZNqd3Ugwrk9fEScapSa7qDH7B84Xb13m1GVkSoB7QcXI1qvI"/>
-</div>
-</div>
+<body class="font-body text-on-surface pb-28 max-w-2xl mx-auto relative">
+
+<!-- ══════════════════════════ TOP APP BAR ══════════════════════════ -->
+<header class="fixed top-0 w-full max-w-2xl z-50 bg-[#f8f9fa]/75 backdrop-blur-xl flex justify-between items-center px-6 h-16">
+  <div class="flex items-center gap-3">
+    <button onclick="toggleMenu()" class="material-symbols-outlined text-on-surface cursor-pointer transition-transform active:scale-90">menu</button>
+    <div>
+      <h1 class="font-headline font-bold tracking-tight text-base leading-tight text-on-surface" id="page-title">首頁</h1>
+      <p class="font-label text-[0.6rem] text-on-surface-variant uppercase tracking-widest">Seoul Travel Assistant</p>
+    </div>
+  </div>
+  <div class="flex items-center gap-2">
+    <button onclick="showToast('搜尋功能即將開放')" class="material-symbols-outlined text-on-surface-variant w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container transition-colors">search</button>
+    <div class="w-9 h-9 rounded-full overflow-hidden bg-gradient-to-br from-primary to-primary-container flex items-center justify-center text-white font-bold text-sm font-headline">旅</div>
+  </div>
 </header>
-<main class="pt-24 px-6 max-w-2xl mx-auto space-y-10">
-<!-- Hero Section: Weather & Greetings -->
-<section class="flex flex-col gap-2">
-<span class="font-label text-label-sm uppercase tracking-widest text-secondary font-bold">Welcome to Seoul</span><span class="block font-body text-xs font-semibold text-on-surface-variant mt-1">Apr 7 - Apr 10</span>
-<div class="flex justify-between items-end">
-<h2 class="font-headline text-[3.5rem] leading-none font-extrabold tracking-tighter">SEOUL</h2>
-<div class="flex items-center gap-3 bg-surface-container-lowest p-4 rounded-lg shadow-sm">
-<span class="material-symbols-outlined text-primary text-4xl" style="font-variation-settings: 'FILL' 1;">wb_sunny</span>
-<div class="flex flex-col">
-<span class="font-headline text-2xl font-bold leading-none">22°C</span>
-<span class="text-on-surface-variant text-[0.6875rem] font-bold uppercase tracking-wider">Sunny</span>
+
+<!-- ══════════════════════════ SIDE MENU ══════════════════════════ -->
+<div id="menu-overlay" class="fixed inset-0 z-[60] hidden" onclick="toggleMenu()">
+  <div class="absolute inset-0 bg-[#2e3335]/40 backdrop-blur-sm"></div>
+  <div id="side-menu" class="absolute left-0 top-0 bottom-0 w-72 bg-surface-container-lowest shadow-2xl flex flex-col"
+       onclick="event.stopPropagation()" style="animation: slideRight 0.3s ease forwards;">
+    <div class="hero-gradient skyline-decoration relative p-6 pt-14 overflow-hidden">
+      <div class="relative z-10">
+        <div class="w-14 h-14 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white font-headline font-black text-2xl mb-3">旅</div>
+        <h2 class="font-headline font-black text-white text-xl leading-tight">我的首爾之旅</h2>
+        <p class="text-white/80 text-xs mt-1 font-body">2025年3月 · 5晚6天</p>
+      </div>
+    </div>
+    <nav class="flex-1 p-4 space-y-1">
+      <button onclick="navigateTo('home'); toggleMenu();" class="menu-nav-item w-full flex items-center gap-3 px-4 py-3 rounded-DEFAULT text-on-surface hover:bg-surface-container-low transition-colors text-sm font-semibold">
+        <span class="material-symbols-outlined text-xl text-primary fill-icon">home</span> 首頁概覽
+      </button>
+      <button onclick="navigateTo('trip'); toggleMenu();" class="menu-nav-item w-full flex items-center gap-3 px-4 py-3 rounded-DEFAULT text-on-surface hover:bg-surface-container-low transition-colors text-sm font-semibold">
+        <span class="material-symbols-outlined text-xl text-secondary">explore</span> 行程規劃
+      </button>
+      <button onclick="navigateTo('toolbox'); toggleMenu();" class="menu-nav-item w-full flex items-center gap-3 px-4 py-3 rounded-DEFAULT text-on-surface hover:bg-surface-container-low transition-colors text-sm font-semibold">
+        <span class="material-symbols-outlined text-xl text-secondary">construction</span> 旅行工具箱
+      </button>
+      <button onclick="navigateTo('budget'); toggleMenu();" class="menu-nav-item w-full flex items-center gap-3 px-4 py-3 rounded-DEFAULT text-on-surface hover:bg-surface-container-low transition-colors text-sm font-semibold">
+        <span class="material-symbols-outlined text-xl text-secondary">payments</span> 預算追蹤
+      </button>
+      <div class="h-px bg-outline-variant/15 my-2"></div>
+      <button onclick="showModal('about')" class="w-full flex items-center gap-3 px-4 py-3 rounded-DEFAULT text-on-surface-variant hover:bg-surface-container-low transition-colors text-sm">
+        <span class="material-symbols-outlined text-xl">info</span> 關於此行程
+      </button>
+      <button onclick="showModal('settings')" class="w-full flex items-center gap-3 px-4 py-3 rounded-DEFAULT text-on-surface-variant hover:bg-surface-container-low transition-colors text-sm">
+        <span class="material-symbols-outlined text-xl">settings</span> 設定
+      </button>
+    </nav>
+    <div class="p-4 border-t border-outline-variant/15">
+      <p class="text-[0.65rem] text-on-surface-variant text-center">Seoul Travel Assistant v2.0<br/>為您的首爾之旅精心設計</p>
+    </div>
+  </div>
 </div>
-</div>
-</div>
-</section>
-<!-- Quick Actions Bento -->
-<section class="grid grid-cols-3 gap-4">
-<button class="flex flex-col items-center justify-center aspect-square bg-error-container text-on-error-container rounded-lg p-4 transition-transform active:scale-95">
-<span class="material-symbols-outlined text-3xl mb-2">emergency</span>
-<span class="font-label text-[10px] font-bold uppercase tracking-tighter">Emergency</span>
-</button>
-<button class="flex flex-col items-center justify-center aspect-square bg-secondary-container text-on-secondary-container rounded-lg p-4 transition-transform active:scale-95">
-<span class="material-symbols-outlined text-3xl mb-2">map</span>
-<span class="font-label text-[10px] font-bold uppercase tracking-tighter">Map</span>
-</button>
-<button class="flex flex-col items-center justify-center aspect-square bg-tertiary-container text-on-tertiary-container rounded-lg p-4 transition-transform active:scale-95">
-<span class="material-symbols-outlined text-3xl mb-2">translate</span>
-<span class="font-label text-[10px] font-bold uppercase tracking-tighter">Translate</span>
-</button>
-</section>
-<!-- Today's Plan Section -->
-<section class="space-y-6">
-<div class="flex justify-between items-center">
-<h3 class="font-headline text-headline-md font-bold">Today's Plan</h3>
-<span class="text-primary font-bold text-sm">See all</span>
-</div>
-<div class="relative overflow-hidden rounded-xl bg-surface-container-low p-8 min-h-[400px] flex flex-col justify-end">
-<div class="absolute inset-0 z-0">
-<img class="w-full h-full object-cover" data-alt="Traditional Gyeongbokgung Palace at sunset in Seoul" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAjZ9lnXjIwryEd8GywRIfS4wuFdRze7oHS_m9YTPCcgsXB184KE2PcGVv-X0m9zNH_qkre8bksYrADVesbVb8X8De79sB0InKNLyx5J1YO2SQoP39mDtj_SI6CmvhSbjPEiyOmRvJ4INRFkqZxyIlOsdHOMbznIcnEFjhdAE7YB7NHTL6fIJ1mDJDE3ROZlSY5nt_vinNdO110OrpaczH-acfFTmr_Ehvdbed7bjiMsgeQc_EUtdXxlZKQryL9NU4lKKRHxgzywM0"/>
-<div class="absolute inset-0 bg-gradient-to-t from-on-surface/90 via-on-surface/20 to-transparent"></div>
-</div>
-<div class="relative z-10 space-y-4">
-<div class="flex gap-2">
-<span class="bg-tertiary-container text-on-tertiary-container px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">Sightseeing</span>
-</div>
-<div>
-<h4 class="text-surface text-3xl font-headline font-extrabold leading-tight">Day 1: Arrival &amp; N Seoul Tower</h4>
-<p class="text-surface-variant text-sm mt-2 opacity-90">Arrive at Seoul Station via AREX and head to N Seoul Tower for stunning night views.</p>
-</div>
-<div class="flex items-center gap-4 pt-4">
-<div class="flex items-center gap-2 text-surface text-xs font-bold"><span class="material-symbols-outlined text-sm">schedule</span> 18:17 Arrival</div>
-<div class="flex items-center gap-2 text-surface text-xs font-bold"><span class="material-symbols-outlined text-sm">location_on</span> Namsan Park</div>
-</div>
-</div>
-</div>
-</section>
-<!-- Currency Converter Card -->
-<section class="bg-surface-container p-8 rounded-lg space-y-6">
-<div class="flex items-center justify-between">
-<h3 class="font-headline text-xl font-bold">Currency</h3>
-<span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-[10px] font-bold">Live Rate</span>
-</div>
-<div class="space-y-4">
-<div class="bg-surface-container-lowest p-4 rounded-md flex justify-between items-center border-l-4 border-primary">
-<div class="flex flex-col">
-<span class="text-[10px] uppercase font-bold text-on-surface-variant">KRW</span>
-<span class="font-headline text-2xl font-bold">1,000</span>
-</div>
-<div class="text-right">
-<span class="text-[10px] uppercase font-bold text-on-surface-variant">South Korean Won</span>
-</div>
-</div>
-<div class="flex justify-center -my-2 relative z-10">
-<div class="bg-primary text-surface p-2 rounded-full shadow-lg">
-<span class="material-symbols-outlined block">swap_vert</span>
-</div>
-</div>
-<div class="bg-surface-container-lowest p-4 rounded-md flex justify-between items-center">
-<div class="flex flex-col">
-<span class="text-[10px] uppercase font-bold text-on-surface-variant">TWD</span>
-<span class="font-headline text-2xl font-bold text-primary">24.00</span>
-</div>
-<div class="text-right">
-<span class="text-[10px] uppercase font-bold text-on-surface-variant">Taiwan New Dollar</span>
-</div>
-</div>
-</div>
-<p class="text-center text-on-surface-variant text-[10px] font-medium tracking-tight">1 KRW = 0.024 TWD • Updated 2 mins ago</p>
-</section>
+<style>
+  @keyframes slideRight { from{transform:translateX(-100%)} to{transform:translateX(0)} }
+  #menu-overlay { transition: visibility 0.3s; }
+</style>
+
+<!-- ══════════════════════════ PAGE: HOME ══════════════════════════ -->
+<main id="page-home" class="page active pt-20 px-5">
+
+  <!-- Hero Banner -->
+  <section class="hero-gradient skyline-decoration relative rounded-xl overflow-hidden p-7 mb-8 animate-in delay-1">
+    <div class="relative z-10">
+      <span class="font-label text-[0.6rem] text-white/70 uppercase tracking-[0.15em] font-bold block mb-2">2025年春季旅行</span>
+      <h2 class="font-headline font-black text-white text-[2.8rem] leading-[1.05] tracking-tight mb-1">首爾<br/>之旅</h2>
+      <p class="text-white/85 text-sm font-body mt-3 leading-relaxed max-w-[220px]">3月22日出發 · 5晚6天 · 精彩等你探索</p>
+      <div class="flex gap-2 mt-5">
+        <button onclick="navigateTo('trip')" class="bg-white/20 backdrop-blur-sm text-white text-xs font-bold px-4 py-2 rounded-full border border-white/30 transition-transform active:scale-95 hover:bg-white/30">
+          查看行程
+        </button>
+        <button onclick="navigateTo('toolbox')" class="bg-white text-primary text-xs font-bold px-4 py-2 rounded-full transition-transform active:scale-95">
+          工具箱
+        </button>
+      </div>
+    </div>
+    <!-- Decorative circles -->
+    <div class="absolute -right-8 -top-8 w-40 h-40 rounded-full bg-white/5"></div>
+    <div class="absolute -right-4 top-12 w-24 h-24 rounded-full bg-white/8"></div>
+  </section>
+
+  <!-- Quick Stats -->
+  <div class="grid grid-cols-3 gap-3 mb-8 animate-in delay-2">
+    <div class="bg-surface-container-lowest rounded-lg editorial-shadow p-4 text-center">
+      <p class="font-headline font-black text-2xl text-primary">6</p>
+      <p class="font-label text-[0.6rem] text-on-surface-variant uppercase tracking-wider mt-0.5">天數</p>
+    </div>
+    <div class="bg-surface-container-lowest rounded-lg editorial-shadow p-4 text-center">
+      <p class="font-headline font-black text-2xl text-secondary">14</p>
+      <p class="font-label text-[0.6rem] text-on-surface-variant uppercase tracking-wider mt-0.5">景點</p>
+    </div>
+    <div class="bg-surface-container-lowest rounded-lg editorial-shadow p-4 text-center">
+      <p class="font-headline font-black text-2xl text-tertiary">₩</p>
+      <p class="font-label text-[0.6rem] text-on-surface-variant uppercase tracking-wider mt-0.5">預算</p>
+    </div>
+  </div>
+
+  <!-- Today's Plan -->
+  <section class="mb-8 animate-in delay-2">
+    <div class="flex justify-between items-end mb-4 px-1">
+      <div>
+        <span class="font-label text-[0.6rem] text-primary uppercase tracking-[0.15em] font-bold block mb-1">Today's Plan</span>
+        <h3 class="font-headline text-xl font-bold">今日行程</h3>
+      </div>
+      <button onclick="navigateTo('trip')" class="text-primary text-xs font-bold uppercase tracking-widest">全覽</button>
+    </div>
+    <!-- Day card -->
+    <div class="bg-surface-container-lowest rounded-lg editorial-shadow overflow-hidden">
+      <div class="bg-gradient-to-r from-surface-container to-surface-container-high px-5 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+            <span class="text-white font-headline font-bold text-xs">1</span>
+          </div>
+          <div>
+            <p class="font-headline font-bold text-sm">第一天</p>
+            <p class="text-[0.65rem] text-on-surface-variant">3月22日（六）抵達日</p>
+          </div>
+        </div>
+        <span class="font-label text-[0.6rem] bg-tertiary-container text-on-tertiary-container px-3 py-1 rounded-full uppercase tracking-wider font-bold">今天</span>
+      </div>
+      <div class="p-5 space-y-4">
+        <div class="flex gap-3 items-start">
+          <div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center flex-shrink-0 mt-0.5">
+            <span class="material-symbols-outlined text-secondary text-lg">flight_land</span>
+          </div>
+          <div class="flex-1">
+            <p class="font-bold text-sm">抵達仁川國際機場</p>
+            <p class="text-xs text-on-surface-variant mt-0.5">預計 14:30 · T2 航廈</p>
+            <p class="text-xs text-on-surface-variant leading-relaxed mt-1">入境後搭乘機場快線 (AREX) 直達首爾站，車程約 43 分鐘，票價 ₩9,500</p>
+          </div>
+          <span class="text-xs text-on-surface-variant font-body bg-surface-container-low px-2 py-1 rounded-full">14:30</span>
+        </div>
+        <div class="flex gap-3 items-start">
+          <div class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center flex-shrink-0 mt-0.5">
+            <span class="material-symbols-outlined text-on-surface-variant text-lg">hotel</span>
+          </div>
+          <div class="flex-1">
+            <p class="font-bold text-sm">入住 Hotel The Designers</p>
+            <p class="text-xs text-on-surface-variant mt-0.5">龍山區·首爾站步行 5 分鐘</p>
+          </div>
+          <span class="text-xs text-on-surface-variant font-body bg-surface-container-low px-2 py-1 rounded-full">17:00</span>
+        </div>
+        <div class="flex gap-3 items-start">
+          <div class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center flex-shrink-0 mt-0.5">
+            <span class="material-symbols-outlined text-on-surface-variant text-lg">restaurant</span>
+          </div>
+          <div class="flex-1">
+            <p class="font-bold text-sm">晚餐：廣藏市場</p>
+            <p class="text-xs text-on-surface-variant mt-0.5">必吃：麻藥紫菜飯捲、藥食·綠豆煎餅</p>
+          </div>
+          <span class="text-xs text-on-surface-variant font-body bg-surface-container-low px-2 py-1 rounded-full">19:00</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Weather -->
+  <section class="mb-8 animate-in delay-3">
+    <span class="font-label text-[0.6rem] text-primary uppercase tracking-[0.15em] font-bold block mb-3 px-1">Weather · 首爾天氣</span>
+    <div class="bg-gradient-to-br from-secondary to-secondary-dim rounded-lg p-5 editorial-shadow">
+      <div class="flex items-start justify-between">
+        <div>
+          <div class="flex items-end gap-1">
+            <span class="font-headline font-black text-[3.5rem] text-white leading-none tracking-tight">8°</span>
+            <span class="text-white/70 font-body text-sm mb-3">C</span>
+          </div>
+          <p class="text-white font-bold">多雲轉晴</p>
+          <p class="text-white/70 text-xs mt-1">體感 5° · 濕度 42%</p>
+        </div>
+        <div class="text-right">
+          <span class="material-symbols-outlined text-white/80 fill-icon text-5xl">partly_cloudy_day</span>
+          <p class="text-white/70 text-xs mt-1">首爾，韓國</p>
+        </div>
+      </div>
+      <div class="grid grid-cols-4 gap-2 mt-4 pt-4 border-t border-white/15">
+        <div class="text-center">
+          <p class="text-white/60 text-[0.6rem] uppercase tracking-wide">週六</p>
+          <span class="material-symbols-outlined text-white text-xl my-1">partly_cloudy_day</span>
+          <p class="text-white font-bold text-xs">8°/3°</p>
+        </div>
+        <div class="text-center">
+          <p class="text-white/60 text-[0.6rem] uppercase tracking-wide">週日</p>
+          <span class="material-symbols-outlined text-white text-xl my-1">wb_sunny</span>
+          <p class="text-white font-bold text-xs">11°/4°</p>
+        </div>
+        <div class="text-center">
+          <p class="text-white/60 text-[0.6rem] uppercase tracking-wide">週一</p>
+          <span class="material-symbols-outlined text-white text-xl my-1">wb_sunny</span>
+          <p class="text-white font-bold text-xs">13°/6°</p>
+        </div>
+        <div class="text-center">
+          <p class="text-white/60 text-[0.6rem] uppercase tracking-wide">週二</p>
+          <span class="material-symbols-outlined text-white text-xl my-1">cloudy</span>
+          <p class="text-white font-bold text-xs">9°/3°</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Access Grid -->
+  <section class="mb-8 animate-in delay-4">
+    <div class="flex justify-between items-end mb-4 px-1">
+      <div>
+        <span class="font-label text-[0.6rem] text-primary uppercase tracking-[0.15em] font-bold block mb-1">Quick Access</span>
+        <h3 class="font-headline text-xl font-bold">快速功能</h3>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 gap-3">
+      <button onclick="navigateTo('toolbox')" class="bg-surface-container-lowest rounded-lg editorial-shadow p-5 flex items-center gap-3 text-left transition-transform active:scale-95">
+        <div class="w-11 h-11 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+          <span class="material-symbols-outlined text-primary fill-icon">construction</span>
+        </div>
+        <div>
+          <p class="font-bold text-sm">工具箱</p>
+          <p class="text-[0.65rem] text-on-surface-variant">緊急·常用語</p>
+        </div>
+      </button>
+      <button onclick="navigateTo('budget')" class="bg-surface-container-lowest rounded-lg editorial-shadow p-5 flex items-center gap-3 text-left transition-transform active:scale-95">
+        <div class="w-11 h-11 rounded-full bg-secondary/10 flex items-center justify-center flex-shrink-0">
+          <span class="material-symbols-outlined text-secondary fill-icon">payments</span>
+        </div>
+        <div>
+          <p class="font-bold text-sm">預算</p>
+          <p class="text-[0.65rem] text-on-surface-variant">已用 43%</p>
+        </div>
+      </button>
+      <button onclick="showModal('transport')" class="bg-surface-container-lowest rounded-lg editorial-shadow p-5 flex items-center gap-3 text-left transition-transform active:scale-95">
+        <div class="w-11 h-11 rounded-full bg-tertiary/10 flex items-center justify-center flex-shrink-0">
+          <span class="material-symbols-outlined text-tertiary fill-icon">directions_subway</span>
+        </div>
+        <div>
+          <p class="font-bold text-sm">地鐵查詢</p>
+          <p class="text-[0.65rem] text-on-surface-variant">路線·票價</p>
+        </div>
+      </button>
+      <button onclick="showModal('currency')" class="bg-surface-container-lowest rounded-lg editorial-shadow p-5 flex items-center gap-3 text-left transition-transform active:scale-95">
+        <div class="w-11 h-11 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+          <span class="material-symbols-outlined text-primary">currency_exchange</span>
+        </div>
+        <div>
+          <p class="font-bold text-sm">匯率換算</p>
+          <p class="text-[0.65rem] text-on-surface-variant">TWD → KRW</p>
+        </div>
+      </button>
+    </div>
+  </section>
+
+  <!-- Recommended Spots -->
+  <section class="mb-6 animate-in delay-5">
+    <div class="flex justify-between items-end mb-4 px-1">
+      <div>
+        <span class="font-label text-[0.6rem] text-primary uppercase tracking-[0.15em] font-bold block mb-1">Must Visit</span>
+        <h3 class="font-headline text-xl font-bold">推薦景點</h3>
+      </div>
+      <button onclick="navigateTo('trip')" class="text-primary text-xs font-bold uppercase tracking-widest">全部</button>
+    </div>
+    <!-- Horizontal scroll spots -->
+    <div class="flex gap-3 overflow-x-auto pb-3 -mx-5 px-5" style="scrollbar-width:none;">
+      <div class="flex-shrink-0 w-44 bg-surface-container-lowest rounded-lg editorial-shadow overflow-hidden">
+        <div class="w-full h-28 bg-gradient-to-br from-[#c1000d] to-[#ff5446] flex items-center justify-center">
+          <span class="material-symbols-outlined text-white text-4xl fill-icon">castle</span>
+        </div>
+        <div class="p-3">
+          <span class="font-label text-[0.6rem] text-secondary uppercase tracking-wider">歷史</span>
+          <p class="font-bold text-sm mt-0.5">景福宮</p>
+          <p class="text-[0.65rem] text-on-surface-variant">鐘路區 · 9:00–18:00</p>
+          <div class="flex items-center gap-0.5 mt-1.5">
+            <span class="material-symbols-outlined text-[#f59e0b] fill-icon text-sm">star</span>
+            <span class="text-xs font-bold">4.8</span>
+          </div>
+        </div>
+      </div>
+      <div class="flex-shrink-0 w-44 bg-surface-container-lowest rounded-lg editorial-shadow overflow-hidden">
+        <div class="w-full h-28 bg-gradient-to-br from-[#036881] to-[#95dffc] flex items-center justify-center">
+          <span class="material-symbols-outlined text-white text-4xl fill-icon">storefront</span>
+        </div>
+        <div class="p-3">
+          <span class="font-label text-[0.6rem] text-secondary uppercase tracking-wider">購物</span>
+          <p class="font-bold text-sm mt-0.5">明洞商圈</p>
+          <p class="text-[0.65rem] text-on-surface-variant">中區 · 10:00–22:00</p>
+          <div class="flex items-center gap-0.5 mt-1.5">
+            <span class="material-symbols-outlined text-[#f59e0b] fill-icon text-sm">star</span>
+            <span class="text-xs font-bold">4.6</span>
+          </div>
+        </div>
+      </div>
+      <div class="flex-shrink-0 w-44 bg-surface-container-lowest rounded-lg editorial-shadow overflow-hidden">
+        <div class="w-full h-28 bg-gradient-to-br from-[#4a664c] to-[#d3f4d3] flex items-center justify-center">
+          <span class="material-symbols-outlined text-white text-4xl fill-icon">park</span>
+        </div>
+        <div class="p-3">
+          <span class="font-label text-[0.6rem] text-secondary uppercase tracking-wider">自然</span>
+          <p class="font-bold text-sm mt-0.5">北村韓屋村</p>
+          <p class="text-[0.65rem] text-on-surface-variant">鐘路區 · 全天開放</p>
+          <div class="flex items-center gap-0.5 mt-1.5">
+            <span class="material-symbols-outlined text-[#f59e0b] fill-icon text-sm">star</span>
+            <span class="text-xs font-bold">4.7</span>
+          </div>
+        </div>
+      </div>
+      <div class="flex-shrink-0 w-44 bg-surface-container-lowest rounded-lg editorial-shadow overflow-hidden">
+        <div class="w-full h-28 bg-gradient-to-br from-[#ac3149] to-[#f76a80] flex items-center justify-center">
+          <span class="material-symbols-outlined text-white text-4xl fill-icon">local_cafe</span>
+        </div>
+        <div class="p-3">
+          <span class="font-label text-[0.6rem] text-secondary uppercase tracking-wider">咖啡</span>
+          <p class="font-bold text-sm mt-0.5">益善洞咖啡街</p>
+          <p class="text-[0.65rem] text-on-surface-variant">鐘路區 · 11:00–21:00</p>
+          <div class="flex items-center gap-0.5 mt-1.5">
+            <span class="material-symbols-outlined text-[#f59e0b] fill-icon text-sm">star</span>
+            <span class="text-xs font-bold">4.9</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
 </main>
-<!-- BottomNavBar -->
-<nav class="fixed bottom-0 left-0 w-full flex justify-around items-end pb-6 px-4 bg-[#f8f9fa]/80 dark:bg-[#2e3335]/80 backdrop-blur-2xl rounded-t-[3rem] z-50 shadow-[0_-8px_32px_rgba(46,51,53,0.06)]">
-<a class="flex flex-col items-center justify-center bg-gradient-to-tr from-[#c1000d] to-[#ffaca1] text-white rounded-full p-3 shadow-lg scale-90 duration-200" href="#">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
-<span class="font-manrope text-[10px] font-bold uppercase tracking-widest mt-1">Home</span>
-</a>
-<a class="flex flex-col items-center justify-center text-[#aeb3b5] p-3 hover:text-[#E30613] transition-colors" href="#">
-<span class="material-symbols-outlined">explore</span>
-<span class="font-manrope text-[10px] font-bold uppercase tracking-widest mt-1">Trip</span>
-</a>
-<a class="flex flex-col items-center justify-center text-[#aeb3b5] p-3 hover:text-[#E30613] transition-colors" href="#">
-<span class="material-symbols-outlined">construction</span>
-<span class="font-manrope text-[10px] font-bold uppercase tracking-widest mt-1">Toolbox</span>
-</a>
-<a class="flex flex-col items-center justify-center text-[#aeb3b5] p-3 hover:text-[#E30613] transition-colors" href="#">
-<span class="material-symbols-outlined">payments</span>
-<span class="font-manrope text-[10px] font-bold uppercase tracking-widest mt-1">Budget</span>
-</a>
-</nav>
-</body></html>
 
-<!-- 4 天 3 夜詳細行程 (4-Day Itinerary) -->
-<!DOCTYPE html>
+<!-- ══════════════════════════ PAGE: TRIP ══════════════════════════ -->
+<main id="page-trip" class="page pt-20 px-5">
 
-<html lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Seoul Travel Assistant - Itinerary</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            colors: {
-              "error-dim": "#770326",
-              "on-error": "#fff7f7",
-              "outline-variant": "#aeb3b5",
-              "primary-fixed-dim": "#ff978a",
-              "on-tertiary": "#e9ffe7",
-              "inverse-surface": "#0c0f10",
-              "tertiary-container": "#d3f4d3",
-              "on-primary-container": "#800005",
-              "surface-dim": "#d5dbdd",
-              "surface-container-low": "#f2f4f5",
-              "error": "#ac3149",
-              "surface-tint": "#c1000d",
-              "on-secondary-fixed-variant": "#00647d",
-              "inverse-on-surface": "#9b9d9e",
-              "on-error-container": "#68001f",
-              "outline": "#767c7e",
-              "secondary-fixed-dim": "#95dffc",
-              "error-container": "#f76a80",
-              "on-primary-fixed-variant": "#900007",
-              "tertiary-fixed-dim": "#c5e5c5",
-              "surface": "#f8f9fa",
-              "on-tertiary-container": "#415d44",
-              "on-surface": "#2e3335",
-              "surface-variant": "#dee3e5",
-              "surface-container": "#ebeef0",
-              "inverse-primary": "#ff5446",
-              "primary": "#c1000d",
-              "primary-container": "#ffaca1",
-              "on-secondary-container": "#005970",
-              "on-tertiary-fixed-variant": "#4b684e",
-              "secondary": "#036881",
-              "on-surface-variant": "#5a6062",
-              "secondary-fixed": "#b9eaff",
-              "on-tertiary-fixed": "#304b33",
-              "secondary-dim": "#005b72",
-              "on-secondary": "#f2faff",
-              "tertiary-dim": "#3e5a41",
-              "surface-bright": "#f8f9fa",
-              "primary-dim": "#ab000a",
-              "tertiary": "#4a664c",
-              "on-primary": "#fff7f6",
-              "on-background": "#2e3335",
-              "secondary-container": "#b9eaff",
-              "primary-fixed": "#ffaca1",
-              "on-secondary-fixed": "#004558",
-              "background": "#f8f9fa",
-              "surface-container-high": "#e5e9eb",
-              "surface-container-lowest": "#ffffff",
-              "on-primary-fixed": "#580002",
-              "surface-container-highest": "#dee3e5",
-              "tertiary-fixed": "#d3f4d3"
-            },
-            fontFamily: {
-              "headline": ["Plus Jakarta Sans"],
-              "body": ["Manrope"],
-              "label": ["Plus Jakarta Sans"]
-            },
-            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
-          },
-        },
-      }
-    </script>
-<style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        body {
-          min-height: max(884px, 100dvh);
-        }
-    </style>
-</head>
-<body class="bg-surface font-body text-on-surface">
-<!-- TopAppBar -->
-<header class="fixed top-0 w-full z-50 bg-[#f8f9fa]/70 dark:bg-[#2e3335]/70 backdrop-blur-xl">
-<div class="flex justify-between items-center px-6 h-16 w-full">
-<div class="flex items-center gap-4">
-<span class="material-symbols-outlined text-[#2e3335] dark:text-[#f8f9fa] cursor-pointer" data-icon="menu">menu</span>
-<h1 class="font-headline font-bold tracking-tight text-xl text-[#2e3335] dark:text-[#f8f9fa]">Seoul Travel Assistant</h1>
-</div>
-<div class="w-8 h-8 rounded-full overflow-hidden border-2 border-primary-container">
-<img alt="Profile" class="w-full h-full object-cover" data-alt="User profile photo avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6qhJ_kiACmX3UJQM5kNzS5leAkocDk434WqXHUeY6B711FW9kmDm7ls3TGEvSi_RuOozPPHaqMIB4g8WwFBWqzV_OZ9tY_0ej9hHfIy91KQd4_EoNpydpKZwwrsY3gAjKh54vOlA4__DZHJOLjVS24wS-iKjOYpZNb-G4kIxWF_IkqNicNNn6YSOra1WPPgOwPXciwomCXp7DjjUWkq_EMQwEEwMqwaRHe2jfYRAX6yZqrKkcyklLBs1aLd9FP6vvoxnG6uRHoaw"/>
-</div>
-</div>
-</header>
-<main class="pt-24 pb-32 px-6 max-w-2xl mx-auto">
-<!-- Hero Section -->
-<section class="mb-12">
-<span class="font-label text-label-sm font-bold uppercase tracking-widest text-secondary mb-2 block">Your Grand Adventure</span>
-<h2 class="font-headline text-5xl font-extrabold tracking-tighter text-on-surface leading-none mb-4">Seoul <br/><span class="text-primary italic">4-Day 3-Night</span></h2>
-<div class="flex items-center gap-2 text-on-surface-variant font-medium">
-<span class="material-symbols-outlined text-sm" data-icon="calendar_today">calendar_today</span>
-<span>Apr 07 — Apr 10, 2025</span>
-</div>
-</section>
-<!-- Date Picker (Day Selector) -->
-<section class="mb-10 -mx-6 px-6 overflow-x-auto hide-scrollbar flex gap-4 snap-x">
-<button class="snap-center flex-shrink-0 w-24 h-32 rounded-lg bg-gradient-to-tr from-[#c1000d] to-[#ffaca1] text-white flex flex-col items-center justify-center gap-1 shadow-lg transform scale-105">
-<span class="font-label text-[10px] uppercase font-extrabold tracking-widest opacity-80">Day</span>
-<span class="font-headline text-4xl font-black">01</span>
-<span class="font-label text-[10px] uppercase font-bold tracking-widest">Arrival</span>
-</button>
-<button class="snap-center flex-shrink-0 w-24 h-32 rounded-lg bg-surface-container-low text-on-surface-variant flex flex-col items-center justify-center gap-1 hover:bg-surface-container transition-colors">
-<span class="font-label text-[10px] uppercase font-extrabold tracking-widest opacity-60">Day</span>
-<span class="font-headline text-4xl font-black">02</span>
-<span class="font-label text-[10px] uppercase font-bold tracking-widest">Market</span>
-</button>
-<button class="snap-center flex-shrink-0 w-24 h-32 rounded-lg bg-surface-container-low text-on-surface-variant flex flex-col items-center justify-center gap-1 hover:bg-surface-container transition-colors">
-<span class="font-label text-[10px] uppercase font-extrabold tracking-widest opacity-60">Day</span>
-<span class="font-headline text-4xl font-black">03</span>
-<span class="font-label text-[10px] uppercase font-bold tracking-widest">Glow</span>
-</button>
-<button class="snap-center flex-shrink-0 w-24 h-32 rounded-lg bg-surface-container-low text-on-surface-variant flex flex-col items-center justify-center gap-1 hover:bg-surface-container transition-colors">
-<span class="font-label text-[10px] uppercase font-extrabold tracking-widest opacity-60">Day</span>
-<span class="font-headline text-4xl font-black">04</span>
-<span class="font-label text-[10px] uppercase font-bold tracking-widest">Home</span>
-</button>
-</section>
-<!-- Transport Tip -->
-<div class="mb-10 p-5 rounded-lg bg-secondary-container flex items-center gap-4">
-<div class="bg-on-secondary-container text-secondary-container w-10 h-10 rounded-full flex items-center justify-center">
-<span class="material-symbols-outlined" data-icon="directions_subway">directions_subway</span>
-</div>
-<div>
-<p class="font-label text-[11px] font-bold uppercase tracking-wider text-on-secondary-fixed">Pro Tip: Transit</p>
-<p class="text-on-secondary-container text-sm font-semibold leading-tight">Take T2 AREX at 17:25. Stay at The Designer's Hotel Seoul Station for easy access.</p>
-</div>
-</div>
-<!-- Vertical Timeline -->
-<div class="relative pl-8 space-y-12 before:content-[''] before:absolute before:left-[11px] before:top-4 before:bottom-4 before:w-0.5 before:bg-surface-container-highest">
-<!-- Day 1 Content -->
-<div class="relative">
-<div class="absolute -left-[30px] top-1 w-6 h-6 rounded-full bg-surface border-4 border-primary z-10"></div>
-<div class="mb-4 flex items-center justify-between">
-<span class="font-label text-xs font-black uppercase text-primary">Day 1 (4/7) — Arrival &amp; Night Views</span>
-</div>
-<div class="bg-surface-container-low rounded-lg p-1 overflow-hidden">
-<div class="h-48 rounded-md overflow-hidden mb-4 relative">
-<img alt="N Seoul Tower" class="w-full h-full object-cover" data-alt="N Seoul Tower at night with city lights" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHXitB9j3vI9hP7J9iN5u9w8X9y6g6r7v7t7r7u7i7o7p7m7n7b7v7c7x7z7l7k7j7h7g7f7d7s7a"/>
-<div class="absolute top-4 right-4 bg-tertiary-container text-on-tertiary-container px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">Evening Activity</div>
-</div>
-<div class="px-4 pb-4">
-<h3 class="font-headline text-2xl font-bold mb-2">N Seoul Tower</h3>
-<p class="text-on-surface-variant text-sm mb-4 leading-relaxed">Arrive at 16:30 ICN, take AREX to Seoul Station, and enjoy a breathtaking night view of the city.</p>
-<div class="flex flex-wrap gap-2">
-<span class="bg-surface-container-lowest border border-outline-variant/10 px-3 py-1 rounded-full text-xs font-bold text-on-surface flex items-center gap-1">
-<span class="material-symbols-outlined text-sm" data-icon="train">train</span>
-                                AREX Express
-                            </span>
-<button class="bg-primary/10 border border-primary/20 px-3 py-1 rounded-full text-xs font-bold text-primary flex items-center gap-1 hover:bg-primary/20 transition-colors"><span class="material-symbols-outlined text-sm" data-icon="map">map</span>Map &amp; Directions</button></div>
-</div>
-</div>
-</div>
-<!-- Day 2 Content -->
-<div class="relative">
-<div class="absolute -left-[30px] top-1 w-6 h-6 rounded-full bg-surface border-4 border-secondary z-10"></div>
-<div class="mb-4 flex items-center justify-between">
-<span class="font-label text-xs font-black uppercase text-secondary">Day 2 (4/8) — Blossoms &amp; Shopping</span>
-</div>
-<div class="bg-surface-container-low rounded-lg p-1 overflow-hidden">
-<div class="grid grid-cols-2 gap-1 mb-4 h-40">
-<img alt="Yeouido Cherry Blossoms" class="w-full h-full object-cover rounded-tl-md" data-alt="Beautiful cherry blossoms in Yeouido" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDd-mS-8Vl2Gf-oO9L1I7E8R9T0Y1U2I3O4P5A6S7D8F9G0H1J2K3L4Z5X6C7V8B9N0M1"/>
-<img alt="Mangwon Market" class="w-full h-full object-cover rounded-tr-md" data-alt="Stall at Mangwon market selling fresh strawberries" src="https://lh3.googleusercontent.com/aida-public/AB6AXuANkoIV4fSIi3jbZ1pXGvsGLFRC7_XRaDvU3KxgKbW3rDOYPNRLEvLuAqv82WbFp7sQGLOO6fEr6oe_AuvBeRjMY__a4Rf6sWSb-sjAuPseJMwCH3dMLe3AS_COIhmMz2_ZABe7-Iq8WvB1qNRTr2TTdFSqutx8s_anwxItAYLFq_T0yDC3CAeHkNhs1yM1eHnFsbsdo5dEum33tmeN5PC_aHF8vIGPBtF-kDRkMcLvQpWZrgZw_72yvKrBq31gRuaLzXVRW5gHjf8"/>
-</div>
-<div class="px-4 pb-4">
-<h3 class="font-headline text-2xl font-bold mb-2">Markets &amp; Cherry Blossoms</h3>
-<p class="text-on-surface-variant text-sm mb-4 leading-relaxed">10:30 LOVAE, then Mangwon Market for strawberries. Sunset at Yeouido cherry blossoms, ending at Hongdae Nyu Nyu.</p>
-<div class="flex flex-wrap gap-2">
-<span class="bg-surface-container-lowest border border-outline-variant/10 px-3 py-1 rounded-full text-xs font-bold text-on-surface flex items-center gap-1">
-<span class="material-symbols-outlined text-sm" data-icon="bakery_dining">bakery_dining</span>
-                                Mandong Bakery
-                            </span>
-<span class="bg-surface-container-lowest border border-outline-variant/10 px-3 py-1 rounded-full text-xs font-bold text-on-surface flex items-center gap-1">
-<span class="material-symbols-outlined text-sm" data-icon="shopping_bag">shopping_bag</span>
-                                Nyu Nyu Hongdae
-                            </span>
-<button class="bg-primary/10 border border-primary/20 px-3 py-1 rounded-full text-xs font-bold text-primary flex items-center gap-1 hover:bg-primary/20 transition-colors"><span class="material-symbols-outlined text-sm" data-icon="map">map</span>Map &amp; Directions</button></div>
-</div>
-</div>
-</div>
-<!-- Day 3 Content -->
-<div class="relative">
-<div class="absolute -left-[30px] top-1 w-6 h-6 rounded-full bg-surface border-4 border-outline-variant z-10"></div>
-<div class="mb-4 flex items-center justify-between">
-<span class="font-label text-xs font-black uppercase text-on-surface-variant">Day 3 (4/9) — Gangnam Vibes</span>
-</div>
-<div class="bg-surface-container-low rounded-lg p-1 overflow-hidden">
-<div class="h-48 rounded-md overflow-hidden mb-4">
-<img alt="Starfield Library" class="w-full h-full object-cover" data-alt="Massive bookshelves at Starfield Library in Seoul" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDj1PtmkZDsbRFINMXMsYvjW3lV5KG2ajksabI7iYGId0sgLVDLcA7C74LHCOZppR23o_Pthr_MOpSfMgm4b4Y69qpoVH02gwsudd0VyiS5E7d8LisYr6ots9A866ikIYdEP86H_wQ_7cLK54PmUTlYAL1SAcjlOQm3UaRe_JFXxRw3XzVZytjT7wmIU8fJdTRR2_I3NPORMBRpe7fUrm-Jwp53CKamrMN85tJiXMNFjEoV17T1aaPpcma6wRF7dZOc0UtxbY2jGm8"/>
-</div>
-<div class="px-4 pb-4">
-<h3 class="font-headline text-2xl font-bold mb-2">Gangnam &amp; Seokchon</h3>
-<p class="text-on-surface-variant text-sm mb-4 leading-relaxed">10:00 mods, BBQ at Jeju Rooftop (Gangnam), visit Starfield Library, and night blossoms at Seokchon Lake.</p>
-<div class="flex flex-wrap gap-2">
-<span class="bg-surface-container-lowest border border-outline-variant/10 px-3 py-1 rounded-full text-xs font-bold text-on-surface flex items-center gap-1">
-<span class="material-symbols-outlined text-sm" data-icon="restaurant">restaurant</span>
-                                Jeju Rooftop BBQ
-                            </span>
-<button class="bg-primary/10 border border-primary/20 px-3 py-1 rounded-full text-xs font-bold text-primary flex items-center gap-1 hover:bg-primary/20 transition-colors"><span class="material-symbols-outlined text-sm" data-icon="map">map</span>Map &amp; Directions</button></div>
-</div>
-</div>
-</div>
-<!-- Day 4 Content -->
-<div class="relative">
-<div class="absolute -left-[30px] top-1 w-6 h-6 rounded-full bg-surface border-4 border-primary/40 z-10"></div>
-<div class="mb-4 flex items-center justify-between">
-<span class="font-label text-xs font-black uppercase text-on-surface-variant">Day 4 (4/10) — Departure</span>
-</div>
-<div class="bg-surface-container-low rounded-lg p-5">
-<div class="flex items-center gap-4 mb-4">
-<div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-primary">
-<span class="material-symbols-outlined" data-icon="flight_takeoff">flight_takeoff</span>
-</div>
-<div>
-<h3 class="font-headline text-xl font-bold">Farewell Seoul</h3>
-<p class="text-on-surface-variant text-sm">Heading home from Incheon (ICN)</p>
-</div>
-</div>
-<div class="space-y-3">
-<div class="flex justify-between text-sm">
-<span class="text-on-surface-variant">AREX Departure</span>
-<span class="font-bold">12:10 PM</span>
-</div>
-<div class="flex justify-between text-sm">
-<span class="text-on-surface-variant">Arrival at ICN T2</span>
-<span class="font-bold">13:01 PM</span>
-</div>
-<div class="flex justify-between text-sm border-t border-outline-variant/20 pt-2">
-<span class="text-on-surface-variant">Flight Takeoff</span>
-<span class="font-bold text-primary">16:10 PM</span>
-</div>
-</div>
-<button class="w-full mt-6 bg-primary/10 border border-primary/20 px-4 py-3 rounded-lg text-sm font-bold text-primary flex items-center justify-center gap-2 hover:bg-primary/20 transition-colors">
-<span class="material-symbols-outlined" data-icon="confirmation_number">confirmation_number</span>
-                    View Flight Tickets
-                </button>
-</div>
-</div>
-</div>
+  <!-- Header -->
+  <section class="mb-6 animate-in delay-1">
+    <span class="font-label text-[0.6rem] text-primary uppercase tracking-[0.15em] font-bold block mb-1">Itinerary · 行程規劃</span>
+    <h2 class="font-headline text-[2.2rem] font-black leading-tight tracking-tight text-on-surface">6天5夜<br/>首爾精選</h2>
+    <!-- Filter pills -->
+    <div class="flex gap-2 mt-4 overflow-x-auto pb-1" style="scrollbar-width:none;">
+      <button onclick="filterDay(0,this)" class="tag-pill selected font-label text-[0.65rem] font-bold uppercase tracking-wider px-4 py-2 rounded-full bg-primary text-white flex-shrink-0">全部</button>
+      <button onclick="filterDay(1,this)" class="tag-pill font-label text-[0.65rem] font-bold uppercase tracking-wider px-4 py-2 rounded-full bg-surface-container text-on-surface-variant flex-shrink-0">第1天</button>
+      <button onclick="filterDay(2,this)" class="tag-pill font-label text-[0.65rem] font-bold uppercase tracking-wider px-4 py-2 rounded-full bg-surface-container text-on-surface-variant flex-shrink-0">第2天</button>
+      <button onclick="filterDay(3,this)" class="tag-pill font-label text-[0.65rem] font-bold uppercase tracking-wider px-4 py-2 rounded-full bg-surface-container text-on-surface-variant flex-shrink-0">第3天</button>
+      <button onclick="filterDay(4,this)" class="tag-pill font-label text-[0.65rem] font-bold uppercase tracking-wider px-4 py-2 rounded-full bg-surface-container text-on-surface-variant flex-shrink-0">第4天</button>
+      <button onclick="filterDay(5,this)" class="tag-pill font-label text-[0.65rem] font-bold uppercase tracking-wider px-4 py-2 rounded-full bg-surface-container text-on-surface-variant flex-shrink-0">第5天</button>
+      <button onclick="filterDay(6,this)" class="tag-pill font-label text-[0.65rem] font-bold uppercase tracking-wider px-4 py-2 rounded-full bg-surface-container text-on-surface-variant flex-shrink-0">第6天</button>
+    </div>
+  </section>
+
+  <!-- Day 1 -->
+  <div class="trip-day mb-6 animate-in delay-2" data-day="1">
+    <div class="bg-surface-container-lowest rounded-lg editorial-shadow overflow-hidden">
+      <div class="bg-gradient-to-r from-primary to-primary-container px-5 py-4 flex items-center justify-between">
+        <div>
+          <p class="font-headline font-black text-white text-lg">Day 1 · 3月22日</p>
+          <p class="text-white/80 text-xs">抵達首爾 · 廣藏市場初探</p>
+        </div>
+        <span class="w-9 h-9 bg-white/20 rounded-full flex items-center justify-center font-headline font-black text-white">1</span>
+      </div>
+      <div class="p-5 space-y-5 relative">
+        <div class="timeline-line"></div>
+        <div class="flex gap-4 items-start pl-2">
+          <div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center flex-shrink-0 z-10 relative">
+            <span class="material-symbols-outlined text-secondary text-lg">flight_land</span>
+          </div>
+          <div class="flex-1">
+            <p class="font-bold">抵達仁川國際機場</p>
+            <p class="text-xs text-primary font-bold">14:30</p>
+            <p class="text-xs text-on-surface-variant mt-1 leading-relaxed">搭乘機場快線 AREX 至首爾站（43分鐘，₩9,500）。建議在機場辦理 T-Money 交通卡，首爾地鐵必備。</p>
+          </div>
+        </div>
+        <div class="flex gap-4 items-start pl-2">
+          <div class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center flex-shrink-0 z-10 relative">
+            <span class="material-symbols-outlined text-on-surface-variant text-lg">hotel</span>
+          </div>
+          <div class="flex-1">
+            <p class="font-bold">入住飯店</p>
+            <p class="text-xs text-primary font-bold">17:00</p>
+            <p class="text-xs text-on-surface-variant mt-1">Hotel The Designers Seoul Station · 龍山區漢江大路305</p>
+          </div>
+        </div>
+        <div class="flex gap-4 items-start pl-2">
+          <div class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center flex-shrink-0 z-10 relative">
+            <span class="material-symbols-outlined text-on-surface-variant text-lg">restaurant</span>
+          </div>
+          <div class="flex-1">
+            <p class="font-bold">廣藏市場夜間探索</p>
+            <p class="text-xs text-primary font-bold">19:00 – 21:30</p>
+            <p class="text-xs text-on-surface-variant mt-1 leading-relaxed">首爾最古老的市場之一。必點：麻藥紫菜飯捲（마약김밥）、綠豆煎餅（녹두전）、生牛肉拌飯（육회비빔밥）</p>
+            <div class="flex gap-2 mt-2">
+              <span class="font-label text-[0.58rem] bg-tertiary-container text-on-tertiary-container px-2 py-0.5 rounded-full uppercase tracking-wider font-bold">美食</span>
+              <span class="font-label text-[0.58rem] bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded-full uppercase tracking-wider font-bold">市場</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Day 2 -->
+  <div class="trip-day mb-6 animate-in delay-3" data-day="2">
+    <div class="bg-surface-container-lowest rounded-lg editorial-shadow overflow-hidden">
+      <div class="bg-gradient-to-r from-secondary to-secondary-fixed-dim px-5 py-4 flex items-center justify-between">
+        <div>
+          <p class="font-headline font-black text-white text-lg">Day 2 · 3月23日</p>
+          <p class="text-white/80 text-xs">北村 · 景福宮 · 仁寺洞</p>
+        </div>
+        <span class="w-9 h-9 bg-white/20 rounded-full flex items-center justify-center font-headline font-black text-white">2</span>
+      </div>
+      <div class="p-5 space-y-5 relative">
+        <div class="timeline-line"></div>
+        <div class="flex gap-4 items-start pl-2">
+          <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 z-10 relative">
+            <span class="material-symbols-outlined text-primary text-lg fill-icon">castle</span>
+          </div>
+          <div class="flex-1">
+            <p class="font-bold">景福宮</p>
+            <p class="text-xs text-primary font-bold">09:00 – 11:30</p>
+            <p class="text-xs text-on-surface-variant mt-1 leading-relaxed">朝鮮王朝的主要王宮，建於1395年。可租借韓服免費入場，建議提前預約。門票 ₩3,000。</p>
+          </div>
+        </div>
+        <div class="flex gap-4 items-start pl-2">
+          <div class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center flex-shrink-0 z-10 relative">
+            <span class="material-symbols-outlined text-on-surface-variant text-lg">location_city</span>
+          </div>
+          <div class="flex-1">
+            <p class="font-bold">北村韓屋村漫步</p>
+            <p class="text-xs text-primary font-bold">12:00 – 14:00</p>
+            <p class="text-xs text-on-surface-variant mt-1">保存完好的傳統韓式建築群，週末人潮較多，建議平日前往。注意：為居住區域，請保持安靜。</p>
+          </div>
+        </div>
+        <div class="flex gap-4 items-start pl-2">
+          <div class="w-10 h-10 rounded-full bg-tertiary/10 flex items-center justify-center flex-shrink-0 z-10 relative">
+            <span class="material-symbols-outlined text-tertiary text-lg">shopping_bag</span>
+          </div>
+          <div class="flex-1">
+            <p class="font-bold">仁寺洞文化街</p>
+            <p class="text-xs text-primary font-bold">14:30 – 17:00</p>
+            <p class="text-xs text-on-surface-variant mt-1">傳統工藝品、畫廊與特色咖啡廳雲集。必逛：쌈지길（Ssamziegil）傳統藝術商城。</p>
+          </div>
+        </div>
+        <div class="flex gap-4 items-start pl-2">
+          <div class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center flex-shrink-0 z-10 relative">
+            <span class="material-symbols-outlined text-on-surface-variant text-lg">local_cafe</span>
+          </div>
+          <div class="flex-1">
+            <p class="font-bold">益善洞下午茶</p>
+            <p class="text-xs text-primary font-bold">17:30 – 19:00</p>
+            <p class="text-xs text-on-surface-variant mt-1">韓屋改建咖啡廳聚集地，IG打卡熱點。推薦：익선다다（益善多多）</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Day 3 -->
+  <div class="trip-day mb-6" data-day="3">
+    <div class="bg-surface-container-lowest rounded-lg editorial-shadow overflow-hidden">
+      <div class="bg-gradient-to-r from-tertiary to-tertiary-fixed-dim px-5 py-4 flex items-center justify-between">
+        <div>
+          <p class="font-headline font-black text-white text-lg">Day 3 · 3月24日</p>
+          <p class="text-white/80 text-xs">弘大 · 延南洞 · 合井</p>
+        </div>
+        <span class="w-9 h-9 bg-white/20 rounded-full flex items-center justify-center font-headline font-black text-white">3</span>
+      </div>
+      <div class="p-5 space-y-4">
+        <div class="flex justify-between items-center">
+          <p class="text-sm text-on-surface-variant">弘益大學藝術區探索，延南洞咖啡文化，合井夜市</p>
+          <button onclick="expandDay(this)" class="text-primary text-xs font-bold uppercase tracking-wider flex items-center gap-1">
+            展開 <span class="material-symbols-outlined text-sm">expand_more</span>
+          </button>
+        </div>
+        <div class="hidden expanded-content space-y-4">
+          <p class="text-xs text-on-surface-variant leading-relaxed">弘大是首爾最具活力的年輕文化區，街頭藝術、獨立咖啡廳、個性小店密集。延南洞為新興文藝聚落，前身是廢棄鐵道，現改造為文化公園（京義線書街公園）。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Day 4 -->
+  <div class="trip-day mb-6" data-day="4">
+    <div class="bg-surface-container-lowest rounded-lg editorial-shadow overflow-hidden">
+      <div class="bg-gradient-to-r from-[#036881] to-[#b9eaff] px-5 py-4 flex items-center justify-between">
+        <div>
+          <p class="font-headline font-black text-white text-lg">Day 4 · 3月25日</p>
+          <p class="text-white/80 text-xs">江南 · 狎鷗亭 · 清潭洞</p>
+        </div>
+        <span class="w-9 h-9 bg-white/20 rounded-full flex items-center justify-center font-headline font-black text-white">4</span>
+      </div>
+      <div class="p-5">
+        <div class="flex justify-between items-center">
+          <p class="text-sm text-on-surface-variant">韓流文化聖地，K-Pop聖地巡禮，奢華購物體驗</p>
+          <button onclick="expandDay(this)" class="text-primary text-xs font-bold uppercase tracking-wider flex items-center gap-1">
+            展開 <span class="material-symbols-outlined text-sm">expand_more</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Day 5 -->
+  <div class="trip-day mb-6" data-day="5">
+    <div class="bg-surface-container-lowest rounded-lg editorial-shadow overflow-hidden">
+      <div class="bg-gradient-to-r from-[#ac3149] to-[#ffaca1] px-5 py-4 flex items-center justify-between">
+        <div>
+          <p class="font-headline font-black text-white text-lg">Day 5 · 3月26日</p>
+          <p class="text-white/80 text-xs">南山 · 梨泰院 · 漢江公園</p>
+        </div>
+        <span class="w-9 h-9 bg-white/20 rounded-full flex items-center justify-center font-headline font-black text-white">5</span>
+      </div>
+      <div class="p-5">
+        <div class="flex justify-between items-center">
+          <p class="text-sm text-on-surface-variant">南山首爾塔全景，梨泰院國際美食，漢江夜景</p>
+          <button onclick="expandDay(this)" class="text-primary text-xs font-bold uppercase tracking-wider flex items-center gap-1">
+            展開 <span class="material-symbols-outlined text-sm">expand_more</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Day 6 -->
+  <div class="trip-day mb-8" data-day="6">
+    <div class="bg-surface-container-lowest rounded-lg editorial-shadow overflow-hidden">
+      <div class="bg-gradient-to-r from-[#2e3335] to-[#5a6062] px-5 py-4 flex items-center justify-between">
+        <div>
+          <p class="font-headline font-black text-white text-lg">Day 6 · 3月27日</p>
+          <p class="text-white/80 text-xs">東大門 · 返程</p>
+        </div>
+        <span class="w-9 h-9 bg-white/20 rounded-full flex items-center justify-center font-headline font-black text-white">6</span>
+      </div>
+      <div class="p-5">
+        <p class="text-sm text-on-surface-variant">最後採購東大門設計廣場，下午搭乘AREX返回仁川機場</p>
+      </div>
+    </div>
+  </div>
+
 </main>
-<!-- BottomNavBar -->
-<nav class="fixed bottom-0 left-0 w-full flex justify-around items-end pb-6 px-4 bg-[#f8f9fa]/80 dark:bg-[#2e3335]/80 backdrop-blur-2xl z-50">
-<a class="flex flex-col items-center justify-center text-[#aeb3b5] p-3 hover:text-[#E30613] transition-colors" href="#">
-<span class="material-symbols-outlined mb-1" data-icon="home">home</span>
-<span class="font-manrope text-[10px] font-bold uppercase tracking-widest">Home</span>
-</a>
-<a class="flex flex-col items-center justify-center bg-gradient-to-tr from-[#c1000d] to-[#ffaca1] text-white rounded-full p-3 shadow-lg transform scale-110 -translate-y-2" href="#">
-<span class="material-symbols-outlined mb-1" data-icon="explore" style="font-variation-settings: 'FILL' 1;">explore</span>
-<span class="font-manrope text-[10px] font-bold uppercase tracking-widest">Trip</span>
-</a>
-<a class="flex flex-col items-center justify-center text-[#aeb3b5] p-3 hover:text-[#E30613] transition-colors" href="#">
-<span class="material-symbols-outlined mb-1" data-icon="construction">construction</span>
-<span class="font-manrope text-[10px] font-bold uppercase tracking-widest">Toolbox</span>
-</a>
-<a class="flex flex-col items-center justify-center text-[#aeb3b5] p-3 hover:text-[#E30613] transition-colors" href="#">
-<span class="material-symbols-outlined mb-1" data-icon="payments">payments</span>
-<span class="font-manrope text-[10px] font-bold uppercase tracking-widest">Budget</span>
-</a>
+
+<!-- ══════════════════════════ PAGE: TOOLBOX ══════════════════════════ -->
+<main id="page-toolbox" class="page pt-20 px-5">
+
+  <!-- Header -->
+  <section class="mb-6 animate-in delay-1">
+    <span class="font-label text-[0.6rem] text-primary uppercase tracking-[0.15em] font-bold block mb-1">Essential Tools</span>
+    <h2 class="font-headline text-[2.2rem] font-black leading-tight tracking-tight text-on-surface">旅行<br/>工具箱</h2>
+  </section>
+
+  <!-- Hotel Card -->
+  <section class="mb-6 animate-in delay-2">
+    <div class="bg-surface-container-lowest rounded-lg editorial-shadow overflow-hidden">
+      <div class="w-full h-44 bg-gradient-to-br from-[#ebeef0] to-[#dee3e5] flex items-center justify-center relative overflow-hidden">
+        <div class="absolute inset-0 flex items-center justify-center opacity-10">
+          <span class="material-symbols-outlined text-on-surface" style="font-size:8rem;">hotel</span>
+        </div>
+        <div class="relative z-10 text-center">
+          <span class="material-symbols-outlined text-secondary fill-icon text-5xl">hotel</span>
+          <p class="font-headline font-bold text-secondary mt-1 text-sm">Hotel The Designers</p>
+        </div>
+      </div>
+      <div class="p-5">
+        <div class="flex items-center gap-2 mb-1">
+          <span class="material-symbols-outlined text-primary text-sm fill-icon">hotel</span>
+          <span class="font-label text-[0.6rem] font-bold tracking-widest text-secondary uppercase">Accommodation · 住宿</span>
+        </div>
+        <h3 class="font-headline text-lg font-bold mb-1">Hotel The Designers Seoul Station</h3>
+        <p class="text-sm text-on-surface-variant mb-1 leading-relaxed">首爾市龍山區漢江大路305</p>
+        <div class="flex items-center gap-1 mb-3">
+          <span class="material-symbols-outlined text-[#f59e0b] fill-icon text-sm">star</span>
+          <span class="text-sm font-bold">4.2</span>
+          <span class="text-xs text-on-surface-variant ml-1">· 3晚（3/22 – 3/25）</span>
+        </div>
+        <div class="grid grid-cols-3 gap-2 mb-4">
+          <div class="bg-surface-container-low rounded-DEFAULT p-2 text-center">
+            <span class="material-symbols-outlined text-secondary text-lg">wifi</span>
+            <p class="text-[0.6rem] text-on-surface-variant mt-0.5">免費 WiFi</p>
+          </div>
+          <div class="bg-surface-container-low rounded-DEFAULT p-2 text-center">
+            <span class="material-symbols-outlined text-secondary text-lg">local_parking</span>
+            <p class="text-[0.6rem] text-on-surface-variant mt-0.5">停車場</p>
+          </div>
+          <div class="bg-surface-container-low rounded-DEFAULT p-2 text-center">
+            <span class="material-symbols-outlined text-secondary text-lg">restaurant</span>
+            <p class="text-[0.6rem] text-on-surface-variant mt-0.5">餐廳</p>
+          </div>
+        </div>
+        <div class="flex gap-3">
+          <a class="flex items-center gap-2 bg-secondary-container text-on-secondary-container px-4 py-2.5 rounded-full text-xs font-bold transition-transform active:scale-95 flex-1 justify-center" href="tel:+8227031447">
+            <span class="material-symbols-outlined text-sm">call</span> 撥打電話
+          </a>
+          <button onclick="showModal('map')" class="flex items-center gap-2 bg-surface-container-high text-on-surface px-4 py-2.5 rounded-full text-xs font-bold transition-transform active:scale-95 flex-1 justify-center">
+            <span class="material-symbols-outlined text-sm">map</span> 查看地圖
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Emergency Section -->
+  <section class="mb-6 animate-in delay-3">
+    <h3 class="font-headline text-lg font-bold px-1 mb-4">緊急聯絡</h3>
+    <div class="grid grid-cols-2 gap-3 mb-3">
+      <a href="tel:112" class="bg-primary p-5 rounded-lg text-on-primary flex flex-col justify-between h-36 neon-glow transition-transform active:scale-95">
+        <span class="material-symbols-outlined text-3xl fill-icon">local_police</span>
+        <div>
+          <p class="font-label text-[0.6rem] opacity-80 font-bold uppercase tracking-widest">Police · 警察</p>
+          <p class="font-headline text-3xl font-black">112</p>
+        </div>
+      </a>
+      <a href="tel:119" class="bg-surface-container-low p-5 rounded-lg text-on-surface flex flex-col justify-between h-36 transition-transform active:scale-95">
+        <span class="material-symbols-outlined text-3xl text-primary fill-icon">medical_services</span>
+        <div>
+          <p class="font-label text-[0.6rem] text-on-surface-variant font-bold uppercase tracking-widest">Ambulance · 救護</p>
+          <p class="font-headline text-3xl font-black">119</p>
+        </div>
+      </a>
+    </div>
+    <div class="grid grid-cols-2 gap-3 mb-3">
+      <a href="tel:182" class="bg-surface-container-low p-5 rounded-lg text-on-surface flex flex-col justify-between h-32 transition-transform active:scale-95">
+        <span class="material-symbols-outlined text-2xl text-secondary fill-icon">support_agent</span>
+        <div>
+          <p class="font-label text-[0.6rem] text-on-surface-variant font-bold uppercase tracking-widest">旅遊熱線</p>
+          <p class="font-headline text-2xl font-black">1330</p>
+          <p class="text-[0.6rem] text-on-surface-variant">24小時中文服務</p>
+        </div>
+      </a>
+      <a href="tel:02-735-0101" class="bg-surface-container-low p-5 rounded-lg text-on-surface flex flex-col justify-between h-32 transition-transform active:scale-95">
+        <span class="material-symbols-outlined text-2xl text-secondary fill-icon">local_hospital</span>
+        <div>
+          <p class="font-label text-[0.6rem] text-on-surface-variant font-bold uppercase tracking-widest">火災消防</p>
+          <p class="font-headline text-2xl font-black">119</p>
+          <p class="text-[0.6rem] text-on-surface-variant">同救護車</p>
+        </div>
+      </a>
+    </div>
+    <!-- Medical Link -->
+    <button onclick="showModal('medical')" class="w-full bg-tertiary-container p-5 rounded-lg flex items-center justify-between transition-transform active:scale-95">
+      <div class="flex items-center gap-4">
+        <div class="bg-white p-3 rounded-full">
+          <span class="material-symbols-outlined text-tertiary fill-icon">health_and_safety</span>
+        </div>
+        <div class="text-left">
+          <h4 class="font-bold text-on-tertiary-container">線上醫療支援</h4>
+          <p class="text-xs text-on-tertiary-container/80">英文·中文醫療協助 24H</p>
+        </div>
+      </div>
+      <span class="material-symbols-outlined text-on-tertiary-container">arrow_forward_ios</span>
+    </button>
+  </section>
+
+  <!-- Common Phrases -->
+  <section class="mb-6 animate-in delay-4">
+    <div class="flex justify-between items-end px-1 mb-4">
+      <h3 class="font-headline text-lg font-bold">韓語常用語</h3>
+      <span class="text-primary text-xs font-bold uppercase tracking-widest">收起</span>
+    </div>
+    <div class="space-y-6">
+
+      <!-- Greetings -->
+      <div class="bg-surface-container-lowest rounded-lg editorial-shadow overflow-hidden">
+        <div class="flex items-center gap-2 px-5 pt-4 pb-3 border-b border-outline-variant/15">
+          <span class="material-symbols-outlined text-sm text-secondary fill-icon">waving_hand</span>
+          <span class="font-label text-[0.6rem] font-bold text-on-surface-variant uppercase tracking-widest">Greetings · 打招呼</span>
+        </div>
+        <div class="p-5 space-y-4">
+          <div class="flex justify-between items-start group">
+            <div>
+              <p class="font-bold text-base">안녕하세요</p>
+              <p class="text-sm text-on-surface-variant">Annyeonghaseyo</p>
+              <p class="text-xs text-on-surface-variant/70 italic mt-0.5">您好 / 早安 / 午安</p>
+            </div>
+            <button onclick="playPhrase('안녕하세요')" class="p-2.5 rounded-full bg-surface-container-low text-on-surface-variant group-active:scale-90 transition-transform">
+              <span class="material-symbols-outlined text-xl">volume_up</span>
+            </button>
+          </div>
+          <div class="flex justify-between items-start group">
+            <div>
+              <p class="font-bold text-base">감사합니다</p>
+              <p class="text-sm text-on-surface-variant">Gamsahamnida</p>
+              <p class="text-xs text-on-surface-variant/70 italic mt-0.5">謝謝您</p>
+            </div>
+            <button onclick="playPhrase('감사합니다')" class="p-2.5 rounded-full bg-surface-container-low text-on-surface-variant group-active:scale-90 transition-transform">
+              <span class="material-symbols-outlined text-xl">volume_up</span>
+            </button>
+          </div>
+          <div class="flex justify-between items-start group">
+            <div>
+              <p class="font-bold text-base">괜찮아요</p>
+              <p class="text-sm text-on-surface-variant">Gwaenchanaayo</p>
+              <p class="text-xs text-on-surface-variant/70 italic mt-0.5">沒關係 / 還好</p>
+            </div>
+            <button onclick="playPhrase('괜찮아요')" class="p-2.5 rounded-full bg-surface-container-low text-on-surface-variant group-active:scale-90 transition-transform">
+              <span class="material-symbols-outlined text-xl">volume_up</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dining -->
+      <div class="bg-surface-container-lowest rounded-lg editorial-shadow overflow-hidden">
+        <div class="flex items-center gap-2 px-5 pt-4 pb-3 border-b border-outline-variant/15">
+          <span class="material-symbols-outlined text-sm text-secondary fill-icon">restaurant</span>
+          <span class="font-label text-[0.6rem] font-bold text-on-surface-variant uppercase tracking-widest">Dining · 用餐</span>
+        </div>
+        <div class="p-5 space-y-4">
+          <div class="flex justify-between items-start group">
+            <div>
+              <p class="font-bold text-base">얼마예요?</p>
+              <p class="text-sm text-on-surface-variant">Eolma-yeyo?</p>
+              <p class="text-xs text-on-surface-variant/70 italic mt-0.5">這個多少錢？</p>
+            </div>
+            <button onclick="playPhrase('얼마예요')" class="p-2.5 rounded-full bg-surface-container-low text-on-surface-variant group-active:scale-90 transition-transform">
+              <span class="material-symbols-outlined text-xl">volume_up</span>
+            </button>
+          </div>
+          <div class="flex justify-between items-start group">
+            <div>
+              <p class="font-bold text-base">물 좀 주세요</p>
+              <p class="text-sm text-on-surface-variant">Mul-jom-juseyo</p>
+              <p class="text-xs text-on-surface-variant/70 italic mt-0.5">請給我水</p>
+            </div>
+            <button onclick="playPhrase('물 좀 주세요')" class="p-2.5 rounded-full bg-surface-container-low text-on-surface-variant group-active:scale-90 transition-transform">
+              <span class="material-symbols-outlined text-xl">volume_up</span>
+            </button>
+          </div>
+          <div class="flex justify-between items-start group">
+            <div>
+              <p class="font-bold text-base">맛있어요!</p>
+              <p class="text-sm text-on-surface-variant">Masisseoyo!</p>
+              <p class="text-xs text-on-surface-variant/70 italic mt-0.5">好好吃！</p>
+            </div>
+            <button onclick="playPhrase('맛있어요')" class="p-2.5 rounded-full bg-surface-container-low text-on-surface-variant group-active:scale-90 transition-transform">
+              <span class="material-symbols-outlined text-xl">volume_up</span>
+            </button>
+          </div>
+          <div class="flex justify-between items-start group">
+            <div>
+              <p class="font-bold text-base">계산해 주세요</p>
+              <p class="text-sm text-on-surface-variant">Gyesan-hae juseyo</p>
+              <p class="text-xs text-on-surface-variant/70 italic mt-0.5">請幫我結帳</p>
+            </div>
+            <button onclick="playPhrase('계산해 주세요')" class="p-2.5 rounded-full bg-surface-container-low text-on-surface-variant group-active:scale-90 transition-transform">
+              <span class="material-symbols-outlined text-xl">volume_up</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Shopping -->
+      <div class="bg-surface-container-lowest rounded-lg editorial-shadow overflow-hidden">
+        <div class="flex items-center gap-2 px-5 pt-4 pb-3 border-b border-outline-variant/15">
+          <span class="material-symbols-outlined text-sm text-secondary fill-icon">shopping_bag</span>
+          <span class="font-label text-[0.6rem] font-bold text-on-surface-variant uppercase tracking-widest">Shopping · 購物</span>
+        </div>
+        <div class="p-5 space-y-4">
+          <div class="flex justify-between items-start group">
+            <div>
+              <p class="font-bold text-base">이거 주세요</p>
+              <p class="text-sm text-on-surface-variant">Igeo juseyo</p>
+              <p class="text-xs text-on-surface-variant/70 italic mt-0.5">請給我這個</p>
+            </div>
+            <button onclick="playPhrase('이거 주세요')" class="p-2.5 rounded-full bg-surface-container-low text-on-surface-variant group-active:scale-90 transition-transform">
+              <span class="material-symbols-outlined text-xl">volume_up</span>
+            </button>
+          </div>
+          <div class="flex justify-between items-start group">
+            <div>
+              <p class="font-bold text-base">깎아 주세요</p>
+              <p class="text-sm text-on-surface-variant">Kkakka juseyo</p>
+              <p class="text-xs text-on-surface-variant/70 italic mt-0.5">可以便宜一點嗎？</p>
+            </div>
+            <button onclick="playPhrase('깎아 주세요')" class="p-2.5 rounded-full bg-surface-container-low text-on-surface-variant group-active:scale-90 transition-transform">
+              <span class="material-symbols-outlined text-xl">volume_up</span>
+            </button>
+          </div>
+          <div class="flex justify-between items-start group">
+            <div>
+              <p class="font-bold text-base">카드 되요?</p>
+              <p class="text-sm text-on-surface-variant">Kadeu dweyo?</p>
+              <p class="text-xs text-on-surface-variant/70 italic mt-0.5">可以刷卡嗎？</p>
+            </div>
+            <button onclick="playPhrase('카드 되요')" class="p-2.5 rounded-full bg-surface-container-low text-on-surface-variant group-active:scale-90 transition-transform">
+              <span class="material-symbols-outlined text-xl">volume_up</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Emergency -->
+      <div class="bg-surface-container-lowest rounded-lg editorial-shadow overflow-hidden">
+        <div class="flex items-center gap-2 px-5 pt-4 pb-3 border-b border-outline-variant/15">
+          <span class="material-symbols-outlined text-sm text-error fill-icon">warning</span>
+          <span class="font-label text-[0.6rem] font-bold text-error uppercase tracking-widest">Emergency · 緊急</span>
+        </div>
+        <div class="p-5 space-y-4">
+          <div class="flex justify-between items-start group">
+            <div>
+              <p class="font-bold text-base text-error">도와주세요!</p>
+              <p class="text-sm text-on-surface-variant">Dowa-juseyo!</p>
+              <p class="text-xs text-on-surface-variant/70 italic mt-0.5">救命！請幫助我！</p>
+            </div>
+            <button onclick="playPhrase('도와주세요')" class="p-2.5 rounded-full bg-error-container/20 text-error group-active:scale-90 transition-transform">
+              <span class="material-symbols-outlined text-xl">volume_up</span>
+            </button>
+          </div>
+          <div class="flex justify-between items-start group">
+            <div>
+              <p class="font-bold text-base text-error">경찰을 불러주세요</p>
+              <p class="text-sm text-on-surface-variant">Gyeongchareul bulleo juseyo</p>
+              <p class="text-xs text-on-surface-variant/70 italic mt-0.5">請幫我叫警察</p>
+            </div>
+            <button onclick="playPhrase('경찰을 불러주세요')" class="p-2.5 rounded-full bg-error-container/20 text-error group-active:scale-90 transition-transform">
+              <span class="material-symbols-outlined text-xl">volume_up</span>
+            </button>
+          </div>
+          <div class="flex justify-between items-start group">
+            <div>
+              <p class="font-bold text-base text-error">병원에 데려가 주세요</p>
+              <p class="text-sm text-on-surface-variant">Byeongwone deryeoga juseyo</p>
+              <p class="text-xs text-on-surface-variant/70 italic mt-0.5">請帶我去醫院</p>
+            </div>
+            <button onclick="playPhrase('병원에 데려가 주세요')" class="p-2.5 rounded-full bg-error-container/20 text-error group-active:scale-90 transition-transform">
+              <span class="material-symbols-outlined text-xl">volume_up</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Transport Info -->
+  <section class="mb-8 animate-in delay-5">
+    <h3 class="font-headline text-lg font-bold px-1 mb-4">交通資訊</h3>
+    <div class="space-y-3">
+      <div class="bg-surface-container-lowest rounded-lg editorial-shadow p-5">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-10 h-10 rounded-full bg-[#ff5446]/10 flex items-center justify-center">
+            <span class="material-symbols-outlined text-[#ff5446] fill-icon">directions_subway</span>
+          </div>
+          <div>
+            <p class="font-bold">T-Money 交通卡</p>
+            <p class="text-xs text-on-surface-variant">地鐵·公車·便利商店通用</p>
+          </div>
+        </div>
+        <p class="text-xs text-on-surface-variant leading-relaxed">在仁川機場入境大廳或便利商店（GS25、CU）購買，押金 ₩2,500，可在各便利商店儲值。搭乘地鐵比現金便宜約 ₩150/次。</p>
+      </div>
+      <div class="bg-surface-container-lowest rounded-lg editorial-shadow p-5">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center">
+            <span class="material-symbols-outlined text-secondary fill-icon">train</span>
+          </div>
+          <div>
+            <p class="font-bold">機場快線 AREX</p>
+            <p class="text-xs text-on-surface-variant">仁川機場 ↔ 首爾站</p>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div class="bg-surface-container-low rounded-DEFAULT p-3">
+            <p class="font-label text-[0.6rem] text-on-surface-variant uppercase tracking-wider mb-1">直達列車</p>
+            <p class="font-bold text-sm">43 分鐘</p>
+            <p class="text-xs text-on-surface-variant">₩9,500</p>
+          </div>
+          <div class="bg-surface-container-low rounded-DEFAULT p-3">
+            <p class="font-label text-[0.6rem] text-on-surface-variant uppercase tracking-wider mb-1">一般列車</p>
+            <p class="font-bold text-sm">66 分鐘</p>
+            <p class="text-xs text-on-surface-variant">₩4,150</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ══════════════════════════ PAGE: BUDGET ══════════════════════════ -->
+<main id="page-budget" class="page pt-20 px-5">
+
+  <!-- Header -->
+  <section class="mb-6 animate-in delay-1">
+    <span class="font-label text-[0.6rem] text-primary uppercase tracking-[0.15em] font-bold block mb-1">Budget Tracker</span>
+    <h2 class="font-headline text-[2.2rem] font-black leading-tight tracking-tight text-on-surface">預算<br/>追蹤</h2>
+  </section>
+
+  <!-- Budget Overview -->
+  <section class="mb-6 animate-in delay-2">
+    <div class="bg-gradient-to-br from-on-surface to-[#5a6062] rounded-lg p-6 editorial-shadow text-white">
+      <div class="flex justify-between items-start mb-6">
+        <div>
+          <p class="text-white/60 text-xs uppercase tracking-widest font-label">總預算</p>
+          <p class="font-headline font-black text-[2.5rem] leading-tight tracking-tight">₩800,000</p>
+          <p class="text-white/60 text-xs mt-0.5">≈ TWD 18,400</p>
+        </div>
+        <button onclick="showModal('addExpense')" class="bg-white/15 backdrop-blur-sm text-white rounded-full px-4 py-2 text-xs font-bold flex items-center gap-1 border border-white/20 active:scale-95 transition-transform">
+          <span class="material-symbols-outlined text-sm">add</span> 新增消費
+        </button>
+      </div>
+      <div>
+        <div class="flex justify-between items-end mb-2">
+          <p class="text-white/60 text-xs">已使用</p>
+          <div class="text-right">
+            <p class="text-white font-bold">₩344,500</p>
+            <p class="text-white/60 text-xs">43%</p>
+          </div>
+        </div>
+        <div class="h-2 bg-white/20 rounded-full overflow-hidden">
+          <div class="h-full bg-gradient-to-r from-white to-white/70 rounded-full" style="width:43%"></div>
+        </div>
+        <div class="flex justify-between mt-2">
+          <p class="text-white/60 text-xs">剩餘 ₩455,500</p>
+          <p class="text-white/60 text-xs">還有 3 天</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Category Breakdown -->
+  <section class="mb-6 animate-in delay-3">
+    <h3 class="font-headline text-lg font-bold px-1 mb-4">分類支出</h3>
+    <div class="bg-surface-container-lowest rounded-lg editorial-shadow p-5 space-y-5">
+
+      <div>
+        <div class="flex justify-between items-center mb-2">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary fill-icon text-lg">hotel</span>
+            <span class="font-bold text-sm">住宿</span>
+          </div>
+          <div class="text-right">
+            <span class="font-bold text-sm">₩150,000</span>
+            <span class="text-xs text-on-surface-variant ml-1">/ ₩200,000</span>
+          </div>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill bg-primary" style="width:75%"></div>
+        </div>
+        <p class="text-[0.6rem] text-on-surface-variant mt-1">75% · ₩50,000 尚未支付</p>
+      </div>
+
+      <div>
+        <div class="flex justify-between items-center mb-2">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-secondary fill-icon text-lg">restaurant</span>
+            <span class="font-bold text-sm">餐飲</span>
+          </div>
+          <div class="text-right">
+            <span class="font-bold text-sm">₩87,500</span>
+            <span class="text-xs text-on-surface-variant ml-1">/ ₩200,000</span>
+          </div>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill bg-secondary" style="width:43%"></div>
+        </div>
+        <p class="text-[0.6rem] text-on-surface-variant mt-1">43%</p>
+      </div>
+
+      <div>
+        <div class="flex justify-between items-center mb-2">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-tertiary fill-icon text-lg">shopping_bag</span>
+            <span class="font-bold text-sm">購物</span>
+          </div>
+          <div class="text-right">
+            <span class="font-bold text-sm">₩67,000</span>
+            <span class="text-xs text-on-surface-variant ml-1">/ ₩200,000</span>
+          </div>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill bg-tertiary" style="width:33%"></div>
+        </div>
+        <p class="text-[0.6rem] text-on-surface-variant mt-1">33%</p>
+      </div>
+
+      <div>
+        <div class="flex justify-between items-center mb-2">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-[#036881] fill-icon text-lg">directions_subway</span>
+            <span class="font-bold text-sm">交通</span>
+          </div>
+          <div class="text-right">
+            <span class="font-bold text-sm">₩40,000</span>
+            <span class="text-xs text-on-surface-variant ml-1">/ ₩100,000</span>
+          </div>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill bg-[#036881]" style="width:40%"></div>
+        </div>
+        <p class="text-[0.6rem] text-on-surface-variant mt-1">40%</p>
+      </div>
+
+      <div>
+        <div class="flex justify-between items-center mb-2">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-[#ac3149] fill-icon text-lg">confirmation_number</span>
+            <span class="font-bold text-sm">門票娛樂</span>
+          </div>
+          <div class="text-right">
+            <span class="font-bold text-sm">₩0</span>
+            <span class="text-xs text-on-surface-variant ml-1">/ ₩100,000</span>
+          </div>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill bg-[#ac3149]" style="width:0%"></div>
+        </div>
+        <p class="text-[0.6rem] text-on-surface-variant mt-1">尚未消費</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Recent Transactions -->
+  <section class="mb-8 animate-in delay-4">
+    <div class="flex justify-between items-end px-1 mb-4">
+      <h3 class="font-headline text-lg font-bold">消費記錄</h3>
+      <button onclick="showToast('匯出功能開發中')" class="text-primary text-xs font-bold uppercase tracking-widest flex items-center gap-1">
+        匯出 <span class="material-symbols-outlined text-sm">download</span>
+      </button>
+    </div>
+    <div class="bg-surface-container-lowest rounded-lg editorial-shadow overflow-hidden">
+      <div class="p-4 space-y-1">
+
+        <div class="flex items-center justify-between py-3">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center">
+              <span class="material-symbols-outlined text-secondary text-lg">flight</span>
+            </div>
+            <div>
+              <p class="font-bold text-sm">機場快線 AREX</p>
+              <p class="text-xs text-on-surface-variant">3/22 · 交通</p>
+            </div>
+          </div>
+          <p class="font-bold text-sm text-on-surface">-₩9,500</p>
+        </div>
+
+        <div class="h-px bg-outline-variant/10"></div>
+
+        <div class="flex items-center justify-between py-3">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center">
+              <span class="material-symbols-outlined text-on-surface-variant text-lg">restaurant</span>
+            </div>
+            <div>
+              <p class="font-bold text-sm">廣藏市場晚餐</p>
+              <p class="text-xs text-on-surface-variant">3/22 · 餐飲</p>
+            </div>
+          </div>
+          <p class="font-bold text-sm text-on-surface">-₩22,000</p>
+        </div>
+
+        <div class="h-px bg-outline-variant/10"></div>
+
+        <div class="flex items-center justify-between py-3">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+              <span class="material-symbols-outlined text-primary fill-icon text-lg">hotel</span>
+            </div>
+            <div>
+              <p class="font-bold text-sm">Hotel The Designers（訂金）</p>
+              <p class="text-xs text-on-surface-variant">預付 · 住宿</p>
+            </div>
+          </div>
+          <p class="font-bold text-sm text-on-surface">-₩150,000</p>
+        </div>
+
+        <div class="h-px bg-outline-variant/10"></div>
+
+        <div class="flex items-center justify-between py-3">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center">
+              <span class="material-symbols-outlined text-tertiary fill-icon text-lg">shopping_bag</span>
+            </div>
+            <div>
+              <p class="font-bold text-sm">仁寺洞文創購物</p>
+              <p class="text-xs text-on-surface-variant">3/23 · 購物</p>
+            </div>
+          </div>
+          <p class="font-bold text-sm text-on-surface">-₩67,000</p>
+        </div>
+
+        <div class="h-px bg-outline-variant/10"></div>
+
+        <div class="flex items-center justify-between py-3">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center">
+              <span class="material-symbols-outlined text-secondary text-lg">directions_subway</span>
+            </div>
+            <div>
+              <p class="font-bold text-sm">T-Money 儲值</p>
+              <p class="text-xs text-on-surface-variant">3/22 · 交通</p>
+            </div>
+          </div>
+          <p class="font-bold text-sm text-on-surface">-₩30,500</p>
+        </div>
+
+      </div>
+      <div class="border-t border-outline-variant/15 px-5 py-3 flex justify-between items-center bg-surface-container-low/50">
+        <p class="text-xs text-on-surface-variant font-bold">近5筆消費</p>
+        <button onclick="showToast('顯示全部記錄')" class="text-primary text-xs font-bold">查看全部</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Currency Quick -->
+  <section class="mb-8 animate-in delay-5">
+    <div class="bg-surface-container-lowest rounded-lg editorial-shadow p-5">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="material-symbols-outlined text-primary fill-icon">currency_exchange</span>
+        <h3 class="font-headline font-bold">快速換算</h3>
+        <span class="ml-auto text-xs text-on-surface-variant">1 TWD ≈ 43.2 KRW</span>
+      </div>
+      <div class="flex gap-3 items-center">
+        <div class="flex-1 bg-surface-container-high rounded-DEFAULT p-3">
+          <p class="text-[0.6rem] text-on-surface-variant uppercase tracking-wider mb-1">TWD 台幣</p>
+          <input id="twd-input" type="number" placeholder="100" oninput="convertCurrency()" class="w-full bg-transparent font-headline font-bold text-xl outline-none text-on-surface" />
+        </div>
+        <span class="material-symbols-outlined text-on-surface-variant">swap_horiz</span>
+        <div class="flex-1 bg-surface-container-high rounded-DEFAULT p-3">
+          <p class="text-[0.6rem] text-on-surface-variant uppercase tracking-wider mb-1">KRW 韓元</p>
+          <p id="krw-output" class="font-headline font-bold text-xl text-primary">4,320</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ══════════════════════════ BOTTOM NAV ══════════════════════════ -->
+<nav class="fixed bottom-0 left-0 w-full max-w-2xl flex justify-around items-end pb-5 px-4 bg-[#f8f9fa]/85 backdrop-blur-2xl z-50 rounded-t-[2.5rem] ambient-shadow" style="left:50%;transform:translateX(-50%);">
+  <button onclick="navigateTo('home')" class="nav-item flex flex-col items-center justify-center text-outline p-3 transition-all duration-200 active:scale-90 nav-active" id="nav-home">
+    <span class="material-symbols-outlined fill-icon">home</span>
+    <span class="text-[0.6rem] font-bold uppercase tracking-widest mt-0.5 font-label">首頁</span>
+    <div class="nav-dot mt-0.5"></div>
+  </button>
+  <button onclick="navigateTo('trip')" class="nav-item flex flex-col items-center justify-center text-outline p-3 transition-all duration-200 active:scale-90" id="nav-trip">
+    <span class="material-symbols-outlined">explore</span>
+    <span class="text-[0.6rem] font-bold uppercase tracking-widest mt-0.5 font-label">行程</span>
+    <div class="nav-dot mt-0.5"></div>
+  </button>
+  <button onclick="navigateTo('toolbox')" class="nav-item flex flex-col items-center justify-center -translate-y-4 transition-all duration-200 active:scale-90" id="nav-toolbox">
+    <div class="w-14 h-14 rounded-full bg-gradient-to-tr from-primary to-primary-container flex flex-col items-center justify-center shadow-lg">
+      <span class="material-symbols-outlined text-white fill-icon text-xl">construction</span>
+      <span class="text-[0.5rem] font-bold uppercase text-white/90 font-label">工具</span>
+    </div>
+  </button>
+  <button onclick="navigateTo('budget')" class="nav-item flex flex-col items-center justify-center text-outline p-3 transition-all duration-200 active:scale-90" id="nav-budget">
+    <span class="material-symbols-outlined">payments</span>
+    <span class="text-[0.6rem] font-bold uppercase tracking-widest mt-0.5 font-label">預算</span>
+    <div class="nav-dot mt-0.5"></div>
+  </button>
 </nav>
-</body></html>
 
-<!-- 清單與記帳 (Budget & List) -->
-<!DOCTYPE html>
+<!-- ══════════════════════════ TOAST ══════════════════════════ -->
+<div id="toast"></div>
 
-<html lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Seoul Travel Assistant - Checklist &amp; Budget</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            colors: {
-              "error-dim": "#770326",
-              "on-error": "#fff7f7",
-              "outline-variant": "#aeb3b5",
-              "primary-fixed-dim": "#ff978a",
-              "on-tertiary": "#e9ffe7",
-              "inverse-surface": "#0c0f10",
-              "tertiary-container": "#d3f4d3",
-              "on-primary-container": "#800005",
-              "surface-dim": "#d5dbdd",
-              "surface-container-low": "#f2f4f5",
-              "error": "#ac3149",
-              "surface-tint": "#c1000d",
-              "on-secondary-fixed-variant": "#00647d",
-              "inverse-on-surface": "#9b9d9e",
-              "on-error-container": "#68001f",
-              "outline": "#767c7e",
-              "secondary-fixed-dim": "#95dffc",
-              "error-container": "#f76a80",
-              "on-primary-fixed-variant": "#900007",
-              "tertiary-fixed-dim": "#c5e5c5",
-              "surface": "#f8f9fa",
-              "on-tertiary-container": "#415d44",
-              "on-surface": "#2e3335",
-              "surface-variant": "#dee3e5",
-              "surface-container": "#ebeef0",
-              "inverse-primary": "#ff5446",
-              "primary": "#c1000d",
-              "primary-container": "#ffaca1",
-              "on-secondary-container": "#005970",
-              "on-tertiary-fixed-variant": "#4b684e",
-              "secondary": "#036881",
-              "on-surface-variant": "#5a6062",
-              "secondary-fixed": "#b9eaff",
-              "on-tertiary-fixed": "#304b33",
-              "secondary-dim": "#005b72",
-              "on-secondary": "#f2faff",
-              "tertiary-dim": "#3e5a41",
-              "surface-bright": "#f8f9fa",
-              "primary-dim": "#ab000a",
-              "tertiary": "#4a664c",
-              "on-primary": "#fff7f6",
-              "on-background": "#2e3335",
-              "secondary-container": "#b9eaff",
-              "primary-fixed": "#ffaca1",
-              "on-secondary-fixed": "#004558",
-              "background": "#f8f9fa",
-              "surface-container-high": "#e5e9eb",
-              "surface-container-lowest": "#ffffff",
-              "on-primary-fixed": "#580002",
-              "surface-container-highest": "#dee3e5",
-              "tertiary-fixed": "#d3f4d3"
-            },
-            fontFamily: {
-              "headline": ["Plus Jakarta Sans"],
-              "body": ["Manrope"],
-              "label": ["Plus Jakarta Sans"]
-            },
-            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
-          },
-        },
-      }
-    </script>
-<style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-        ::-webkit-scrollbar { width: 0px; background: transparent; }
-    </style>
-<style>
-    body {
-      min-height: max(884px, 100dvh);
+<!-- ══════════════════════════ MODAL ══════════════════════════ -->
+<div id="modal-overlay" onclick="closeModal()">
+  <div id="modal-sheet" onclick="event.stopPropagation()">
+    <div class="w-10 h-1 bg-outline-variant/30 rounded-full mx-auto mb-5"></div>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════ JAVASCRIPT ══════════════════════════ -->
+<script>
+// ── Navigation ──
+const pages = ['home','trip','toolbox','budget'];
+const titles = { home:'首頁', trip:'行程規劃', toolbox:'旅行工具箱', budget:'預算追蹤' };
+
+function navigateTo(page) {
+  pages.forEach(p => {
+    document.getElementById('page-'+p).classList.remove('active');
+    const nav = document.getElementById('nav-'+p);
+    if (nav) nav.classList.remove('nav-active');
+  });
+  document.getElementById('page-'+page).classList.add('active');
+  const nav = document.getElementById('nav-'+page);
+  if (nav) nav.classList.add('nav-active');
+  document.getElementById('page-title').textContent = titles[page];
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── Side Menu ──
+function toggleMenu() {
+  const overlay = document.getElementById('menu-overlay');
+  overlay.classList.toggle('hidden');
+}
+
+// ── Toast ──
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ── Phrase Audio ──
+function playPhrase(text) {
+  if ('speechSynthesis' in window) {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'ko-KR';
+    u.rate = 0.85;
+    speechSynthesis.speak(u);
+    showToast('播放：' + text);
+  } else {
+    showToast('您的裝置不支援語音播放');
+  }
+}
+
+// ── Filter Days ──
+function filterDay(day, btn) {
+  document.querySelectorAll('.tag-pill').forEach(p => {
+    p.classList.remove('selected');
+    p.style.background = '';
+    p.style.color = '';
+  });
+  btn.classList.add('selected');
+  document.querySelectorAll('.trip-day').forEach(d => {
+    if (day === 0 || parseInt(d.dataset.day) === day) {
+      d.style.display = 'block';
+    } else {
+      d.style.display = 'none';
     }
-  </style>
-  </head>
-<body class="bg-surface text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container">
-<!-- Top Navigation Anchor -->
-<header class="fixed top-0 w-full z-50 bg-[#f8f9fa]/70 backdrop-blur-xl flex justify-between items-center px-6 h-16 w-full">
-<div class="flex items-center gap-4">
-<span class="material-symbols-outlined text-on-surface">menu</span>
-</div>
-<h1 class="text-xl font-extrabold text-[#2e3335] font-headline tracking-tight">Seoul Travel Assistant</h1>
-<div class="w-8 h-8 rounded-full overflow-hidden bg-surface-container-high">
-<img alt="User" data-alt="User profile photo avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAM0OXMGRG-Yhk2PqK7CLVPisDmdw8geA0ZDvl8HPyZYvd4V2iW6ERtieeOwCe-bRvqNDrHQCxQXLufFKrjQI721PfZyMuwAUZzmej3IATtfrm6_VdCcpP6RhN_ryHqnD46jnuLUMG68JvwTWW0V8URaboS8aQz_RR7TmG8zsneuk24b365EfdR24xGhbYQ0ZBQCAaxI19SQPMvwhyYg7TytQMmwXXzPwArq25QOVvF4nKPrsDsADWaMjE32P9zU8H__x_pWdqwDp4"/>
-</div>
-</header>
-<main class="pt-24 pb-32 px-6 max-w-2xl mx-auto min-h-screen">
-<!-- Hero Editorial Section -->
-<section class="mb-12">
-<span class="font-label text-xs font-bold tracking-widest text-primary uppercase mb-2 block">Planner &amp; Budget</span>
-<h2 class="font-headline text-5xl font-extrabold tracking-tight text-on-surface leading-none">Seoul <br/><span class="text-outline-variant">Essentials.</span></h2>
-</section>
-<!-- Tabbed Navigation Interface -->
-<div class="flex gap-2 p-1.5 bg-surface-container-low rounded-lg mb-8">
-<button class="flex-1 py-3 px-4 rounded-md bg-surface-container-lowest text-primary font-bold text-sm transition-all shadow-sm">Preparation</button>
-<button class="flex-1 py-3 px-4 rounded-md text-on-surface-variant font-medium text-sm hover:bg-surface-container-high transition-colors">Shopping</button>
-<button class="flex-1 py-3 px-4 rounded-md text-on-surface-variant font-medium text-sm hover:bg-surface-container-high transition-colors">Expenses</button>
-</div>
-<!-- Progress Overview -->
-<div class="bg-surface-container-lowest p-8 rounded-xl mb-10 relative overflow-hidden group">
-<div class="absolute top-0 right-0 w-32 h-32 bg-primary-container/20 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-110 duration-500"></div>
-<div class="relative z-10">
-<div class="flex justify-between items-end mb-4">
-<div>
-<p class="text-on-surface-variant text-sm font-semibold mb-1">Trip Readiness</p>
-<h3 class="font-headline text-3xl font-bold">65% Complete</h3>
-</div>
-<span class="material-symbols-outlined text-primary text-4xl" data-weight="fill" style="font-variation-settings: 'FILL' 1;">rocket_launch</span>
-</div>
-<div class="w-full h-3 bg-surface-container-low rounded-full overflow-hidden">
-<div class="h-full bg-gradient-to-r from-primary to-primary-container w-[65%] rounded-full"></div>
-</div>
-</div>
-</div>
-<!-- Section: Preparation Checklist -->
-<div class="space-y-4 mb-12">
-<div class="flex items-center justify-between px-2 mb-4">
-<h4 class="font-headline text-xl font-bold">Pre-arrival Checklist</h4>
-<span class="text-xs font-bold text-secondary bg-secondary-container px-3 py-1 rounded-full uppercase tracking-wider">3 Left</span>
-</div>
-<!-- Checklist Items - Magazine Style -->
-<div class="group flex items-center p-5 bg-surface-container-low rounded-lg transition-all hover:bg-surface-container-high">
-<div class="w-8 h-8 rounded-md border-2 border-primary/20 flex items-center justify-center bg-surface-container-lowest mr-4">
-<span class="material-symbols-outlined text-primary text-lg" style="font-variation-settings: 'FILL' 1;">check</span>
-</div>
-<div class="flex-1">
-<p class="font-bold text-on-surface">Apply for K-ETA</p>
-<p class="text-xs text-on-surface-variant">Electronic Travel Authorization</p>
-</div>
-<span class="material-symbols-outlined text-outline-variant">more_vert</span>
-</div>
-<div class="group flex items-center p-5 bg-surface-container-low rounded-lg transition-all hover:bg-surface-container-high">
-<div class="w-8 h-8 rounded-md border-2 border-outline-variant/30 flex items-center justify-center bg-surface-container-lowest mr-4"></div>
-<div class="flex-1">
-<p class="font-bold text-on-surface">Book eSIM / SIM Card</p>
-<p class="text-xs text-on-surface-variant">Pick up at Incheon T1/T2</p>
-</div>
-<span class="material-symbols-outlined text-outline-variant">more_vert</span>
-</div>
-<div class="group flex items-center p-5 bg-surface-container-low rounded-lg transition-all hover:bg-surface-container-high">
-<div class="w-8 h-8 rounded-md border-2 border-outline-variant/30 flex items-center justify-center bg-surface-container-lowest mr-4"></div>
-<div class="flex-1">
-<p class="font-bold text-on-surface">Top up T-money Card</p>
-<p class="text-xs text-on-surface-variant">Public transport ready</p>
-</div>
-<span class="material-symbols-outlined text-outline-variant">more_vert</span>
-</div>
-</div>
-<!-- Section: Budget Quick Glance (Bento Style) -->
-<div class="grid grid-cols-2 gap-4 mb-12">
-<div class="col-span-2 bg-on-surface p-8 rounded-xl text-surface">
-<p class="text-sm font-semibold opacity-70 mb-1">Total Spending Today</p>
-<div class="flex items-baseline gap-2">
-<span class="text-4xl font-headline font-extrabold tracking-tighter">₩142,500</span>
-<span class="text-primary-container text-sm font-bold">↑ 12%</span>
-</div>
-<div class="mt-8 flex justify-between items-center">
-<div class="flex -space-x-2">
-<div class="w-10 h-10 rounded-full border-4 border-on-surface bg-surface-container-high flex items-center justify-center">
-<span class="material-symbols-outlined text-on-surface text-sm">restaurant</span>
-</div>
-<div class="w-10 h-10 rounded-full border-4 border-on-surface bg-surface-container-high flex items-center justify-center">
-<span class="material-symbols-outlined text-on-surface text-sm">shopping_bag</span>
-</div>
-<div class="w-10 h-10 rounded-full border-4 border-on-surface bg-surface-container-high flex items-center justify-center">
-<span class="material-symbols-outlined text-on-surface text-sm">commute</span>
-</div>
-</div>
-<button class="bg-primary hover:bg-primary-dim text-white rounded-md px-6 py-2 text-sm font-bold transition-all active:scale-95">Add Expense</button>
-</div>
-</div>
-<div class="bg-secondary-container p-6 rounded-lg flex flex-col justify-between aspect-square">
-<span class="material-symbols-outlined text-on-secondary-container text-3xl">savings</span>
-<div>
-<p class="text-xs font-bold text-on-secondary-container opacity-60 uppercase tracking-widest">Left in Budget</p>
-<p class="text-xl font-headline font-bold text-on-secondary-container leading-tight">₩857,000</p>
-</div>
-</div>
-<div class="bg-tertiary-container p-6 rounded-lg flex flex-col justify-between aspect-square">
-<span class="material-symbols-outlined text-on-tertiary-container text-3xl">receipt_long</span>
-<div>
-<p class="text-xs font-bold text-on-tertiary-container opacity-60 uppercase tracking-widest">Transactions</p>
-<p class="text-xl font-headline font-bold text-on-tertiary-container leading-tight">24 Items</p>
-</div>
-</div>
-</div>
-<!-- Section: Shopping Wishlist (Editorial Cards) -->
-<div class="space-y-6">
-<h4 class="font-headline text-xl font-bold px-2">Seoul Shopping Haul</h4>
-<div class="grid grid-cols-1 gap-6">
-<!-- Shopping Item 1 -->
-<div class="flex gap-4 p-4 bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] group">
-<div class="w-24 h-24 rounded-lg overflow-hidden shrink-0">
-<img alt="Cosmetics" class="w-full h-full object-cover transition-transform group-hover:scale-110 duration-500" data-alt="Close up of high end Korean skincare products" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDPa_EolK5JUIX9ef0m7EmI6y_pSxG0malqZyPjI4Irt1Hy_bbWa2J-sWm3vo_Ti5r_8cLIhBOEle5fP17mtiWE12NfP_o4l6LoONUle8IC2rDBB-wmCUlueI3xv6BZokZ7i1lR3jjwhzuT9bpDDosvofrZ5Ztt6g7K0JUviWVi9rijHCM6hG2MNmsd1pUmjoLvO-fFNPoBcgRfwFtSJ5DecEzzyY-5pNvudKPr45WWIMFikzgwHsGP3KhGwcaGaGe_8j1nlG55euE"/>
-</div>
-<div class="flex-1 flex flex-col justify-center">
-<div class="flex justify-between items-start">
-<div>
-<span class="text-[10px] font-bold text-primary uppercase tracking-widest">Myeongdong</span>
-<h5 class="font-bold text-lg text-on-surface">Olive Young Haul</h5>
-</div>
-<span class="material-symbols-outlined text-outline-variant">favorite</span>
-</div>
-<div class="mt-2 flex items-center justify-between">
-<p class="text-sm font-bold text-on-surface-variant">Estimated: ₩120k</p>
-<span class="material-symbols-outlined text-secondary">add_circle</span>
-</div>
-</div>
-</div>
-<!-- Shopping Item 2 -->
-<div class="flex gap-4 p-4 bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] group">
-<div class="w-24 h-24 rounded-lg overflow-hidden shrink-0">
-<img alt="Almonds" class="w-full h-full object-cover transition-transform group-hover:scale-110 duration-500" data-alt="Packages of colorful honey butter almonds from Korea" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZQ2x_Y6e9lR-NhI4JNPFH-l7DmUC4Axnq68qUCUsqmStAPQcjB2qhyxrSk6H_iUV8eml21YV1myrvIeO2gpYdkQ_fP-KhT_kZicENjwAitElAnKlyAvDncH_BSvpvuG73KjSozJenvFU2BMlJMyLpLt5hC-DjTzHMaGlx1wBsK7YzJ3xoXcEofD87TSTn--WeE_3VuQQsyqhXLNwVq4DuQpPIcJGXtFIQdLufbqQKL5AzCvFXGh_Zd2Aacu4Ejh5Gwu5zyzbUk9Y"/>
-</div>
-<div class="flex-1 flex flex-col justify-center">
-<div class="flex justify-between items-start">
-<div>
-<span class="text-[10px] font-bold text-primary uppercase tracking-widest">Gourmet</span>
-<h5 class="font-bold text-lg text-on-surface">HBAF Almonds</h5>
-</div>
-<span class="material-symbols-outlined text-outline-variant" data-weight="fill" style="font-variation-settings: 'FILL' 1;">favorite</span>
-</div>
-<div class="mt-2 flex items-center justify-between">
-<p class="text-sm font-bold text-on-surface-variant">Estimated: ₩45k</p>
-<span class="material-symbols-outlined text-secondary">add_circle</span>
-</div>
-</div>
-</div>
-</div>
-</div>
-</main>
-<!-- Bottom Navigation Shell -->
-<nav class="fixed bottom-0 left-0 w-full flex justify-around items-end pb-6 px-4 bg-[#f8f9fa]/80 backdrop-blur-2xl rounded-t-[3rem] z-50 shadow-[0_-8px_32px_rgba(46,51,53,0.06)]">
-<a class="flex flex-col items-center justify-center text-[#aeb3b5] p-3 hover:text-[#E30613] transition-colors" href="#">
-<span class="material-symbols-outlined mb-1">home</span>
-<span class="font-manrope text-[10px] font-bold uppercase tracking-widest">Home</span>
-</a>
-<a class="flex flex-col items-center justify-center text-[#aeb3b5] p-3 hover:text-[#E30613] transition-colors" href="#">
-<span class="material-symbols-outlined mb-1">explore</span>
-<span class="font-manrope text-[10px] font-bold uppercase tracking-widest">Trip</span>
-</a>
-<a class="flex flex-col items-center justify-center bg-gradient-to-tr from-[#c1000d] to-[#ffaca1] text-white rounded-full p-4 shadow-lg active:scale-90 duration-200 -translate-y-4" href="#">
-<span class="material-symbols-outlined text-2xl">construction</span>
-<span class="sr-only text-[10px] font-bold uppercase tracking-widest">Toolbox</span>
-</a>
-<a class="flex flex-col items-center justify-center text-[#aeb3b5] p-3 hover:text-[#E30613] transition-colors" href="#">
-<span class="material-symbols-outlined mb-1">payments</span>
-<span class="font-manrope text-[10px] font-bold uppercase tracking-widest">Budget</span>
-</a>
-</nav>
-<!-- Floating Action Button Contextual (Hidden on certain views, but useful for a quick expense entry) -->
-<button class="fixed bottom-24 right-6 w-14 h-14 rounded-full bg-on-surface text-surface flex items-center justify-center shadow-2xl active:scale-95 transition-all z-40 md:hidden">
-<span class="material-symbols-outlined text-2xl">add</span>
-</button>
-</body></html>
+  });
+}
 
-<!-- 旅遊工具箱 (Toolbox) -->
-<!DOCTYPE html>
-
-<html lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            colors: {
-              "error-dim": "#770326",
-              "on-error": "#fff7f7",
-              "outline-variant": "#aeb3b5",
-              "primary-fixed-dim": "#ff978a",
-              "on-tertiary": "#e9ffe7",
-              "inverse-surface": "#0c0f10",
-              "tertiary-container": "#d3f4d3",
-              "on-primary-container": "#800005",
-              "surface-dim": "#d5dbdd",
-              "surface-container-low": "#f2f4f5",
-              "error": "#ac3149",
-              "surface-tint": "#c1000d",
-              "on-secondary-fixed-variant": "#00647d",
-              "inverse-on-surface": "#9b9d9e",
-              "on-error-container": "#68001f",
-              "outline": "#767c7e",
-              "secondary-fixed-dim": "#95dffc",
-              "error-container": "#f76a80",
-              "on-primary-fixed-variant": "#900007",
-              "tertiary-fixed-dim": "#c5e5c5",
-              "surface": "#f8f9fa",
-              "on-tertiary-container": "#415d44",
-              "on-surface": "#2e3335",
-              "surface-variant": "#dee3e5",
-              "surface-container": "#ebeef0",
-              "inverse-primary": "#ff5446",
-              "primary": "#c1000d",
-              "primary-container": "#ffaca1",
-              "on-secondary-container": "#005970",
-              "on-tertiary-fixed-variant": "#4b684e",
-              "secondary": "#036881",
-              "on-surface-variant": "#5a6062",
-              "secondary-fixed": "#b9eaff",
-              "on-tertiary-fixed": "#304b33",
-              "secondary-dim": "#005b72",
-              "on-secondary": "#f2faff",
-              "tertiary-dim": "#3e5a41",
-              "surface-bright": "#f8f9fa",
-              "primary-dim": "#ab000a",
-              "tertiary": "#4a664c",
-              "on-primary": "#fff7f6",
-              "on-background": "#2e3335",
-              "secondary-container": "#b9eaff",
-              "primary-fixed": "#ffaca1",
-              "on-secondary-fixed": "#004558",
-              "background": "#f8f9fa",
-              "surface-container-high": "#e5e9eb",
-              "surface-container-lowest": "#ffffff",
-              "on-primary-fixed": "#580002",
-              "surface-container-highest": "#dee3e5",
-              "tertiary-fixed": "#d3f4d3"
-            },
-            fontFamily: {
-              "headline": ["Plus Jakarta Sans"],
-              "body": ["Manrope"],
-              "label": ["Plus Jakarta Sans"]
-            },
-            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
-          },
-        },
-      }
-    </script>
-<style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-        .editorial-shadow {
-            box-shadow: 0 8px 32px rgba(46, 51, 53, 0.06);
-        }
-        .neon-glow {
-            box-shadow: 0 0 20px rgba(193, 0, 13, 0.15);
-        }
-    </style>
-<style>
-    body {
-      min-height: max(884px, 100dvh);
+// ── Expand Day ──
+function expandDay(btn) {
+  const content = btn.closest('.p-5').querySelector('.expanded-content');
+  if (content) {
+    content.classList.toggle('hidden');
+    const icon = btn.querySelector('.material-symbols-outlined');
+    if (content.classList.contains('hidden')) {
+      icon.textContent = 'expand_more';
+      btn.childNodes[0].textContent = '展開 ';
+    } else {
+      icon.textContent = 'expand_less';
+      btn.childNodes[0].textContent = '收起 ';
     }
-  </style>
-  </head>
-<body class="bg-surface font-body text-on-surface min-h-screen pb-32">
-<!-- TopAppBar -->
-<header class="fixed top-0 w-full z-50 bg-[#f8f9fa]/70 backdrop-blur-xl flex justify-between items-center px-6 h-16 w-full">
-<div class="flex items-center gap-4">
-<span class="material-symbols-outlined text-on-surface cursor-pointer">menu</span>
-<h1 class="font-headline font-bold tracking-tight text-xl text-on-surface">Seoul Travel Assistant</h1>
-</div>
-<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container-high">
-<img alt="User profile" class="w-full h-full object-cover" data-alt="Modern professional headshot for user profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDu4RZHLs90Pth0SPLI6Yq73-bCmtJgW8dVVYFZZ5JrWB-I3ktJSj_bzpttOTeecKQr8hqcvb-XIJjxp56LytgtX5xZVb_cT4tx5pcCDpM5Dd4abxMup9mNaGuYz1GOP7YUS6wTMgzv6ipZLqkXSweFsKgauX73RN1FH8yoL4OOHRREVUOBUIfkeRd6PovKDOtAN4b_HQ80C8qIu35Rih-gPKd9Mm-hHUPUU61oFAnQ9efhJErdcesmKNUIheTqCEudvUj8HlclSZE"/>
-</div>
-</header>
-<main class="pt-24 px-6 max-w-2xl mx-auto space-y-10">
-<!-- Hero Section -->
-<section>
-<span class="font-label text-label-sm font-bold tracking-widest text-primary uppercase mb-2 block">Essential Tools</span>
-<h2 class="font-headline text-[2.5rem] font-extrabold leading-tight tracking-tight text-on-surface">Travel <br/>Toolbox</h2>
-</section>
-<!-- Hotel Card - Asymmetric Layout -->
-<section class="relative">
-<div class="bg-surface-container-lowest rounded-lg editorial-shadow p-6 flex flex-col md:flex-row gap-6 items-center">
-<div class="w-full md:w-40 h-40 rounded-xl overflow-hidden flex-shrink-0">
-<img alt="Hotel building" class="w-full h-full object-cover" data-alt="Sleek modern boutique hotel exterior facade" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBituNunZkaVeUrt8PVKjMk671HbbH-6ti4oTqFaC8Ks2axxOcq0Kx405C_-hibfGoI4OvPhX5nikhZf2AoTl9C-dYyJ3txrp6CsvCD3h3Ordg6DV4rhY95sfxsn4nGJpP9YYCD67Q5sF_-xe8yKxq25hd1Bl6ZEols8FvcnE2e5UaLfOBP-6ASz67nZatnSq2uWsmFkVrbVK57b053GWsDnHa1NTsj3jsRXtPQFUjvUkHXC7lk9Hzm2W7ObaljLYNR_AnxA4Hv-Vo"/>
-</div>
-<div class="flex-grow">
-<div class="flex items-center gap-2 mb-2">
-<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">hotel</span>
-<span class="font-label text-[0.6875rem] font-bold tracking-widest text-secondary uppercase">Accommodation</span>
-</div>
-<h3 class="font-headline text-xl font-bold mb-2">Hotel The Designers Seoul Station</h3>
-<p class="text-on-surface-variant text-sm mb-4 leading-relaxed">
-                        305, Hangang-daero, Yongsan-gu, Seoul, South Korea
-                    </p>
-<div class="flex gap-3">
-<a class="flex items-center gap-2 bg-secondary-container text-on-secondary-container px-4 py-2 rounded-full text-xs font-bold transition-transform active:scale-95" href="tel:+8227031447">
-<span class="material-symbols-outlined text-sm">call</span>
-                            Call Hotel
-                        </a>
-<button class="flex items-center gap-2 bg-surface-container-high text-on-surface px-4 py-2 rounded-full text-xs font-bold transition-transform active:scale-95">
-<span class="material-symbols-outlined text-sm">map</span>
-                            Directions
-                        </button>
-</div>
-</div>
-</div>
-</section>
-<!-- Emergency & Medical Section - Bento Style -->
-<section class="space-y-4">
-<h3 class="font-headline text-lg font-bold px-1">Emergency &amp; Medical</h3>
-<div class="grid grid-cols-2 gap-4">
-<!-- Police Card -->
-<div class="bg-primary p-6 rounded-lg text-on-primary flex flex-col justify-between h-40 neon-glow">
-<span class="material-symbols-outlined text-3xl">local_police</span>
-<div>
-<p class="font-label text-[0.6875rem] opacity-80 font-bold uppercase tracking-widest">Police</p>
-<p class="font-headline text-3xl font-extrabold">112</p>
-</div>
-</div>
-<!-- Ambulance Card -->
-<div class="bg-surface-container-low p-6 rounded-lg text-on-surface flex flex-col justify-between h-40">
-<span class="material-symbols-outlined text-3xl text-primary">medical_services</span>
-<div>
-<p class="font-label text-[0.6875rem] text-on-surface-variant font-bold uppercase tracking-widest">Ambulance</p>
-<p class="font-headline text-3xl font-extrabold">119</p>
-</div>
-</div>
-<!-- Medical Link Card -->
-<div class="col-span-2 bg-tertiary-container p-6 rounded-lg flex items-center justify-between border-l-4 border-tertiary">
-<div class="flex items-center gap-4">
-<div class="bg-white p-3 rounded-full">
-<span class="material-symbols-outlined text-tertiary" style="font-variation-settings: 'FILL' 1;">health_and_safety</span>
-</div>
-<div>
-<h4 class="font-bold text-on-tertiary-container">Online Medical Link</h4>
-<p class="text-xs text-on-tertiary-container/80">English-speaking medical assistance</p>
-</div>
-</div>
-<span class="material-symbols-outlined text-on-tertiary-container">arrow_forward_ios</span>
-</div>
-</div>
-</section>
-<!-- Common Phrases Section - Magazine List -->
-<section class="space-y-6 pb-8">
-<div class="flex justify-between items-end px-1">
-<h3 class="font-headline text-lg font-bold">Common Phrases</h3>
-<span class="text-primary text-xs font-bold uppercase tracking-widest">View All</span>
-</div>
-<div class="space-y-8">
-<!-- Dining Category -->
-<div class="space-y-3">
-<div class="flex items-center gap-2 border-b border-outline-variant/15 pb-2">
-<span class="material-symbols-outlined text-sm text-secondary">restaurant</span>
-<span class="font-label text-[0.6875rem] font-bold text-on-surface-variant uppercase tracking-widest">Dining</span>
-</div>
-<div class="space-y-4">
-<div class="flex justify-between items-start group">
-<div>
-<p class="font-bold text-lg">Ol-ma-ye-yo?</p>
-<p class="text-sm text-on-surface-variant italic">How much is it?</p>
-</div>
-<button class="p-2 rounded-full bg-surface-container-low text-on-surface-variant group-active:scale-90 transition-transform">
-<span class="material-symbols-outlined">volume_up</span>
-</button>
-</div>
-<div class="flex justify-between items-start group">
-<div>
-<p class="font-bold text-lg">Mul-jom-ju-se-yo</p>
-<p class="text-sm text-on-surface-variant italic">Please give me some water</p>
-</div>
-<button class="p-2 rounded-full bg-surface-container-low text-on-surface-variant group-active:scale-90 transition-transform">
-<span class="material-symbols-outlined">volume_up</span>
-</button>
-</div>
-</div>
-</div>
-<!-- Shopping Category -->
-<div class="space-y-3">
-<div class="flex items-center gap-2 border-b border-outline-variant/15 pb-2">
-<span class="material-symbols-outlined text-sm text-secondary">shopping_bag</span>
-<span class="font-label text-[0.6875rem] font-bold text-on-surface-variant uppercase tracking-widest">Shopping</span>
-</div>
-<div class="space-y-4">
-<div class="flex justify-between items-start group">
-<div>
-<p class="font-bold text-lg">Annyeong-haseyo</p>
-<p class="text-sm text-on-surface-variant italic">Hello / Good morning</p>
-</div>
-<button class="p-2 rounded-full bg-surface-container-low text-on-surface-variant group-active:scale-90 transition-transform">
-<span class="material-symbols-outlined">volume_up</span>
-</button>
-</div>
-</div>
-</div>
-<!-- Emergency Category -->
-<div class="space-y-3">
-<div class="flex items-center gap-2 border-b border-outline-variant/15 pb-2">
-<span class="material-symbols-outlined text-sm text-error">warning</span>
-<span class="font-label text-[0.6875rem] font-bold text-on-surface-variant uppercase tracking-widest">Emergency</span>
-</div>
-<div class="space-y-4">
-<div class="flex justify-between items-start group">
-<div>
-<p class="font-bold text-lg text-error">Do-wa-ju-se-yo!</p>
-<p class="text-sm text-on-surface-variant italic">Please help me!</p>
-</div>
-<button class="p-2 rounded-full bg-error-container/20 text-error group-active:scale-90 transition-transform">
-<span class="material-symbols-outlined">volume_up</span>
-</button>
-</div>
-</div>
-</div>
-</div>
-</section>
-</main>
-<!-- BottomNavBar -->
-<nav class="fixed bottom-0 left-0 w-full flex justify-around items-end pb-6 px-4 bg-[#f8f9fa]/80 backdrop-blur-2xl z-50 rounded-t-[3rem] shadow-[0_-8px_32px_rgba(46,51,53,0.06)]">
-<!-- Home -->
-<a class="flex flex-col items-center justify-center text-[#aeb3b5] p-3 hover:text-[#E30613] transition-colors active:scale-90 duration-200" href="#">
-<span class="material-symbols-outlined">home</span>
-<span class="font-manrope text-[10px] font-bold uppercase tracking-widest mt-1">Home</span>
-</a>
-<!-- Trip -->
-<a class="flex flex-col items-center justify-center text-[#aeb3b5] p-3 hover:text-[#E30613] transition-colors active:scale-90 duration-200" href="#">
-<span class="material-symbols-outlined">explore</span>
-<span class="font-manrope text-[10px] font-bold uppercase tracking-widest mt-1">Trip</span>
-</a>
-<!-- Toolbox (Active) -->
-<a class="flex flex-col items-center justify-center bg-gradient-to-tr from-[#c1000d] to-[#ffaca1] text-white rounded-full p-3 shadow-lg active:scale-90 duration-200 -translate-y-4" href="#">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">construction</span>
-<span class="font-manrope text-[10px] font-bold uppercase tracking-widest mt-1">Toolbox</span>
-</a>
-<!-- Budget -->
-<a class="flex flex-col items-center justify-center text-[#aeb3b5] p-3 hover:text-[#E30613] transition-colors active:scale-90 duration-200" href="#">
-<span class="material-symbols-outlined">payments</span>
-<span class="font-manrope text-[10px] font-bold uppercase tracking-widest mt-1">Budget</span>
-</a>
-</nav>
-</body></html>
+  }
+}
+
+// ── Currency ──
+function convertCurrency() {
+  const twd = parseFloat(document.getElementById('twd-input').value) || 0;
+  const krw = Math.round(twd * 43.2);
+  document.getElementById('krw-output').textContent = krw.toLocaleString();
+}
+
+// ── Modal ──
+const modalContents = {
+  map: `
+    <h3 class="font-headline font-bold text-xl mb-1">飯店位置</h3>
+    <p class="text-sm text-on-surface-variant mb-4">Hotel The Designers Seoul Station</p>
+    <div class="map-placeholder rounded-lg h-48 flex items-center justify-center mb-4 relative">
+      <div class="relative z-10 text-center">
+        <span class="material-symbols-outlined text-primary fill-icon text-4xl">location_on</span>
+        <p class="text-sm font-bold mt-1">龍山區漢江大路305</p>
+        <p class="text-xs text-on-surface-variant">首爾站步行5分鐘</p>
+      </div>
+    </div>
+    <div class="space-y-3">
+      <div class="bg-surface-container-low rounded-DEFAULT p-3 flex items-center gap-3">
+        <span class="material-symbols-outlined text-secondary fill-icon">directions_subway</span>
+        <div>
+          <p class="font-bold text-sm">首爾地鐵 1號線 / KTX</p>
+          <p class="text-xs text-on-surface-variant">首爾站 出口 5 步行 3 分鐘</p>
+        </div>
+      </div>
+      <div class="bg-surface-container-low rounded-DEFAULT p-3 flex items-center gap-3">
+        <span class="material-symbols-outlined text-secondary fill-icon">directions_bus</span>
+        <div>
+          <p class="font-bold text-sm">公車</p>
+          <p class="text-xs text-on-surface-variant">漢江大路405 站·0015, 104, 421號</p>
+        </div>
+      </div>
+    </div>
+    <button onclick="closeModal()" class="w-full mt-5 bg-gradient-to-r from-primary to-primary-container text-white font-bold py-3 rounded-full active:scale-95 transition-transform">關閉</button>
+  `,
+  transport: `
+    <h3 class="font-headline font-bold text-xl mb-1">首爾地鐵指南</h3>
+    <p class="text-sm text-on-surface-variant mb-4">Seoul Metro · 서울 지하철</p>
+    <div class="space-y-3 mb-5">
+      <div class="flex items-center gap-3 p-3 bg-surface-container-low rounded-DEFAULT">
+        <div class="w-6 h-6 rounded-full bg-[#ff5446] flex items-center justify-center flex-shrink-0">
+          <span class="text-white text-[0.55rem] font-black">1</span>
+        </div>
+        <div>
+          <p class="font-bold text-sm">1號線（深藍）</p>
+          <p class="text-xs text-on-surface-variant">仁川機場↔首爾站↔鐘路</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3 p-3 bg-surface-container-low rounded-DEFAULT">
+        <div class="w-6 h-6 rounded-full bg-[#036881] flex items-center justify-center flex-shrink-0">
+          <span class="text-white text-[0.55rem] font-black">2</span>
+        </div>
+        <div>
+          <p class="font-bold text-sm">2號線（綠色）</p>
+          <p class="text-xs text-on-surface-variant">弘大↔市廳↔東大門↔江南</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3 p-3 bg-surface-container-low rounded-DEFAULT">
+        <div class="w-6 h-6 rounded-full bg-[#f59e0b] flex items-center justify-center flex-shrink-0">
+          <span class="text-white text-[0.55rem] font-black">9</span>
+        </div>
+        <div>
+          <p class="font-bold text-sm">9號線（金色）</p>
+          <p class="text-xs text-on-surface-variant">仁川機場↔金浦機場↔江南</p>
+        </div>
+      </div>
+    </div>
+    <div class="bg-tertiary-container rounded-DEFAULT p-4 mb-4">
+      <p class="font-bold text-on-tertiary-container text-sm mb-1">✓ 旅行小提示</p>
+      <p class="text-xs text-on-tertiary-container/80 leading-relaxed">首爾地鐵全天約 05:30–24:00 運行，T-Money 搭乘基本票 ₩1,400起。轉乘同一條路線30分鐘內免費。</p>
+    </div>
+    <button onclick="closeModal()" class="w-full bg-gradient-to-r from-primary to-primary-container text-white font-bold py-3 rounded-full active:scale-95 transition-transform">關閉</button>
+  `,
+  currency: `
+    <h3 class="font-headline font-bold text-xl mb-1">匯率換算</h3>
+    <p class="text-sm text-on-surface-variant mb-5">即時參考匯率（僅供參考）</p>
+    <div class="bg-surface-container-low rounded-lg p-4 mb-4 text-center">
+      <p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-widest mb-1">今日匯率</p>
+      <p class="font-headline font-black text-3xl text-primary">1 TWD = 43.2 KRW</p>
+      <p class="text-xs text-on-surface-variant mt-1">更新：2025/03/22 09:00</p>
+    </div>
+    <div class="space-y-2 mb-5">
+      ${[[100,'4,320'],[500,'21,600'],[1000,'43,200'],[5000,'216,000']].map(([t,k])=>`
+      <div class="flex justify-between items-center py-2 border-b border-outline-variant/10">
+        <span class="text-sm font-body">TWD ${t.toLocaleString()}</span>
+        <span class="font-bold text-sm">₩${k}</span>
+      </div>`).join('')}
+    </div>
+    <button onclick="closeModal()" class="w-full bg-gradient-to-r from-primary to-primary-container text-white font-bold py-3 rounded-full active:scale-95 transition-transform">關閉</button>
+  `,
+  medical: `
+    <h3 class="font-headline font-bold text-xl mb-1">醫療支援</h3>
+    <p class="text-sm text-on-surface-variant mb-5">首爾英語/中文醫療資源</p>
+    <div class="space-y-3">
+      <div class="bg-surface-container-lowest rounded-lg p-4 border-l-4 border-tertiary">
+        <p class="font-bold">旅遊諮詢熱線 1330</p>
+        <p class="text-xs text-on-surface-variant mt-1">24小時·中英日文服務·免費</p>
+        <a href="tel:1330" class="mt-2 inline-flex items-center gap-1 text-tertiary text-xs font-bold">
+          <span class="material-symbols-outlined text-sm">call</span> 撥打 1330
+        </a>
+      </div>
+      <div class="bg-surface-container-lowest rounded-lg p-4 border-l-4 border-secondary">
+        <p class="font-bold">首爾大學病院</p>
+        <p class="text-xs text-on-surface-variant mt-1">鐘路區大學路101 · 設有外籍患者中心</p>
+        <a href="tel:02-2072-2114" class="mt-2 inline-flex items-center gap-1 text-secondary text-xs font-bold">
+          <span class="material-symbols-outlined text-sm">call</span> 02-2072-2114
+        </a>
+      </div>
+      <div class="bg-surface-container-lowest rounded-lg p-4 border-l-4 border-primary">
+        <p class="font-bold">延世大學세브란스醫院</p>
+        <p class="text-xs text-on-surface-variant mt-1">西大門區延世路50-1 · 24小時急診</p>
+        <a href="tel:1599-1004" class="mt-2 inline-flex items-center gap-1 text-primary text-xs font-bold">
+          <span class="material-symbols-outlined text-sm">call</span> 1599-1004
+        </a>
+      </div>
+    </div>
+    <button onclick="closeModal()" class="w-full mt-5 bg-gradient-to-r from-primary to-primary-container text-white font-bold py-3 rounded-full active:scale-95 transition-transform">關閉</button>
+  `,
+  addExpense: `
+    <h3 class="font-headline font-bold text-xl mb-5">新增消費記錄</h3>
+    <div class="space-y-4">
+      <div>
+        <p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">消費項目</p>
+        <input type="text" placeholder="例：景福宮門票" class="w-full bg-surface-container-high rounded-DEFAULT p-3 text-sm outline-none focus:bg-surface-container-lowest font-body" />
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">金額（₩）</p>
+          <input type="number" placeholder="3000" class="w-full bg-surface-container-high rounded-DEFAULT p-3 text-sm outline-none focus:bg-surface-container-lowest font-body" />
+        </div>
+        <div>
+          <p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">日期</p>
+          <input type="date" class="w-full bg-surface-container-high rounded-DEFAULT p-3 text-sm outline-none focus:bg-surface-container-lowest font-body" />
+        </div>
+      </div>
+      <div>
+        <p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">分類</p>
+        <div class="flex flex-wrap gap-2">
+          ${['住宿','餐飲','購物','交通','門票','其他'].map(c => `<button class="tag-pill font-label text-[0.65rem] font-bold px-3 py-1.5 rounded-full bg-surface-container text-on-surface-variant" onclick="this.classList.toggle('selected')">${c}</button>`).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="flex gap-3 mt-6">
+      <button onclick="closeModal()" class="flex-1 bg-surface-container-high text-on-surface font-bold py-3 rounded-full active:scale-95 transition-transform">取消</button>
+      <button onclick="closeModal();showToast('消費記錄已儲存 ✓')" class="flex-1 bg-gradient-to-r from-primary to-primary-container text-white font-bold py-3 rounded-full active:scale-95 transition-transform">儲存</button>
+    </div>
+  `,
+  about: `
+    <h3 class="font-headline font-bold text-xl mb-4">關於此行程</h3>
+    <div class="hero-gradient skyline-decoration relative rounded-xl p-6 mb-5 overflow-hidden">
+      <p class="font-headline font-black text-white text-3xl relative z-10">首爾之旅</p>
+      <p class="text-white/80 text-sm mt-1 relative z-10">2025年3月22日 – 3月27日</p>
+    </div>
+    <div class="space-y-3 text-sm text-on-surface-variant leading-relaxed">
+      <p>此行程由 Seoul Travel Assistant 為您精心規劃，涵蓋首爾6天5夜的主要景點、美食與文化體驗。</p>
+      <p>從歷史悠久的景福宮、充滿韓流氣息的弘大，到現代感十足的江南區，讓您全面感受首爾的多元魅力。</p>
+    </div>
+    <button onclick="closeModal()" class="w-full mt-5 bg-gradient-to-r from-primary to-primary-container text-white font-bold py-3 rounded-full">關閉</button>
+  `,
+  settings: `
+    <h3 class="font-headline font-bold text-xl mb-5">設定</h3>
+    <div class="space-y-4">
+      <div class="flex justify-between items-center py-3 border-b border-outline-variant/15">
+        <div class="flex items-center gap-3">
+          <span class="material-symbols-outlined text-secondary">language</span>
+          <p class="font-bold text-sm">語言</p>
+        </div>
+        <span class="text-xs text-on-surface-variant bg-surface-container px-3 py-1 rounded-full">繁體中文</span>
+      </div>
+      <div class="flex justify-between items-center py-3 border-b border-outline-variant/15">
+        <div class="flex items-center gap-3">
+          <span class="material-symbols-outlined text-secondary">currency_exchange</span>
+          <p class="font-bold text-sm">預設貨幣</p>
+        </div>
+        <span class="text-xs text-on-surface-variant bg-surface-container px-3 py-1 rounded-full">TWD / KRW</span>
+      </div>
+      <div class="flex justify-between items-center py-3 border-b border-outline-variant/15">
+        <div class="flex items-center gap-3">
+          <span class="material-symbols-outlined text-secondary">notifications</span>
+          <p class="font-bold text-sm">行程提醒</p>
+        </div>
+        <div class="w-11 h-6 bg-primary rounded-full flex items-center px-1">
+          <div class="w-4 h-4 bg-white rounded-full ml-auto"></div>
+        </div>
+      </div>
+    </div>
+    <button onclick="closeModal()" class="w-full mt-5 bg-gradient-to-r from-primary to-primary-container text-white font-bold py-3 rounded-full">確認</button>
+  `
+};
+
+function showModal(type) {
+  document.getElementById('modal-content').innerHTML = modalContents[type] || '<p class="text-on-surface-variant">內容載入中...</p>';
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+
+// Init
+document.addEventListener('DOMContentLoaded', () => {
+  // Animate progress bars
+  setTimeout(() => {
+    document.querySelectorAll('.progress-fill').forEach(el => {
+      const w = el.style.width;
+      el.style.width = '0%';
+      setTimeout(() => el.style.width = w, 100);
+    });
+  }, 300);
+});
+</script>
+</body>
+</html>
