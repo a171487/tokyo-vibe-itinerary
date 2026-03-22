@@ -274,7 +274,7 @@
   <!-- Quick Stats -->
   <div class="grid grid-cols-3 gap-3 mb-8 animate-in delay-2">
     <div class="bg-surface-container-lowest rounded-lg editorial-shadow p-4 text-center">
-      <p class="font-headline font-black text-2xl text-primary">6</p>
+      <p class="font-headline font-black text-2xl text-primary">4</p>
       <p class="font-label text-[0.6rem] text-on-surface-variant uppercase tracking-wider mt-0.5">天數</p>
     </div>
     <div class="bg-surface-container-lowest rounded-lg editorial-shadow p-4 text-center">
@@ -1151,10 +1151,22 @@
       <div class="flex justify-between items-start mb-6">
         <div>
           <p class="text-white/60 text-xs uppercase tracking-widest font-label">總預算</p>
-          <p class="font-headline font-black text-[2.5rem] leading-tight tracking-tight">₩800,000</p>
-          <p class="text-white/60 text-xs mt-0.5">≈ TWD 18,400</p>
+          <!-- Editable total budget -->
+          <div id="budget-display-row" class="flex items-end gap-2">
+            <p class="font-headline font-black text-[2.5rem] leading-tight tracking-tight" id="budget-total-display">₩800,000</p>
+            <button onclick="openBudgetEdit()" class="mb-2 bg-white/15 rounded-full p-1 active:scale-90 transition-transform">
+              <span class="material-symbols-outlined text-white/70 text-base">edit</span>
+            </button>
+          </div>
+          <div id="budget-edit-row" class="hidden flex items-center gap-2 mt-1">
+            <span class="text-white/60 text-sm">₩</span>
+            <input id="budget-total-input" type="number" class="bg-white/15 rounded-DEFAULT px-3 py-1.5 font-headline font-bold text-xl text-white outline-none w-36" />
+            <button onclick="saveBudgetTotal()" class="bg-white text-on-surface font-bold text-xs px-3 py-1.5 rounded-full active:scale-90 transition-transform">確認</button>
+            <button onclick="cancelBudgetEdit()" class="text-white/60 text-xs">取消</button>
+          </div>
+          <p class="text-white/60 text-xs mt-1" id="budget-twd-equiv">≈ TWD 18,519</p>
         </div>
-        <button onclick="showModal('addExpense')" class="bg-white/15 backdrop-blur-sm text-white rounded-full px-4 py-2 text-xs font-bold flex items-center gap-1 border border-white/20 active:scale-95 transition-transform">
+        <button onclick="showModal('addExpense')" class="bg-white/15 backdrop-blur-sm text-white rounded-full px-4 py-2 text-xs font-bold flex items-center gap-1 border border-white/20 active:scale-95 transition-transform flex-shrink-0">
           <span class="material-symbols-outlined text-sm">add</span> 新增消費
         </button>
       </div>
@@ -1162,112 +1174,25 @@
         <div class="flex justify-between items-end mb-2">
           <p class="text-white/60 text-xs">已使用</p>
           <div class="text-right">
-            <p class="text-white font-bold">₩344,500</p>
-            <p class="text-white/60 text-xs">43%</p>
+            <p class="text-white font-bold" id="budget-used-amount">₩0</p>
+            <p class="text-white/60 text-xs" id="budget-used-pct">0%</p>
           </div>
         </div>
         <div class="h-2 bg-white/20 rounded-full overflow-hidden">
-          <div class="h-full bg-gradient-to-r from-white to-white/70 rounded-full" style="width:43%"></div>
+          <div class="h-full bg-gradient-to-r from-white to-white/70 rounded-full transition-all duration-700" id="budget-bar" style="width:0%"></div>
         </div>
         <div class="flex justify-between mt-2">
-          <p class="text-white/60 text-xs">剩餘 ₩455,500</p>
+          <p class="text-white/60 text-xs" id="budget-remaining">剩餘 ₩800,000</p>
           <p class="text-white/60 text-xs">還有 3 天</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Category Breakdown -->
+  <!-- Category Breakdown — fully dynamic, rendered by JS -->
   <section class="mb-6 animate-in delay-3">
     <h3 class="font-headline text-lg font-bold px-1 mb-4">分類支出</h3>
-    <div class="bg-surface-container-lowest rounded-lg editorial-shadow p-5 space-y-5">
-
-      <div>
-        <div class="flex justify-between items-center mb-2">
-          <div class="flex items-center gap-2">
-            <span class="material-symbols-outlined text-primary fill-icon text-lg">hotel</span>
-            <span class="font-bold text-sm">住宿</span>
-          </div>
-          <div class="text-right">
-            <span class="font-bold text-sm">₩150,000</span>
-            <span class="text-xs text-on-surface-variant ml-1">/ ₩200,000</span>
-          </div>
-        </div>
-        <div class="progress-bar">
-          <div class="progress-fill bg-primary" style="width:75%"></div>
-        </div>
-        <p class="text-[0.6rem] text-on-surface-variant mt-1">75% · ₩50,000 尚未支付</p>
-      </div>
-
-      <div>
-        <div class="flex justify-between items-center mb-2">
-          <div class="flex items-center gap-2">
-            <span class="material-symbols-outlined text-secondary fill-icon text-lg">restaurant</span>
-            <span class="font-bold text-sm">餐飲</span>
-          </div>
-          <div class="text-right">
-            <span class="font-bold text-sm">₩87,500</span>
-            <span class="text-xs text-on-surface-variant ml-1">/ ₩200,000</span>
-          </div>
-        </div>
-        <div class="progress-bar">
-          <div class="progress-fill bg-secondary" style="width:43%"></div>
-        </div>
-        <p class="text-[0.6rem] text-on-surface-variant mt-1">43%</p>
-      </div>
-
-      <div>
-        <div class="flex justify-between items-center mb-2">
-          <div class="flex items-center gap-2">
-            <span class="material-symbols-outlined text-tertiary fill-icon text-lg">shopping_bag</span>
-            <span class="font-bold text-sm">購物</span>
-          </div>
-          <div class="text-right">
-            <span class="font-bold text-sm">₩67,000</span>
-            <span class="text-xs text-on-surface-variant ml-1">/ ₩200,000</span>
-          </div>
-        </div>
-        <div class="progress-bar">
-          <div class="progress-fill bg-tertiary" style="width:33%"></div>
-        </div>
-        <p class="text-[0.6rem] text-on-surface-variant mt-1">33%</p>
-      </div>
-
-      <div>
-        <div class="flex justify-between items-center mb-2">
-          <div class="flex items-center gap-2">
-            <span class="material-symbols-outlined text-[#036881] fill-icon text-lg">directions_subway</span>
-            <span class="font-bold text-sm">交通</span>
-          </div>
-          <div class="text-right">
-            <span class="font-bold text-sm">₩40,000</span>
-            <span class="text-xs text-on-surface-variant ml-1">/ ₩100,000</span>
-          </div>
-        </div>
-        <div class="progress-bar">
-          <div class="progress-fill bg-[#036881]" style="width:40%"></div>
-        </div>
-        <p class="text-[0.6rem] text-on-surface-variant mt-1">40%</p>
-      </div>
-
-      <div>
-        <div class="flex justify-between items-center mb-2">
-          <div class="flex items-center gap-2">
-            <span class="material-symbols-outlined text-[#ac3149] fill-icon text-lg">confirmation_number</span>
-            <span class="font-bold text-sm">門票娛樂</span>
-          </div>
-          <div class="text-right">
-            <span class="font-bold text-sm">₩0</span>
-            <span class="text-xs text-on-surface-variant ml-1">/ ₩100,000</span>
-          </div>
-        </div>
-        <div class="progress-bar">
-          <div class="progress-fill bg-[#ac3149]" style="width:0%"></div>
-        </div>
-        <p class="text-[0.6rem] text-on-surface-variant mt-1">尚未消費</p>
-      </div>
-
-    </div>
+    <div class="bg-surface-container-lowest rounded-lg editorial-shadow p-5 space-y-5" id="cat-breakdown"></div>
   </section>
 
   <!-- Recent Transactions -->
@@ -1279,85 +1204,10 @@
       </button>
     </div>
     <div class="bg-surface-container-lowest rounded-lg editorial-shadow overflow-hidden">
-      <div class="p-4 space-y-1">
-
-        <div class="flex items-center justify-between py-3">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center">
-              <span class="material-symbols-outlined text-secondary text-lg">flight</span>
-            </div>
-            <div>
-              <p class="font-bold text-sm">機場快線 AREX</p>
-              <p class="text-xs text-on-surface-variant">3/22 · 交通</p>
-            </div>
-          </div>
-          <p class="font-bold text-sm text-on-surface">-₩9,500</p>
-        </div>
-
-        <div class="h-px bg-outline-variant/10"></div>
-
-        <div class="flex items-center justify-between py-3">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center">
-              <span class="material-symbols-outlined text-on-surface-variant text-lg">restaurant</span>
-            </div>
-            <div>
-              <p class="font-bold text-sm">廣藏市場晚餐</p>
-              <p class="text-xs text-on-surface-variant">3/22 · 餐飲</p>
-            </div>
-          </div>
-          <p class="font-bold text-sm text-on-surface">-₩22,000</p>
-        </div>
-
-        <div class="h-px bg-outline-variant/10"></div>
-
-        <div class="flex items-center justify-between py-3">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-              <span class="material-symbols-outlined text-primary fill-icon text-lg">hotel</span>
-            </div>
-            <div>
-              <p class="font-bold text-sm">Hotel The Designers（訂金）</p>
-              <p class="text-xs text-on-surface-variant">預付 · 住宿</p>
-            </div>
-          </div>
-          <p class="font-bold text-sm text-on-surface">-₩150,000</p>
-        </div>
-
-        <div class="h-px bg-outline-variant/10"></div>
-
-        <div class="flex items-center justify-between py-3">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center">
-              <span class="material-symbols-outlined text-tertiary fill-icon text-lg">shopping_bag</span>
-            </div>
-            <div>
-              <p class="font-bold text-sm">仁寺洞文創購物</p>
-              <p class="text-xs text-on-surface-variant">3/23 · 購物</p>
-            </div>
-          </div>
-          <p class="font-bold text-sm text-on-surface">-₩67,000</p>
-        </div>
-
-        <div class="h-px bg-outline-variant/10"></div>
-
-        <div class="flex items-center justify-between py-3">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center">
-              <span class="material-symbols-outlined text-secondary text-lg">directions_subway</span>
-            </div>
-            <div>
-              <p class="font-bold text-sm">T-Money 儲值</p>
-              <p class="text-xs text-on-surface-variant">3/22 · 交通</p>
-            </div>
-          </div>
-          <p class="font-bold text-sm text-on-surface">-₩30,500</p>
-        </div>
-
-      </div>
+      <div id="transactions-list" class="p-4 space-y-1"></div>
       <div class="border-t border-outline-variant/15 px-5 py-3 flex justify-between items-center bg-surface-container-low/50">
-        <p class="text-xs text-on-surface-variant font-bold">近5筆消費</p>
-        <button onclick="showToast('顯示全部記錄')" class="text-primary text-xs font-bold">查看全部</button>
+        <p class="text-xs text-on-surface-variant font-bold" id="tx-count-label">共 0 筆</p>
+        <button onclick="showToast('已顯示全部記錄')" class="text-primary text-xs font-bold">查看全部</button>
       </div>
     </div>
   </section>
@@ -1365,20 +1215,33 @@
   <!-- Currency Quick -->
   <section class="mb-8 animate-in delay-5">
     <div class="bg-surface-container-lowest rounded-lg editorial-shadow p-5">
-      <div class="flex items-center gap-3 mb-4">
+      <div class="flex items-center gap-2 mb-3">
         <span class="material-symbols-outlined text-primary fill-icon">currency_exchange</span>
         <h3 class="font-headline font-bold">快速換算</h3>
-        <span class="ml-auto text-xs text-on-surface-variant">1 TWD ≈ 43.2 KRW</span>
+        <button onclick="openRateEdit()" class="ml-auto flex items-center gap-1 text-xs text-primary font-bold bg-primary/8 px-3 py-1 rounded-full">
+          <span class="material-symbols-outlined text-sm">edit</span>
+          <span id="rate-display">43.2</span>
+        </button>
       </div>
+      <!-- Rate edit row (hidden by default) -->
+      <div id="rate-edit-row" class="hidden mb-3 bg-surface-container-high rounded-DEFAULT p-3 flex items-center gap-2">
+        <span class="text-xs text-on-surface-variant font-bold flex-shrink-0">1 TWD =</span>
+        <input id="rate-input" type="number" step="0.1" class="flex-1 bg-transparent font-headline font-bold text-base outline-none text-primary" />
+        <span class="text-xs text-on-surface-variant font-bold flex-shrink-0">KRW</span>
+        <button onclick="saveRate()" class="bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">確認</button>
+      </div>
+      <!-- Currency direction toggle -->
       <div class="flex gap-3 items-center">
-        <div class="flex-1 bg-surface-container-high rounded-DEFAULT p-3">
-          <p class="text-[0.6rem] text-on-surface-variant uppercase tracking-wider mb-1">TWD 台幣</p>
-          <input id="twd-input" type="number" placeholder="100" oninput="convertCurrency()" class="w-full bg-transparent font-headline font-bold text-xl outline-none text-on-surface" />
+        <div id="left-box" class="flex-1 bg-surface-container-high rounded-DEFAULT p-3">
+          <p id="left-label" class="text-[0.6rem] text-on-surface-variant uppercase tracking-wider mb-1">TWD 台幣</p>
+          <input id="left-input" type="number" placeholder="100" oninput="doConvert()" class="w-full bg-transparent font-headline font-bold text-xl outline-none text-on-surface" />
         </div>
-        <span class="material-symbols-outlined text-on-surface-variant">swap_horiz</span>
-        <div class="flex-1 bg-surface-container-high rounded-DEFAULT p-3">
-          <p class="text-[0.6rem] text-on-surface-variant uppercase tracking-wider mb-1">KRW 韓元</p>
-          <p id="krw-output" class="font-headline font-bold text-xl text-primary">4,320</p>
+        <button onclick="swapCurrency()" class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center flex-shrink-0 transition-transform active:scale-90 hover:bg-surface-container-high" id="swap-btn">
+          <span class="material-symbols-outlined text-on-surface-variant">swap_horiz</span>
+        </button>
+        <div id="right-box" class="flex-1 bg-surface-container-high rounded-DEFAULT p-3">
+          <p id="right-label" class="text-[0.6rem] text-on-surface-variant uppercase tracking-wider mb-1">KRW 韓元</p>
+          <p id="right-output" class="font-headline font-bold text-xl text-primary">4,320</p>
         </div>
       </div>
     </div>
@@ -1443,8 +1306,7 @@ function navigateTo(page) {
 
 // ── Side Menu ──
 function toggleMenu() {
-  const overlay = document.getElementById('menu-overlay');
-  overlay.classList.toggle('hidden');
+  document.getElementById('menu-overlay').classList.toggle('hidden');
 }
 
 // ── Toast ──
@@ -1462,29 +1324,20 @@ function playPhrase(text) {
   if ('speechSynthesis' in window) {
     speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
-    u.lang = 'ko-KR';
-    u.rate = 0.85;
+    u.lang = 'ko-KR'; u.rate = 0.85;
     speechSynthesis.speak(u);
     showToast('播放：' + text);
-  } else {
-    showToast('您的裝置不支援語音播放');
-  }
+  } else { showToast('您的裝置不支援語音播放'); }
 }
 
 // ── Filter Days ──
 function filterDay(day, btn) {
   document.querySelectorAll('.tag-pill').forEach(p => {
-    p.classList.remove('selected');
-    p.style.background = '';
-    p.style.color = '';
+    p.classList.remove('selected'); p.style.background = ''; p.style.color = '';
   });
   btn.classList.add('selected');
   document.querySelectorAll('.trip-day').forEach(d => {
-    if (day === 0 || parseInt(d.dataset.day) === day) {
-      d.style.display = 'block';
-    } else {
-      d.style.display = 'none';
-    }
+    d.style.display = (day === 0 || parseInt(d.dataset.day) === day) ? 'block' : 'none';
   });
 }
 
@@ -1494,36 +1347,317 @@ function expandDay(btn) {
   if (content) {
     content.classList.toggle('hidden');
     const icon = btn.querySelector('.material-symbols-outlined');
-    if (content.classList.contains('hidden')) {
-      icon.textContent = 'expand_more';
-      btn.childNodes[0].textContent = '展開 ';
-    } else {
-      icon.textContent = 'expand_less';
-      btn.childNodes[0].textContent = '收起 ';
-    }
+    if (content.classList.contains('hidden')) { icon.textContent='expand_more'; btn.childNodes[0].textContent='展開 '; }
+    else { icon.textContent='expand_less'; btn.childNodes[0].textContent='收起 '; }
   }
 }
 
-// ── Currency ──
-function convertCurrency() {
-  const twd = parseFloat(document.getElementById('twd-input').value) || 0;
-  const krw = Math.round(twd * 43.2);
-  document.getElementById('krw-output').textContent = krw.toLocaleString();
+// ══════════════════════════════════════════════════
+// ── TRANSACTIONS (real data store) ──
+// ══════════════════════════════════════════════════
+const CAT_ICONS = {
+  '住宿':'hotel', '餐飲':'restaurant', '購物':'shopping_bag',
+  '交通':'directions_subway', '門票':'confirmation_number', '其他':'more_horiz', '醫美':'spa'
+};
+const CAT_COLORS = {
+  '住宿':'text-primary fill-icon', '餐飲':'text-secondary fill-icon',
+  '購物':'text-tertiary fill-icon', '交通':'text-secondary',
+  '門票':'text-[#ac3149] fill-icon', '其他':'text-on-surface-variant', '醫美':'text-[#ac3149] fill-icon'
+};
+
+let transactions = [
+  { id:1, name:'機場快線 AREX', amount:9500,  date:'4/7',  cat:'交通' },
+  { id:2, name:'Hotel The Designers（訂金）', amount:150000, date:'預付', cat:'住宿' },
+  { id:3, name:'T-Money 儲值', amount:30500, date:'4/7',  cat:'交通' },
+  { id:4, name:'N首爾塔纜車票', amount:22000, date:'4/7',  cat:'門票' },
+  { id:5, name:'望遠市場草莓＋小吃', amount:18000, date:'4/8',  cat:'餐飲' },
+];
+let nextTxId = 6;
+
+function renderTransactions() {
+  const list = document.getElementById('transactions-list');
+  if (!list) return;
+  const total = transactions.reduce((s,t) => s+t.amount, 0);
+  // Update overview card
+  const usedEl = document.querySelector('#page-budget .font-black.text-\\[2\\.5rem\\]');
+  if (usedEl) {
+    // update progress bar + numbers
+  }
+  updateBudgetOverview();
+
+  if (transactions.length === 0) {
+    list.innerHTML = '<p class="text-center text-on-surface-variant text-sm py-6">尚無消費記錄</p>';
+    document.getElementById('tx-count-label').textContent = '共 0 筆';
+    return;
+  }
+  document.getElementById('tx-count-label').textContent = `共 ${transactions.length} 筆`;
+
+  list.innerHTML = transactions.map((tx, idx) => {
+    const icon = CAT_ICONS[tx.cat] || 'more_horiz';
+    const color = CAT_COLORS[tx.cat] || 'text-on-surface-variant';
+    const divider = idx < transactions.length-1 ? '<div class="h-px bg-outline-variant/10"></div>' : '';
+    return `
+      <div class="flex items-center justify-between py-3 gap-3" id="tx-row-${tx.id}">
+        <div class="flex items-center gap-3 flex-1 min-w-0">
+          <div class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center flex-shrink-0">
+            <span class="material-symbols-outlined ${color} text-lg">${icon}</span>
+          </div>
+          <div class="min-w-0">
+            <p class="font-bold text-sm truncate">${tx.name}</p>
+            <p class="text-xs text-on-surface-variant">${tx.date} · ${tx.cat}</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 flex-shrink-0">
+          <p class="font-bold text-sm text-on-surface">-₩${tx.amount.toLocaleString()}</p>
+          <button onclick="openEditTx(${tx.id})" class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors active:scale-90">
+            <span class="material-symbols-outlined text-base">more_vert</span>
+          </button>
+        </div>
+      </div>${divider}`;
+  }).join('');
 }
 
-// ── Modal ──
+function updateBudgetOverview() {
+  const total = transactions.reduce((s,t) => s+t.amount, 0);
+  const budget = 800000;
+  const pct = Math.min(100, Math.round(total/budget*100));
+  const remaining = budget - total;
+
+  const usedAmountEl = document.getElementById('budget-used-amount');
+  const usedPctEl    = document.getElementById('budget-used-pct');
+  const remainEl     = document.getElementById('budget-remaining');
+  const barEl        = document.getElementById('budget-bar');
+  if (usedAmountEl) usedAmountEl.textContent = '₩' + total.toLocaleString();
+  if (usedPctEl)    usedPctEl.textContent    = pct + '%';
+  if (remainEl)     remainEl.textContent     = '剩餘 ₩' + Math.max(0,remaining).toLocaleString();
+  if (barEl)        barEl.style.width        = pct + '%';
+
+  // update category breakdown
+  const cats = ['住宿','餐飲','購物','交通','門票','醫美','其他'];
+  cats.forEach(cat => {
+    const catTotal = transactions.filter(t=>t.cat===cat).reduce((s,t)=>s+t.amount,0);
+    const el = document.getElementById('cat-total-'+cat);
+    const bar = document.getElementById('cat-bar-'+cat);
+    const bgt = parseInt(document.getElementById('cat-budget-'+cat)?.dataset.budget||'0');
+    if (el) el.textContent = '₩'+catTotal.toLocaleString();
+    if (bar && bgt>0) bar.style.width = Math.min(100,Math.round(catTotal/bgt*100))+'%';
+  });
+}
+
+function openEditTx(id) {
+  const tx = transactions.find(t=>t.id===id);
+  if (!tx) return;
+  showDynamicModal('editTx', tx);
+}
+
+function deleteTx(id) {
+  transactions = transactions.filter(t=>t.id!==id);
+  renderTransactions();
+  closeModal();
+  showToast('已刪除消費記錄');
+}
+
+function saveEditTx(id) {
+  const name   = document.getElementById('edit-name').value.trim();
+  const amount = parseInt(document.getElementById('edit-amount').value) || 0;
+  const date   = document.getElementById('edit-date').value;
+  const cat    = document.querySelector('#edit-cat-pills .selected')?.dataset.cat || '其他';
+  if (!name || !amount) { showToast('請填寫項目名稱與金額'); return; }
+  const tx = transactions.find(t=>t.id===id);
+  if (tx) { tx.name=name; tx.amount=amount; tx.date=date; tx.cat=cat; }
+  renderTransactions();
+  closeModal();
+  showToast('消費記錄已更新 ✓');
+}
+
+function addExpense() {
+  const name   = document.getElementById('new-name').value.trim();
+  const amount = parseInt(document.getElementById('new-amount').value) || 0;
+  const date   = document.getElementById('new-date').value || '4/7';
+  const cat    = document.querySelector('#new-cat-pills .selected')?.dataset.cat || '其他';
+  if (!name) { showToast('請輸入消費項目名稱'); return; }
+  if (!amount) { showToast('請輸入金額'); return; }
+  transactions.unshift({ id: nextTxId++, name, amount, date, cat });
+  renderTransactions();
+  closeModal();
+  showToast('✓ 消費記錄已新增');
+}
+
+// ══════════════════════════════════════════════════
+// ── CURRENCY ──
+// ══════════════════════════════════════════════════
+let exchangeRate = 43.2;      // 1 TWD → KRW
+let swapped = false;          // false: TWD→KRW, true: KRW→TWD
+
+function doConvert() {
+  const val = parseFloat(document.getElementById('left-input').value) || 0;
+  let result;
+  if (!swapped) {
+    result = Math.round(val * exchangeRate);
+    document.getElementById('right-output').textContent = result.toLocaleString();
+  } else {
+    result = (val / exchangeRate).toFixed(1);
+    document.getElementById('right-output').textContent = parseFloat(result).toLocaleString();
+  }
+}
+
+function swapCurrency() {
+  swapped = !swapped;
+  const btn = document.getElementById('swap-btn');
+  btn.style.transform = 'rotate(180deg)';
+  setTimeout(() => btn.style.transform = '', 300);
+  if (!swapped) {
+    document.getElementById('left-label').textContent  = 'TWD 台幣';
+    document.getElementById('right-label').textContent = 'KRW 韓元';
+  } else {
+    document.getElementById('left-label').textContent  = 'KRW 韓元';
+    document.getElementById('right-label').textContent = 'TWD 台幣';
+  }
+  document.getElementById('left-input').value = '';
+  document.getElementById('right-output').textContent = '0';
+}
+
+function openRateEdit() {
+  const row = document.getElementById('rate-edit-row');
+  const inp = document.getElementById('rate-input');
+  inp.value = exchangeRate;
+  row.classList.toggle('hidden');
+  if (!row.classList.contains('hidden')) inp.focus();
+}
+
+function saveRate() {
+  const v = parseFloat(document.getElementById('rate-input').value);
+  if (v > 0) {
+    exchangeRate = v;
+    document.getElementById('rate-display').textContent = v;
+    document.getElementById('rate-edit-row').classList.add('hidden');
+    doConvert();
+    showToast('匯率已更新：1 TWD = ' + v + ' KRW');
+  } else { showToast('請輸入有效匯率'); }
+}
+
+// ── convertCurrency kept for backwards compat (no longer used) ──
+function convertCurrency() { doConvert(); }
+
+// ══════════════════════════════════════════════════
+// ── DYNAMIC MODAL BUILDER ──
+// ══════════════════════════════════════════════════
+function showDynamicModal(type, data) {
+  let html = '';
+  const cats = ['住宿','餐飲','購物','交通','門票','醫美','其他'];
+
+  if (type === 'addExpense') {
+    html = `
+      <h3 class="font-headline font-bold text-xl mb-5">新增消費記錄</h3>
+      <div class="space-y-4">
+        <div>
+          <p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">消費項目</p>
+          <input id="new-name" type="text" placeholder="例：N首爾塔纜車票" class="w-full bg-surface-container-high rounded-DEFAULT p-3 text-sm outline-none font-body" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">金額（₩）</p>
+            <input id="new-amount" type="number" placeholder="11000" class="w-full bg-surface-container-high rounded-DEFAULT p-3 text-sm outline-none font-body" />
+          </div>
+          <div>
+            <p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">日期</p>
+            <input id="new-date" type="text" placeholder="4/7" class="w-full bg-surface-container-high rounded-DEFAULT p-3 text-sm outline-none font-body" />
+          </div>
+        </div>
+        <div>
+          <p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">分類</p>
+          <div id="new-cat-pills" class="flex flex-wrap gap-2">
+            ${cats.map((c,i) => `<button data-cat="${c}" onclick="selectCatPill(this,'new-cat-pills')" class="tag-pill font-label text-[0.65rem] font-bold px-3 py-1.5 rounded-full ${i===5?'bg-primary text-white selected':'bg-surface-container text-on-surface-variant'}">${c}</button>`).join('')}
+          </div>
+        </div>
+      </div>
+      <div class="flex gap-3 mt-6">
+        <button onclick="closeModal()" class="flex-1 bg-surface-container-high text-on-surface font-bold py-3 rounded-full active:scale-95 transition-transform">取消</button>
+        <button onclick="addExpense()" class="flex-1 bg-gradient-to-r from-primary to-primary-container text-white font-bold py-3 rounded-full active:scale-95 transition-transform">儲存</button>
+      </div>`;
+  }
+
+  if (type === 'editTx') {
+    const tx = data;
+    html = `
+      <h3 class="font-headline font-bold text-xl mb-5">編輯消費記錄</h3>
+      <div class="space-y-4">
+        <div>
+          <p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">消費項目</p>
+          <input id="edit-name" type="text" value="${tx.name}" class="w-full bg-surface-container-high rounded-DEFAULT p-3 text-sm outline-none font-body" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">金額（₩）</p>
+            <input id="edit-amount" type="number" value="${tx.amount}" class="w-full bg-surface-container-high rounded-DEFAULT p-3 text-sm outline-none font-body" />
+          </div>
+          <div>
+            <p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">日期</p>
+            <input id="edit-date" type="text" value="${tx.date}" class="w-full bg-surface-container-high rounded-DEFAULT p-3 text-sm outline-none font-body" />
+          </div>
+        </div>
+        <div>
+          <p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">分類</p>
+          <div id="edit-cat-pills" class="flex flex-wrap gap-2">
+            ${cats.map(c => `<button data-cat="${c}" onclick="selectCatPill(this,'edit-cat-pills')" class="tag-pill font-label text-[0.65rem] font-bold px-3 py-1.5 rounded-full ${c===tx.cat?'bg-primary text-white selected':'bg-surface-container text-on-surface-variant'}">${c}</button>`).join('')}
+          </div>
+        </div>
+      </div>
+      <div class="flex gap-3 mt-6">
+        <button onclick="deleteTx(${tx.id})" class="flex-shrink-0 bg-error-container/20 text-error font-bold py-3 px-4 rounded-full active:scale-95 transition-transform flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm">delete</span> 刪除
+        </button>
+        <button onclick="closeModal()" class="flex-1 bg-surface-container-high text-on-surface font-bold py-3 rounded-full active:scale-95 transition-transform">取消</button>
+        <button onclick="saveEditTx(${tx.id})" class="flex-1 bg-gradient-to-r from-primary to-primary-container text-white font-bold py-3 rounded-full active:scale-95 transition-transform">更新</button>
+      </div>`;
+  }
+
+  document.getElementById('modal-content').innerHTML = html;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function selectCatPill(btn, groupId) {
+  document.querySelectorAll('#'+groupId+' .tag-pill').forEach(b => {
+    b.classList.remove('selected','bg-primary','text-white');
+    b.classList.add('bg-surface-container','text-on-surface-variant');
+  });
+  btn.classList.add('selected','bg-primary','text-white');
+  btn.classList.remove('bg-surface-container','text-on-surface-variant');
+}
+
+// ── Static modal contents ──
 const modalContents = {
   map: `
     <h3 class="font-headline font-bold text-xl mb-1">飯店位置</h3>
     <p class="text-sm text-on-surface-variant mb-4">Hotel The Designers Seoul Station</p>
-    <div class="map-placeholder rounded-lg h-48 flex items-center justify-center mb-4 relative">
-      <div class="relative z-10 text-center">
-        <span class="material-symbols-outlined text-primary fill-icon text-4xl">location_on</span>
-        <p class="text-sm font-bold mt-1">龍山區漢江大路305</p>
-        <p class="text-xs text-on-surface-variant">首爾站步行5分鐘</p>
+    <a href="https://map.naver.com/p/search/Hotel%20The%20Designers%20Seoul%20Station" target="_blank" rel="noopener"
+       class="block relative rounded-lg overflow-hidden mb-4 group" style="cursor:pointer;">
+      <div class="map-placeholder h-48 flex items-center justify-center relative">
+        <div class="absolute inset-0 bg-[#2e3335]/0 group-hover:bg-[#2e3335]/10 transition-colors z-10 flex items-center justify-center">
+          <div class="bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity shadow-lg">
+            <span class="material-symbols-outlined text-secondary fill-icon text-lg">open_in_new</span>
+            <span class="font-bold text-sm text-secondary">在 Naver Maps 開啟</span>
+          </div>
+        </div>
+        <div class="relative z-10 text-center">
+          <span class="material-symbols-outlined text-primary fill-icon text-5xl">location_on</span>
+          <p class="text-sm font-bold mt-1">龍山區漢江大路305</p>
+          <p class="text-xs text-on-surface-variant">點擊開啟 Naver Maps</p>
+        </div>
       </div>
-    </div>
-    <div class="space-y-3">
+    </a>
+    <a href="https://map.naver.com/p/search/Hotel%20The%20Designers%20Seoul%20Station" target="_blank" rel="noopener"
+       class="flex items-center gap-3 bg-[#03c75a]/10 border border-[#03c75a]/30 rounded-DEFAULT p-3 mb-3 transition-transform active:scale-95">
+      <div class="w-10 h-10 rounded-full bg-[#03c75a] flex items-center justify-center flex-shrink-0">
+        <span class="text-white font-black text-xs">N</span>
+      </div>
+      <div class="flex-1">
+        <p class="font-bold text-sm text-[#03c75a]">在 Naver Maps 查看</p>
+        <p class="text-xs text-on-surface-variant">龍山區漢江大路305</p>
+      </div>
+      <span class="material-symbols-outlined text-[#03c75a] text-sm">open_in_new</span>
+    </a>
+    <div class="space-y-2">
       <div class="bg-surface-container-low rounded-DEFAULT p-3 flex items-center gap-3">
         <span class="material-symbols-outlined text-secondary fill-icon">directions_subway</span>
         <div>
@@ -1535,7 +1669,7 @@ const modalContents = {
         <span class="material-symbols-outlined text-secondary fill-icon">directions_bus</span>
         <div>
           <p class="font-bold text-sm">公車</p>
-          <p class="text-xs text-on-surface-variant">漢江大路405 站·0015, 104, 421號</p>
+          <p class="text-xs text-on-surface-variant">漢江大路405 站 · 0015, 104, 421號</p>
         </div>
       </div>
     </div>
@@ -1546,31 +1680,16 @@ const modalContents = {
     <p class="text-sm text-on-surface-variant mb-4">Seoul Metro · 서울 지하철</p>
     <div class="space-y-3 mb-5">
       <div class="flex items-center gap-3 p-3 bg-surface-container-low rounded-DEFAULT">
-        <div class="w-6 h-6 rounded-full bg-[#ff5446] flex items-center justify-center flex-shrink-0">
-          <span class="text-white text-[0.55rem] font-black">1</span>
-        </div>
-        <div>
-          <p class="font-bold text-sm">1號線（深藍）</p>
-          <p class="text-xs text-on-surface-variant">仁川機場↔首爾站↔鐘路</p>
-        </div>
+        <div class="w-6 h-6 rounded-full bg-[#ff5446] flex items-center justify-center flex-shrink-0"><span class="text-white text-[0.55rem] font-black">1</span></div>
+        <div><p class="font-bold text-sm">1號線（深藍）</p><p class="text-xs text-on-surface-variant">仁川機場↔首爾站↔鐘路</p></div>
       </div>
       <div class="flex items-center gap-3 p-3 bg-surface-container-low rounded-DEFAULT">
-        <div class="w-6 h-6 rounded-full bg-[#036881] flex items-center justify-center flex-shrink-0">
-          <span class="text-white text-[0.55rem] font-black">2</span>
-        </div>
-        <div>
-          <p class="font-bold text-sm">2號線（綠色）</p>
-          <p class="text-xs text-on-surface-variant">弘大↔市廳↔東大門↔江南</p>
-        </div>
+        <div class="w-6 h-6 rounded-full bg-[#036881] flex items-center justify-center flex-shrink-0"><span class="text-white text-[0.55rem] font-black">2</span></div>
+        <div><p class="font-bold text-sm">2號線（綠色）</p><p class="text-xs text-on-surface-variant">弘大↔市廳↔東大門↔江南</p></div>
       </div>
       <div class="flex items-center gap-3 p-3 bg-surface-container-low rounded-DEFAULT">
-        <div class="w-6 h-6 rounded-full bg-[#f59e0b] flex items-center justify-center flex-shrink-0">
-          <span class="text-white text-[0.55rem] font-black">9</span>
-        </div>
-        <div>
-          <p class="font-bold text-sm">9號線（金色）</p>
-          <p class="text-xs text-on-surface-variant">仁川機場↔金浦機場↔江南</p>
-        </div>
+        <div class="w-6 h-6 rounded-full bg-[#f59e0b] flex items-center justify-center flex-shrink-0"><span class="text-white text-[0.55rem] font-black">9</span></div>
+        <div><p class="font-bold text-sm">9號線（金色）</p><p class="text-xs text-on-surface-variant">仁川機場↔金浦機場↔江南</p></div>
       </div>
     </div>
     <div class="bg-tertiary-container rounded-DEFAULT p-4 mb-4">
@@ -1585,14 +1704,7 @@ const modalContents = {
     <div class="bg-surface-container-low rounded-lg p-4 mb-4 text-center">
       <p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-widest mb-1">今日匯率</p>
       <p class="font-headline font-black text-3xl text-primary">1 TWD = 43.2 KRW</p>
-      <p class="text-xs text-on-surface-variant mt-1">更新：2025/03/22 09:00</p>
-    </div>
-    <div class="space-y-2 mb-5">
-      ${[[100,'4,320'],[500,'21,600'],[1000,'43,200'],[5000,'216,000']].map(([t,k])=>`
-      <div class="flex justify-between items-center py-2 border-b border-outline-variant/10">
-        <span class="text-sm font-body">TWD ${t.toLocaleString()}</span>
-        <span class="font-bold text-sm">₩${k}</span>
-      </div>`).join('')}
+      <p class="text-xs text-on-surface-variant mt-1">更新：2025/04/07 09:00</p>
     </div>
     <button onclick="closeModal()" class="w-full bg-gradient-to-r from-primary to-primary-container text-white font-bold py-3 rounded-full active:scale-95 transition-transform">關閉</button>
   `,
@@ -1603,55 +1715,20 @@ const modalContents = {
       <div class="bg-surface-container-lowest rounded-lg p-4 border-l-4 border-tertiary">
         <p class="font-bold">旅遊諮詢熱線 1330</p>
         <p class="text-xs text-on-surface-variant mt-1">24小時·中英日文服務·免費</p>
-        <a href="tel:1330" class="mt-2 inline-flex items-center gap-1 text-tertiary text-xs font-bold">
-          <span class="material-symbols-outlined text-sm">call</span> 撥打 1330
-        </a>
+        <a href="tel:1330" class="mt-2 inline-flex items-center gap-1 text-tertiary text-xs font-bold"><span class="material-symbols-outlined text-sm">call</span> 撥打 1330</a>
       </div>
       <div class="bg-surface-container-lowest rounded-lg p-4 border-l-4 border-secondary">
         <p class="font-bold">首爾大學病院</p>
         <p class="text-xs text-on-surface-variant mt-1">鐘路區大學路101 · 設有外籍患者中心</p>
-        <a href="tel:02-2072-2114" class="mt-2 inline-flex items-center gap-1 text-secondary text-xs font-bold">
-          <span class="material-symbols-outlined text-sm">call</span> 02-2072-2114
-        </a>
+        <a href="tel:02-2072-2114" class="mt-2 inline-flex items-center gap-1 text-secondary text-xs font-bold"><span class="material-symbols-outlined text-sm">call</span> 02-2072-2114</a>
       </div>
       <div class="bg-surface-container-lowest rounded-lg p-4 border-l-4 border-primary">
         <p class="font-bold">延世大學세브란스醫院</p>
         <p class="text-xs text-on-surface-variant mt-1">西大門區延世路50-1 · 24小時急診</p>
-        <a href="tel:1599-1004" class="mt-2 inline-flex items-center gap-1 text-primary text-xs font-bold">
-          <span class="material-symbols-outlined text-sm">call</span> 1599-1004
-        </a>
+        <a href="tel:1599-1004" class="mt-2 inline-flex items-center gap-1 text-primary text-xs font-bold"><span class="material-symbols-outlined text-sm">call</span> 1599-1004</a>
       </div>
     </div>
     <button onclick="closeModal()" class="w-full mt-5 bg-gradient-to-r from-primary to-primary-container text-white font-bold py-3 rounded-full active:scale-95 transition-transform">關閉</button>
-  `,
-  addExpense: `
-    <h3 class="font-headline font-bold text-xl mb-5">新增消費記錄</h3>
-    <div class="space-y-4">
-      <div>
-        <p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">消費項目</p>
-        <input type="text" placeholder="例：景福宮門票" class="w-full bg-surface-container-high rounded-DEFAULT p-3 text-sm outline-none focus:bg-surface-container-lowest font-body" />
-      </div>
-      <div class="grid grid-cols-2 gap-3">
-        <div>
-          <p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">金額（₩）</p>
-          <input type="number" placeholder="3000" class="w-full bg-surface-container-high rounded-DEFAULT p-3 text-sm outline-none focus:bg-surface-container-lowest font-body" />
-        </div>
-        <div>
-          <p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">日期</p>
-          <input type="date" class="w-full bg-surface-container-high rounded-DEFAULT p-3 text-sm outline-none focus:bg-surface-container-lowest font-body" />
-        </div>
-      </div>
-      <div>
-        <p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">分類</p>
-        <div class="flex flex-wrap gap-2">
-          ${['住宿','餐飲','購物','交通','門票','其他'].map(c => `<button class="tag-pill font-label text-[0.65rem] font-bold px-3 py-1.5 rounded-full bg-surface-container text-on-surface-variant" onclick="this.classList.toggle('selected')">${c}</button>`).join('')}
-        </div>
-      </div>
-    </div>
-    <div class="flex gap-3 mt-6">
-      <button onclick="closeModal()" class="flex-1 bg-surface-container-high text-on-surface font-bold py-3 rounded-full active:scale-95 transition-transform">取消</button>
-      <button onclick="closeModal();showToast('消費記錄已儲存 ✓')" class="flex-1 bg-gradient-to-r from-primary to-primary-container text-white font-bold py-3 rounded-full active:scale-95 transition-transform">儲存</button>
-    </div>
   `,
   about: `
     <h3 class="font-headline font-bold text-xl mb-4">關於此行程</h3>
@@ -1661,7 +1738,6 @@ const modalContents = {
     </div>
     <div class="space-y-3 text-sm text-on-surface-variant leading-relaxed">
       <p>此行程由 Seoul Travel Assistant 為您精心規劃，涵蓋首爾3晚4天的醫美療程、賞櫻散策與美食探索。</p>
-      <p>從歷史悠久的景福宮、充滿韓流氣息的弘大，到現代感十足的江南區，讓您全面感受首爾的多元魅力。</p>
     </div>
     <button onclick="closeModal()" class="w-full mt-5 bg-gradient-to-r from-primary to-primary-container text-white font-bold py-3 rounded-full">關閉</button>
   `,
@@ -1669,27 +1745,16 @@ const modalContents = {
     <h3 class="font-headline font-bold text-xl mb-5">設定</h3>
     <div class="space-y-4">
       <div class="flex justify-between items-center py-3 border-b border-outline-variant/15">
-        <div class="flex items-center gap-3">
-          <span class="material-symbols-outlined text-secondary">language</span>
-          <p class="font-bold text-sm">語言</p>
-        </div>
+        <div class="flex items-center gap-3"><span class="material-symbols-outlined text-secondary">language</span><p class="font-bold text-sm">語言</p></div>
         <span class="text-xs text-on-surface-variant bg-surface-container px-3 py-1 rounded-full">繁體中文</span>
       </div>
       <div class="flex justify-between items-center py-3 border-b border-outline-variant/15">
-        <div class="flex items-center gap-3">
-          <span class="material-symbols-outlined text-secondary">currency_exchange</span>
-          <p class="font-bold text-sm">預設貨幣</p>
-        </div>
+        <div class="flex items-center gap-3"><span class="material-symbols-outlined text-secondary">currency_exchange</span><p class="font-bold text-sm">預設貨幣</p></div>
         <span class="text-xs text-on-surface-variant bg-surface-container px-3 py-1 rounded-full">TWD / KRW</span>
       </div>
       <div class="flex justify-between items-center py-3 border-b border-outline-variant/15">
-        <div class="flex items-center gap-3">
-          <span class="material-symbols-outlined text-secondary">notifications</span>
-          <p class="font-bold text-sm">行程提醒</p>
-        </div>
-        <div class="w-11 h-6 bg-primary rounded-full flex items-center px-1">
-          <div class="w-4 h-4 bg-white rounded-full ml-auto"></div>
-        </div>
+        <div class="flex items-center gap-3"><span class="material-symbols-outlined text-secondary">notifications</span><p class="font-bold text-sm">行程提醒</p></div>
+        <div class="w-11 h-6 bg-primary rounded-full flex items-center px-1"><div class="w-4 h-4 bg-white rounded-full ml-auto"></div></div>
       </div>
     </div>
     <button onclick="closeModal()" class="w-full mt-5 bg-gradient-to-r from-primary to-primary-container text-white font-bold py-3 rounded-full">確認</button>
@@ -1697,7 +1762,8 @@ const modalContents = {
 };
 
 function showModal(type) {
-  document.getElementById('modal-content').innerHTML = modalContents[type] || '<p class="text-on-surface-variant">內容載入中...</p>';
+  if (type === 'addExpense') { showDynamicModal('addExpense'); return; }
+  document.getElementById('modal-content').innerHTML = modalContents[type] || '';
   document.getElementById('modal-overlay').classList.add('open');
 }
 
@@ -1705,14 +1771,13 @@ function closeModal() {
   document.getElementById('modal-overlay').classList.remove('open');
 }
 
-// Init
+// ── Init ──
 document.addEventListener('DOMContentLoaded', () => {
-  // Animate progress bars
+  renderTransactions();
   setTimeout(() => {
     document.querySelectorAll('.progress-fill').forEach(el => {
-      const w = el.style.width;
-      el.style.width = '0%';
-      setTimeout(() => el.style.width = w, 100);
+      const w = el.style.width; el.style.width='0%';
+      setTimeout(() => el.style.width=w, 100);
     });
   }, 300);
 });
