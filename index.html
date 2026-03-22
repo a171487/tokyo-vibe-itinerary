@@ -367,11 +367,14 @@
 
   <!-- Weather -->
   <section class="mb-8 animate-in delay-3">
-    <span class="font-label text-[0.6rem] text-primary uppercase tracking-[0.15em] font-bold block mb-3 px-1">Weather · 首爾天氣</span>
+    <div class="flex justify-between items-end mb-3 px-1">
+      <span class="font-label text-[0.6rem] text-primary uppercase tracking-[0.15em] font-bold">Weather · 首爾天氣</span>
+      <span class="font-label text-[0.6rem] text-on-surface-variant" id="weather-sync-time">同步中…</span>
+    </div>
     <div class="rounded-lg editorial-shadow overflow-hidden relative">
-      <!-- Sky/cherry blossom background photo -->
+      <!-- Background photo -->
       <div class="absolute inset-0 z-0" style="background:url('https://images.unsplash.com/photo-1508739773434-c26b3d09e071?w=800&q=80') center/cover no-repeat;"></div>
-      <!-- Dark overlay for text legibility, matching hero style -->
+      <!-- Dark overlay -->
       <div class="absolute inset-0 z-0" style="background:linear-gradient(170deg,rgba(2,55,90,0.60) 0%,rgba(1,30,60,0.82) 100%);"></div>
       <!-- Main weather -->
       <div class="relative z-10 p-5">
@@ -422,75 +425,10 @@
           </div>
         </div>
       </div>
-      <!-- Hourly forecast — horizontal scroll -->
+      <!-- Hourly forecast — rendered by JS -->
       <div class="relative z-10 border-t border-white/15 px-3 pb-4 pt-3">
         <p class="text-white/60 text-[0.58rem] uppercase tracking-wider px-2 mb-2">每小時預報</p>
-        <div class="flex gap-1 overflow-x-auto pb-1" style="scrollbar-width:none;">
-          <!-- each hourly block -->
-          <div class="flex-shrink-0 w-14 bg-white/10 rounded-DEFAULT px-1 py-2.5 text-center">
-            <p class="text-white/60 text-[0.58rem]">07時</p>
-            <span class="material-symbols-outlined text-white fill-icon text-lg my-1">wb_twilight</span>
-            <p class="text-white font-bold text-xs">9°</p>
-            <p class="text-white/55 text-[0.5rem] mt-0.5">UV1</p>
-            <p class="text-white/55 text-[0.5rem]">60%</p>
-          </div>
-          <div class="flex-shrink-0 w-14 bg-white/10 rounded-DEFAULT px-1 py-2.5 text-center">
-            <p class="text-white/60 text-[0.58rem]">09時</p>
-            <span class="material-symbols-outlined text-white fill-icon text-lg my-1">wb_sunny</span>
-            <p class="text-white font-bold text-xs">12°</p>
-            <p class="text-white/55 text-[0.5rem] mt-0.5">UV3</p>
-            <p class="text-white/55 text-[0.5rem]">52%</p>
-          </div>
-          <div class="flex-shrink-0 w-14 bg-white/10 rounded-DEFAULT px-1 py-2.5 text-center">
-            <p class="text-white/60 text-[0.58rem]">11時</p>
-            <span class="material-symbols-outlined text-white fill-icon text-lg my-1">wb_sunny</span>
-            <p class="text-white font-bold text-xs">15°</p>
-            <p class="text-white/55 text-[0.5rem] mt-0.5">UV5</p>
-            <p class="text-white/55 text-[0.5rem]">48%</p>
-          </div>
-          <div class="flex-shrink-0 w-14 bg-white/15 rounded-DEFAULT px-1 py-2.5 text-center border border-white/30">
-            <p class="text-white/80 text-[0.58rem] font-bold">13時</p>
-            <span class="material-symbols-outlined text-white fill-icon text-lg my-1">partly_cloudy_day</span>
-            <p class="text-white font-black text-xs">19°</p>
-            <p class="text-white/70 text-[0.5rem] mt-0.5">UV4</p>
-            <p class="text-white/70 text-[0.5rem]">45%</p>
-          </div>
-          <div class="flex-shrink-0 w-14 bg-white/10 rounded-DEFAULT px-1 py-2.5 text-center">
-            <p class="text-white/60 text-[0.58rem]">15時</p>
-            <span class="material-symbols-outlined text-white fill-icon text-lg my-1">partly_cloudy_day</span>
-            <p class="text-white font-bold text-xs">18°</p>
-            <p class="text-white/55 text-[0.5rem] mt-0.5">UV3</p>
-            <p class="text-white/55 text-[0.5rem]">50%</p>
-          </div>
-          <div class="flex-shrink-0 w-14 bg-white/10 rounded-DEFAULT px-1 py-2.5 text-center">
-            <p class="text-white/60 text-[0.58rem]">17時</p>
-            <span class="material-symbols-outlined text-white fill-icon text-lg my-1">partly_cloudy_day</span>
-            <p class="text-white font-bold text-xs">16°</p>
-            <p class="text-white/55 text-[0.5rem] mt-0.5">UV1</p>
-            <p class="text-white/55 text-[0.5rem]">55%</p>
-          </div>
-          <div class="flex-shrink-0 w-14 bg-white/10 rounded-DEFAULT px-1 py-2.5 text-center">
-            <p class="text-white/60 text-[0.58rem]">19時</p>
-            <span class="material-symbols-outlined text-white fill-icon text-lg my-1">wb_twilight</span>
-            <p class="text-white font-bold text-xs">13°</p>
-            <p class="text-white/55 text-[0.5rem] mt-0.5">UV0</p>
-            <p class="text-white/55 text-[0.5rem]">60%</p>
-          </div>
-          <div class="flex-shrink-0 w-14 bg-white/10 rounded-DEFAULT px-1 py-2.5 text-center">
-            <p class="text-white/60 text-[0.58rem]">21時</p>
-            <span class="material-symbols-outlined text-white fill-icon text-lg my-1">nights_stay</span>
-            <p class="text-white font-bold text-xs">10°</p>
-            <p class="text-white/55 text-[0.5rem] mt-0.5">UV0</p>
-            <p class="text-white/55 text-[0.5rem]">65%</p>
-          </div>
-          <div class="flex-shrink-0 w-14 bg-white/10 rounded-DEFAULT px-1 py-2.5 text-center">
-            <p class="text-white/60 text-[0.58rem]">23時</p>
-            <span class="material-symbols-outlined text-white fill-icon text-lg my-1">nights_stay</span>
-            <p class="text-white font-bold text-xs">8°</p>
-            <p class="text-white/55 text-[0.5rem] mt-0.5">UV0</p>
-            <p class="text-white/55 text-[0.5rem]">70%</p>
-          </div>
-        </div>
+        <div class="flex gap-1 overflow-x-auto pb-1" id="hourly-scroll" style="scrollbar-width:none;"></div>
         <p class="text-white/40 text-[0.55rem] text-right mt-2 px-1">每格：溫度 · 紫外線 · 濕度</p>
       </div>
     </div>
@@ -2240,7 +2178,89 @@ document.addEventListener('DOMContentLoaded',()=>{
   loadFromStorage();
   renderAll();
   updateToolboxBubble(false);
+  initWeather();
 });
+
+// ── Weather: render hourly strip with current Seoul-time highlight ──
+function initWeather() {
+  // Convert device time → Seoul time (UTC+9)
+  const now = new Date();
+  const seoulTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Seoul' }));
+  const seoulHour = seoulTime.getHours();
+  const seoulMin  = seoulTime.getMinutes();
+  const pad = n => String(n).padStart(2, '0');
+
+  // Show sync timestamp
+  const syncEl = document.getElementById('weather-sync-time');
+  if (syncEl) syncEl.textContent = `首爾時間 ${pad(seoulHour)}:${pad(seoulMin)} 同步`;
+
+  // Icon map
+  const ICON = {
+    sunny:   'wb_sunny',
+    partly:  'partly_cloudy_day',
+    cloudy:  'cloudy',
+    twilight:'wb_twilight',
+    night:   'nights_stay',
+  };
+
+  // 24h hourly data (sample Seoul April forecast)
+  const hourly = [
+    { h: 0, icon:'night',    temp: 8,  uv: 0, hum: 72 },
+    { h: 1, icon:'night',    temp: 8,  uv: 0, hum: 73 },
+    { h: 2, icon:'night',    temp: 7,  uv: 0, hum: 74 },
+    { h: 3, icon:'night',    temp: 7,  uv: 0, hum: 75 },
+    { h: 4, icon:'night',    temp: 7,  uv: 0, hum: 75 },
+    { h: 5, icon:'night',    temp: 7,  uv: 0, hum: 74 },
+    { h: 6, icon:'twilight', temp: 8,  uv: 0, hum: 70 },
+    { h: 7, icon:'twilight', temp: 9,  uv: 1, hum: 68 },
+    { h: 8, icon:'sunny',    temp: 10, uv: 2, hum: 64 },
+    { h: 9, icon:'sunny',    temp: 12, uv: 3, hum: 60 },
+    { h:10, icon:'sunny',    temp: 14, uv: 4, hum: 55 },
+    { h:11, icon:'sunny',    temp: 15, uv: 5, hum: 51 },
+    { h:12, icon:'sunny',    temp: 17, uv: 5, hum: 48 },
+    { h:13, icon:'partly',   temp: 19, uv: 4, hum: 45 },
+    { h:14, icon:'partly',   temp: 18, uv: 4, hum: 46 },
+    { h:15, icon:'partly',   temp: 18, uv: 3, hum: 48 },
+    { h:16, icon:'partly',   temp: 17, uv: 2, hum: 50 },
+    { h:17, icon:'partly',   temp: 16, uv: 1, hum: 52 },
+    { h:18, icon:'twilight', temp: 14, uv: 0, hum: 57 },
+    { h:19, icon:'twilight', temp: 13, uv: 0, hum: 60 },
+    { h:20, icon:'night',    temp: 11, uv: 0, hum: 63 },
+    { h:21, icon:'night',    temp: 10, uv: 0, hum: 65 },
+    { h:22, icon:'night',    temp:  9, uv: 0, hum: 67 },
+    { h:23, icon:'night',    temp:  8, uv: 0, hum: 70 },
+  ];
+
+  // Build display list: current hour first, then next 11 hours (wrap at midnight)
+  const startIdx = hourly.findIndex(d => d.h === seoulHour);
+  const slots = Array.from({ length: 12 }, (_, i) => hourly[(startIdx + i) % 24]);
+
+  const scroll = document.getElementById('hourly-scroll');
+  if (!scroll) return;
+
+  scroll.innerHTML = slots.map((d, i) => {
+    const isCurrent = (i === 0);
+    const iconName  = ICON[d.icon] || 'partly_cloudy_day';
+    // Active slot: brighter background + white border
+    const boxCls = isCurrent
+      ? 'flex-shrink-0 w-14 bg-white/22 rounded-DEFAULT px-1 py-2.5 text-center border border-white/70'
+      : 'flex-shrink-0 w-14 bg-white/10 rounded-DEFAULT px-1 py-2.5 text-center';
+    const timeCls  = isCurrent ? 'text-white text-[0.58rem] font-black' : 'text-white/70 text-[0.58rem]';
+    const tempCls  = isCurrent ? 'text-white font-black text-xs'        : 'text-white font-bold text-xs';
+    const dataCls  = isCurrent ? 'text-white/90 text-[0.5rem] mt-0.5'  : 'text-white/55 text-[0.5rem] mt-0.5';
+    const uvLabel  = d.uv === 0 ? 'UV—' : `UV${d.uv}`;
+    return `<div class="${boxCls}">
+        <p class="${timeCls}">${pad(d.h)}時</p>
+        <span class="material-symbols-outlined text-white fill-icon text-lg my-1">${iconName}</span>
+        <p class="${tempCls}">${d.temp}°</p>
+        <p class="${dataCls}">${uvLabel}</p>
+        <p class="text-white/55 text-[0.5rem]">${d.hum}%</p>
+      </div>`;
+  }).join('');
+
+  // Auto-scroll so current slot is visible (it's first, so no-op, but just in case)
+  scroll.scrollLeft = 0;
+}
 </script>
 </body>
 </html>
