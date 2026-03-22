@@ -156,9 +156,28 @@
   #toast.show { opacity: 1; }
 
   /* Nav active state */
+  .nav-item { color: #aeb3b5; }
   .nav-item.nav-active { color: #c1000d; }
-  .nav-item.nav-active .nav-dot { opacity: 1; }
-  .nav-dot { width: 4px; height: 4px; border-radius: 9999px; background: #c1000d; opacity: 0; transition: opacity 0.2s; }
+  .nav-item .nav-ring {
+    width: 44px; height: 44px; border-radius: 9999px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
+    border: 2px solid transparent; transition: border-color 0.2s, background 0.2s;
+  }
+  .nav-item.nav-active .nav-ring {
+    border-color: #c1000d;
+    background: #c1000d10;
+  }
+  /* toolbox centre pill: same ring treatment, no separate bubble bg */
+  .nav-item .nav-ring-toolbox {
+    width: 52px; height: 52px; border-radius: 9999px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
+    border: 2px solid transparent; transition: border-color 0.2s, background 0.2s;
+    background: #ebeef0;
+  }
+  .nav-item.nav-active .nav-ring-toolbox {
+    border-color: #c1000d;
+    background: #c1000d12;
+  }
 
   /* Itinerary timeline */
   .timeline-line {
@@ -252,13 +271,17 @@
 <main id="page-home" class="page active pt-20 px-5">
 
   <!-- Hero Banner -->
-  <section class="hero-gradient skyline-decoration relative rounded-xl overflow-hidden p-7 mb-8 animate-in delay-1">
+  <section class="relative rounded-xl overflow-hidden p-7 mb-8 animate-in delay-1" style="min-height:200px;">
+    <!-- Cherry blossom background image -->
+    <div class="absolute inset-0 z-0" style="background:url('https://images.unsplash.com/photo-1522383225653-ed111181a951?w=800&q=80') center/cover no-repeat;"></div>
+    <!-- Dark gradient overlay for text legibility -->
+    <div class="absolute inset-0 z-0" style="background:linear-gradient(135deg, rgba(30,10,10,0.72) 0%, rgba(193,0,13,0.55) 50%, rgba(80,10,10,0.45) 100%);"></div>
     <div class="relative z-10">
-      <span class="font-label text-[0.6rem] text-white/70 uppercase tracking-[0.15em] font-bold block mb-2">2025年春季旅行</span>
-      <h2 class="font-headline font-black text-white text-[2.8rem] leading-[1.05] tracking-tight mb-1">首爾<br/>之旅</h2>
-      <p class="text-white/85 text-sm font-body mt-3 leading-relaxed max-w-[220px]">4月7日出發 · 3晚4天 · 醫美＋賞櫻之旅</p>
+      <span class="font-label text-[0.6rem] text-white/80 uppercase tracking-[0.15em] font-bold block mb-2">2026年春季旅行</span>
+      <h2 class="font-headline font-black text-white text-[2.8rem] leading-[1.05] tracking-tight mb-1" style="text-shadow:0 2px 12px rgba(0,0,0,0.4);">首爾<br/>之旅</h2>
+      <p class="text-white/90 text-sm font-body mt-3 leading-relaxed max-w-[220px]" style="text-shadow:0 1px 6px rgba(0,0,0,0.5);">4月7日出發 · 3晚4天 · 醫美＋賞櫻之旅</p>
       <div class="flex gap-2 mt-5">
-        <button onclick="navigateTo('trip')" class="bg-white/20 backdrop-blur-sm text-white text-xs font-bold px-4 py-2 rounded-full border border-white/30 transition-transform active:scale-95 hover:bg-white/30">
+        <button onclick="navigateTo('trip')" class="bg-white/25 backdrop-blur-sm text-white text-xs font-bold px-4 py-2 rounded-full border border-white/40 transition-transform active:scale-95 hover:bg-white/35">
           查看行程
         </button>
         <button onclick="navigateTo('toolbox')" class="bg-white text-primary text-xs font-bold px-4 py-2 rounded-full transition-transform active:scale-95">
@@ -266,9 +289,6 @@
         </button>
       </div>
     </div>
-    <!-- Decorative circles -->
-    <div class="absolute -right-8 -top-8 w-40 h-40 rounded-full bg-white/5"></div>
-    <div class="absolute -right-4 top-12 w-24 h-24 rounded-full bg-white/8"></div>
   </section>
 
   <!-- Quick Stats -->
@@ -349,42 +369,126 @@
   <!-- Weather -->
   <section class="mb-8 animate-in delay-3">
     <span class="font-label text-[0.6rem] text-primary uppercase tracking-[0.15em] font-bold block mb-3 px-1">Weather · 首爾天氣</span>
-    <div class="bg-gradient-to-br from-secondary to-secondary-dim rounded-lg p-5 editorial-shadow">
-      <div class="flex items-start justify-between">
-        <div>
-          <div class="flex items-end gap-1">
-            <span class="font-headline font-black text-[3.5rem] text-white leading-none tracking-tight">8°</span>
-            <span class="text-white/70 font-body text-sm mb-3">C</span>
+    <div class="bg-gradient-to-br from-secondary to-secondary-dim rounded-lg editorial-shadow overflow-hidden">
+      <!-- Main weather -->
+      <div class="p-5">
+        <div class="flex items-start justify-between">
+          <div>
+            <div class="flex items-end gap-1">
+              <span class="font-headline font-black text-[3.5rem] text-white leading-none tracking-tight">14°</span>
+              <span class="text-white/70 font-body text-sm mb-3">C</span>
+            </div>
+            <p class="text-white font-bold">晴時多雲</p>
+            <p class="text-white/70 text-xs mt-0.5">首爾，韓國 · 4月7日</p>
           </div>
-          <p class="text-white font-bold">多雲轉晴</p>
-          <p class="text-white/70 text-xs mt-1">體感 5° · 濕度 42%</p>
+          <div class="text-right">
+            <span class="material-symbols-outlined text-white/80 fill-icon text-5xl">partly_cloudy_day</span>
+            <div class="flex gap-3 mt-2 justify-end">
+              <div class="text-center">
+                <p class="text-white/50 text-[0.55rem] uppercase">最高</p>
+                <p class="text-white font-bold text-sm">19°</p>
+              </div>
+              <div class="text-center">
+                <p class="text-white/50 text-[0.55rem] uppercase">最低</p>
+                <p class="text-white font-bold text-sm">8°</p>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="text-right">
-          <span class="material-symbols-outlined text-white/80 fill-icon text-5xl">partly_cloudy_day</span>
-          <p class="text-white/70 text-xs mt-1">首爾，韓國</p>
+        <!-- Key stats row -->
+        <div class="grid grid-cols-4 gap-2 mt-4 pt-4 border-t border-white/15">
+          <div class="text-center">
+            <span class="material-symbols-outlined text-white/70 text-base fill-icon">thermostat</span>
+            <p class="text-white font-bold text-xs mt-0.5">11°</p>
+            <p class="text-white/55 text-[0.58rem]">體感</p>
+          </div>
+          <div class="text-center">
+            <span class="material-symbols-outlined text-white/70 text-base fill-icon">water_drop</span>
+            <p class="text-white font-bold text-xs mt-0.5">55%</p>
+            <p class="text-white/55 text-[0.58rem]">濕度</p>
+          </div>
+          <div class="text-center">
+            <span class="material-symbols-outlined text-white/70 text-base fill-icon">wb_sunny</span>
+            <p class="text-white font-bold text-xs mt-0.5">UV 4</p>
+            <p class="text-white/55 text-[0.58rem]">紫外線</p>
+          </div>
+          <div class="text-center">
+            <span class="material-symbols-outlined text-white/70 text-base fill-icon">air</span>
+            <p class="text-white font-bold text-xs mt-0.5">良好</p>
+            <p class="text-white/55 text-[0.58rem]">空氣品質</p>
+          </div>
         </div>
       </div>
-      <div class="grid grid-cols-4 gap-2 mt-4 pt-4 border-t border-white/15">
-        <div class="text-center">
-          <p class="text-white/60 text-[0.6rem] uppercase tracking-wide">週一</p>
-          <span class="material-symbols-outlined text-white text-xl my-1">wb_sunny</span>
-          <p class="text-white font-bold text-xs">17°/9°</p>
+      <!-- Hourly forecast — horizontal scroll -->
+      <div class="border-t border-white/15 px-3 pb-4 pt-3">
+        <p class="text-white/60 text-[0.58rem] uppercase tracking-wider px-2 mb-2">每小時預報</p>
+        <div class="flex gap-1 overflow-x-auto pb-1" style="scrollbar-width:none;">
+          <!-- each hourly block -->
+          <div class="flex-shrink-0 w-14 bg-white/10 rounded-DEFAULT px-1 py-2.5 text-center">
+            <p class="text-white/60 text-[0.58rem]">07時</p>
+            <span class="material-symbols-outlined text-white fill-icon text-lg my-1">wb_twilight</span>
+            <p class="text-white font-bold text-xs">9°</p>
+            <p class="text-white/55 text-[0.5rem] mt-0.5">UV1</p>
+            <p class="text-white/55 text-[0.5rem]">60%</p>
+          </div>
+          <div class="flex-shrink-0 w-14 bg-white/10 rounded-DEFAULT px-1 py-2.5 text-center">
+            <p class="text-white/60 text-[0.58rem]">09時</p>
+            <span class="material-symbols-outlined text-white fill-icon text-lg my-1">wb_sunny</span>
+            <p class="text-white font-bold text-xs">12°</p>
+            <p class="text-white/55 text-[0.5rem] mt-0.5">UV3</p>
+            <p class="text-white/55 text-[0.5rem]">52%</p>
+          </div>
+          <div class="flex-shrink-0 w-14 bg-white/10 rounded-DEFAULT px-1 py-2.5 text-center">
+            <p class="text-white/60 text-[0.58rem]">11時</p>
+            <span class="material-symbols-outlined text-white fill-icon text-lg my-1">wb_sunny</span>
+            <p class="text-white font-bold text-xs">15°</p>
+            <p class="text-white/55 text-[0.5rem] mt-0.5">UV5</p>
+            <p class="text-white/55 text-[0.5rem]">48%</p>
+          </div>
+          <div class="flex-shrink-0 w-14 bg-white/15 rounded-DEFAULT px-1 py-2.5 text-center border border-white/30">
+            <p class="text-white/80 text-[0.58rem] font-bold">13時</p>
+            <span class="material-symbols-outlined text-white fill-icon text-lg my-1">partly_cloudy_day</span>
+            <p class="text-white font-black text-xs">19°</p>
+            <p class="text-white/70 text-[0.5rem] mt-0.5">UV4</p>
+            <p class="text-white/70 text-[0.5rem]">45%</p>
+          </div>
+          <div class="flex-shrink-0 w-14 bg-white/10 rounded-DEFAULT px-1 py-2.5 text-center">
+            <p class="text-white/60 text-[0.58rem]">15時</p>
+            <span class="material-symbols-outlined text-white fill-icon text-lg my-1">partly_cloudy_day</span>
+            <p class="text-white font-bold text-xs">18°</p>
+            <p class="text-white/55 text-[0.5rem] mt-0.5">UV3</p>
+            <p class="text-white/55 text-[0.5rem]">50%</p>
+          </div>
+          <div class="flex-shrink-0 w-14 bg-white/10 rounded-DEFAULT px-1 py-2.5 text-center">
+            <p class="text-white/60 text-[0.58rem]">17時</p>
+            <span class="material-symbols-outlined text-white fill-icon text-lg my-1">partly_cloudy_day</span>
+            <p class="text-white font-bold text-xs">16°</p>
+            <p class="text-white/55 text-[0.5rem] mt-0.5">UV1</p>
+            <p class="text-white/55 text-[0.5rem]">55%</p>
+          </div>
+          <div class="flex-shrink-0 w-14 bg-white/10 rounded-DEFAULT px-1 py-2.5 text-center">
+            <p class="text-white/60 text-[0.58rem]">19時</p>
+            <span class="material-symbols-outlined text-white fill-icon text-lg my-1">wb_twilight</span>
+            <p class="text-white font-bold text-xs">13°</p>
+            <p class="text-white/55 text-[0.5rem] mt-0.5">UV0</p>
+            <p class="text-white/55 text-[0.5rem]">60%</p>
+          </div>
+          <div class="flex-shrink-0 w-14 bg-white/10 rounded-DEFAULT px-1 py-2.5 text-center">
+            <p class="text-white/60 text-[0.58rem]">21時</p>
+            <span class="material-symbols-outlined text-white fill-icon text-lg my-1">nights_stay</span>
+            <p class="text-white font-bold text-xs">10°</p>
+            <p class="text-white/55 text-[0.5rem] mt-0.5">UV0</p>
+            <p class="text-white/55 text-[0.5rem]">65%</p>
+          </div>
+          <div class="flex-shrink-0 w-14 bg-white/10 rounded-DEFAULT px-1 py-2.5 text-center">
+            <p class="text-white/60 text-[0.58rem]">23時</p>
+            <span class="material-symbols-outlined text-white fill-icon text-lg my-1">nights_stay</span>
+            <p class="text-white font-bold text-xs">8°</p>
+            <p class="text-white/55 text-[0.5rem] mt-0.5">UV0</p>
+            <p class="text-white/55 text-[0.5rem]">70%</p>
+          </div>
         </div>
-        <div class="text-center">
-          <p class="text-white/60 text-[0.6rem] uppercase tracking-wide">週二</p>
-          <span class="material-symbols-outlined text-white text-xl my-1">wb_sunny</span>
-          <p class="text-white font-bold text-xs">19°/10°</p>
-        </div>
-        <div class="text-center">
-          <p class="text-white/60 text-[0.6rem] uppercase tracking-wide">週三</p>
-          <span class="material-symbols-outlined text-white text-xl my-1">partly_cloudy_day</span>
-          <p class="text-white font-bold text-xs">16°/8°</p>
-        </div>
-        <div class="text-center">
-          <p class="text-white/60 text-[0.6rem] uppercase tracking-wide">週四</p>
-          <span class="material-symbols-outlined text-white text-xl my-1">wb_sunny</span>
-          <p class="text-white font-bold text-xs">18°/10°</p>
-        </div>
+        <p class="text-white/40 text-[0.55rem] text-right mt-2 px-1">每格：溫度 · 紫外線 · 濕度</p>
       </div>
     </div>
   </section>
@@ -413,7 +517,7 @@
         </div>
         <div>
           <p class="font-bold text-sm">預算</p>
-          <p class="text-[0.65rem] text-on-surface-variant">已用 43%</p>
+          <p class="text-[0.65rem] text-on-surface-variant" id="home-budget-pct">已用 0%</p>
         </div>
       </button>
       <button onclick="showModal('transport')" class="bg-surface-container-lowest rounded-lg editorial-shadow p-5 flex items-center gap-3 text-left transition-transform active:scale-95">
@@ -582,7 +686,7 @@
   <!-- Day 2 -->
   <div class="trip-day mb-6 animate-in delay-3" data-day="2">
     <div class="bg-surface-container-lowest rounded-lg editorial-shadow overflow-hidden">
-      <div class="bg-gradient-to-r from-[#ac3149] to-[#ffaca1] px-5 py-4 flex items-center justify-between">
+      <div class="bg-gradient-to-r from-[#0e7490] to-[#67e8f9] px-5 py-4 flex items-center justify-between">
         <div>
           <p class="font-headline font-black text-white text-lg">Day 2 · 4月8日（二）</p>
           <p class="text-white/80 text-xs">LOVAE醫美 · 望遠市場 · 汝矣島賞櫻 · 弘大</p>
@@ -1250,27 +1354,30 @@
 </main>
 
 <!-- ══════════════════════════ BOTTOM NAV ══════════════════════════ -->
-<nav class="fixed bottom-0 left-0 w-full max-w-2xl flex justify-around items-end pb-5 px-4 bg-[#f8f9fa]/85 backdrop-blur-2xl z-50 rounded-t-[2.5rem] ambient-shadow" style="left:50%;transform:translateX(-50%);">
-  <button onclick="navigateTo('home')" class="nav-item flex flex-col items-center justify-center text-outline p-3 transition-all duration-200 active:scale-90 nav-active" id="nav-home">
-    <span class="material-symbols-outlined fill-icon">home</span>
-    <span class="text-[0.6rem] font-bold uppercase tracking-widest mt-0.5 font-label">首頁</span>
-    <div class="nav-dot mt-0.5"></div>
-  </button>
-  <button onclick="navigateTo('trip')" class="nav-item flex flex-col items-center justify-center text-outline p-3 transition-all duration-200 active:scale-90" id="nav-trip">
-    <span class="material-symbols-outlined">explore</span>
-    <span class="text-[0.6rem] font-bold uppercase tracking-widest mt-0.5 font-label">行程</span>
-    <div class="nav-dot mt-0.5"></div>
-  </button>
-  <button onclick="navigateTo('toolbox')" class="nav-item flex flex-col items-center justify-center -translate-y-4 transition-all duration-200 active:scale-90" id="nav-toolbox">
-    <div class="w-14 h-14 rounded-full bg-gradient-to-tr from-primary to-primary-container flex flex-col items-center justify-center shadow-lg">
-      <span class="material-symbols-outlined text-white fill-icon text-xl">construction</span>
-      <span class="text-[0.5rem] font-bold uppercase text-white/90 font-label">工具</span>
+<nav class="fixed bottom-0 left-0 w-full max-w-2xl flex justify-around items-center pb-5 pt-2 px-4 bg-[#f8f9fa]/88 backdrop-blur-2xl z-50 rounded-t-[2rem] ambient-shadow" style="left:50%;transform:translateX(-50%);">
+  <button onclick="navigateTo('home')" class="nav-item flex flex-col items-center gap-0.5 transition-all duration-200 active:scale-90 nav-active" id="nav-home">
+    <div class="nav-ring">
+      <span class="material-symbols-outlined text-xl fill-icon">home</span>
     </div>
+    <span class="text-[0.58rem] font-bold uppercase tracking-wider font-label">首頁</span>
   </button>
-  <button onclick="navigateTo('budget')" class="nav-item flex flex-col items-center justify-center text-outline p-3 transition-all duration-200 active:scale-90" id="nav-budget">
-    <span class="material-symbols-outlined">payments</span>
-    <span class="text-[0.6rem] font-bold uppercase tracking-widest mt-0.5 font-label">預算</span>
-    <div class="nav-dot mt-0.5"></div>
+  <button onclick="navigateTo('trip')" class="nav-item flex flex-col items-center gap-0.5 transition-all duration-200 active:scale-90" id="nav-trip">
+    <div class="nav-ring">
+      <span class="material-symbols-outlined text-xl">explore</span>
+    </div>
+    <span class="text-[0.58rem] font-bold uppercase tracking-wider font-label">行程</span>
+  </button>
+  <button onclick="navigateTo('toolbox')" class="nav-item flex flex-col items-center gap-0.5 -translate-y-2 transition-all duration-200 active:scale-90" id="nav-toolbox">
+    <div class="nav-ring-toolbox">
+      <span class="material-symbols-outlined text-xl" id="nav-toolbox-icon">construction</span>
+    </div>
+    <span class="text-[0.58rem] font-bold uppercase tracking-wider font-label" id="nav-toolbox-label">工具</span>
+  </button>
+  <button onclick="navigateTo('budget')" class="nav-item flex flex-col items-center gap-0.5 transition-all duration-200 active:scale-90" id="nav-budget">
+    <div class="nav-ring">
+      <span class="material-symbols-outlined text-xl">payments</span>
+    </div>
+    <span class="text-[0.58rem] font-bold uppercase tracking-wider font-label">預算</span>
   </button>
 </nav>
 
@@ -1287,9 +1394,12 @@
 
 <!-- ══════════════════════════ JAVASCRIPT ══════════════════════════ -->
 <script>
-// ── Navigation ──
+// ══════════════════════════════════════════════════════════════════
+// ── NAVIGATION ──
+// ══════════════════════════════════════════════════════════════════
 const pages = ['home','trip','toolbox','budget'];
 const titles = { home:'首頁', trip:'行程規劃', toolbox:'旅行工具箱', budget:'預算追蹤' };
+
 function navigateTo(page) {
   pages.forEach(p => {
     document.getElementById('page-'+p).classList.remove('active');
@@ -1300,13 +1410,23 @@ function navigateTo(page) {
   const nav = document.getElementById('nav-'+page);
   if (nav) nav.classList.add('nav-active');
   document.getElementById('page-title').textContent = titles[page];
+  updateToolboxBubble(page === 'toolbox');
   window.scrollTo({ top:0, behavior:'smooth' });
 }
 
-// ── Side Menu ──
+function updateToolboxBubble(isActive) {
+  // The ring CSS handles active state automatically via nav-active class
+  // Just update icon fill for the toolbox icon
+  const icon = document.getElementById('nav-toolbox-icon');
+  if (icon) {
+    icon.style.fontVariationSettings = isActive
+      ? "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24"
+      : "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24";
+  }
+}
+
 function toggleMenu() { document.getElementById('menu-overlay').classList.toggle('hidden'); }
 
-// ── Toast ──
 let toastTimer;
 function showToast(msg) {
   const t = document.getElementById('toast');
@@ -1315,7 +1435,6 @@ function showToast(msg) {
   toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-// ── Phrase Audio ──
 function playPhrase(text) {
   if ('speechSynthesis' in window) {
     speechSynthesis.cancel();
@@ -1325,14 +1444,12 @@ function playPhrase(text) {
   } else showToast('您的裝置不支援語音播放');
 }
 
-// ── Filter Days ──
 function filterDay(day, btn) {
   document.querySelectorAll('.tag-pill').forEach(p => { p.classList.remove('selected'); p.style.background=''; p.style.color=''; });
   btn.classList.add('selected');
   document.querySelectorAll('.trip-day').forEach(d => { d.style.display=(day===0||parseInt(d.dataset.day)===day)?'block':'none'; });
 }
 
-// ── Expand Day ──
 function expandDay(btn) {
   const c = btn.closest('.p-5').querySelector('.expanded-content');
   if (!c) return;
@@ -1343,6 +1460,42 @@ function expandDay(btn) {
 }
 
 // ══════════════════════════════════════════════════════════════════
+// ── PERSISTENCE ──
+// ══════════════════════════════════════════════════════════════════
+const LS_KEY = 'seoul_travel_v1';
+
+function saveToStorage() {
+  try {
+    const data = { totalBudget, exchangeRate, nextTxId,
+      transactions: transactions.map(tx => ({ id:tx.id, name:tx.name, amount:tx.amount, date:tx.date, cat:tx.cat, imgs:tx.imgs||[] }))
+    };
+    localStorage.setItem(LS_KEY, JSON.stringify(data));
+  } catch(e) {
+    showToast('⚠️ 圖片過大，儲存可能不完整');
+    console.warn('localStorage save failed:', e);
+  }
+}
+
+function loadFromStorage() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) return false;
+    const data = JSON.parse(raw);
+    if (data.totalBudget)  totalBudget  = data.totalBudget;
+    if (data.exchangeRate) exchangeRate = data.exchangeRate;
+    if (data.nextTxId)     nextTxId     = data.nextTxId;
+    if (Array.isArray(data.transactions)) transactions = data.transactions.map(tx => ({ ...tx, imgs:tx.imgs||[] }));
+    return true;
+  } catch(e) { console.warn('localStorage load failed:', e); return false; }
+}
+
+function clearStorage() {
+  localStorage.removeItem(LS_KEY);
+  closeModal();
+  showToast('資料已清除，重新整理頁面生效');
+}
+
+// ══════════════════════════════════════════════════════════════════
 // ── BUDGET STATE ──
 // ══════════════════════════════════════════════════════════════════
 let totalBudget = 800000;
@@ -1350,25 +1503,23 @@ let exchangeRate = 43.2;
 let swapped = false;
 let nextTxId = 6;
 
-// Category config — icon / colour / bar colour
 const CAT_CFG = {
-  '住宿': { icon:'hotel',              bar:'bg-primary',       iconCls:'text-primary fill-icon' },
-  '餐飲': { icon:'restaurant',         bar:'bg-secondary',     iconCls:'text-secondary fill-icon' },
-  '購物': { icon:'shopping_bag',       bar:'bg-tertiary',      iconCls:'text-tertiary fill-icon' },
-  '交通': { icon:'directions_subway',  bar:'bg-[#036881]',     iconCls:'text-[#036881] fill-icon' },
-  '門票': { icon:'confirmation_number',bar:'bg-[#ac3149]',     iconCls:'text-[#ac3149] fill-icon' },
-  '醫美': { icon:'spa',               bar:'bg-[#9333ea]',     iconCls:'text-[#9333ea] fill-icon' },
-  '其他': { icon:'more_horiz',         bar:'bg-outline',       iconCls:'text-on-surface-variant' },
+  '住宿': { icon:'hotel',               bar:'bg-primary',    iconCls:'text-primary fill-icon' },
+  '餐飲': { icon:'restaurant',          bar:'bg-secondary',  iconCls:'text-secondary fill-icon' },
+  '購物': { icon:'shopping_bag',        bar:'bg-tertiary',   iconCls:'text-tertiary fill-icon' },
+  '交通': { icon:'directions_subway',   bar:'bg-[#036881]',  iconCls:'text-[#036881] fill-icon' },
+  '門票': { icon:'confirmation_number', bar:'bg-[#ac3149]',  iconCls:'text-[#ac3149] fill-icon' },
+  '醫美': { icon:'spa',                bar:'bg-[#9333ea]',  iconCls:'text-[#9333ea] fill-icon' },
+  '其他': { icon:'more_horiz',          bar:'bg-outline',    iconCls:'text-on-surface-variant' },
 };
 const CAT_LIST = Object.keys(CAT_CFG);
 
-// Initial transactions
 let transactions = [
-  { id:1, name:'機場快線 AREX',           amount:9500,   date:'4/7',  cat:'交通', imgs:[] },
+  { id:1, name:'機場快線 AREX',               amount:9500,   date:'4/7',  cat:'交通', imgs:[] },
   { id:2, name:'Hotel The Designers（訂金）', amount:150000, date:'預付', cat:'住宿', imgs:[] },
-  { id:3, name:'T-Money 儲值',             amount:30500,  date:'4/7',  cat:'交通', imgs:[] },
-  { id:4, name:'N首爾塔纜車票',            amount:22000,  date:'4/7',  cat:'門票', imgs:[] },
-  { id:5, name:'望遠市場草莓＋小吃',       amount:18000,  date:'4/8',  cat:'餐飲', imgs:[] },
+  { id:3, name:'T-Money 儲值',                amount:30500,  date:'4/7',  cat:'交通', imgs:[] },
+  { id:4, name:'N首爾塔纜車票',               amount:22000,  date:'4/7',  cat:'門票', imgs:[] },
+  { id:5, name:'望遠市場草莓＋小吃',          amount:18000,  date:'4/8',  cat:'餐飲', imgs:[] },
 ];
 
 // ── Budget edit ──
@@ -1384,7 +1535,7 @@ function cancelBudgetEdit() {
 }
 function saveBudgetTotal() {
   const v = parseInt(document.getElementById('budget-total-input').value);
-  if (v > 0) { totalBudget = v; cancelBudgetEdit(); renderAll(); showToast('總預算已更新 ✓'); }
+  if (v > 0) { totalBudget = v; cancelBudgetEdit(); saveToStorage(); renderAll(); showToast('總預算已更新 ✓'); }
   else showToast('請輸入有效金額');
 }
 
@@ -1393,31 +1544,38 @@ function renderAll() {
   renderOverview();
   renderCategoryBreakdown();
   renderTransactions();
+  renderHomeBudgetCard();
 }
 
-// ── Overview ──
 function renderOverview() {
   const used = transactions.reduce((s,t) => s+t.amount, 0);
   const pct  = totalBudget > 0 ? Math.min(100, Math.round(used/totalBudget*100)) : 0;
   const rem  = totalBudget - used;
-  document.getElementById('budget-total-display').textContent = '₩'+totalBudget.toLocaleString();
-  document.getElementById('budget-twd-equiv').textContent     = '≈ TWD '+(totalBudget/exchangeRate).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,',');
-  document.getElementById('budget-used-amount').textContent   = '₩'+used.toLocaleString();
+  const fmt  = n => n.toLocaleString();
+  document.getElementById('budget-total-display').textContent = '₩'+fmt(totalBudget);
+  document.getElementById('budget-twd-equiv').textContent     = '≈ TWD '+Math.round(totalBudget/exchangeRate).toLocaleString();
+  document.getElementById('budget-used-amount').textContent   = '₩'+fmt(used);
   document.getElementById('budget-used-pct').textContent      = pct+'%';
-  document.getElementById('budget-remaining').textContent     = '剩餘 ₩'+Math.max(0,rem).toLocaleString();
+  document.getElementById('budget-remaining').textContent     = '剩餘 ₩'+fmt(Math.max(0,rem));
   document.getElementById('budget-bar').style.width           = pct+'%';
 }
 
-// ── Category Breakdown ──
+function renderHomeBudgetCard() {
+  const used = transactions.reduce((s,t) => s+t.amount, 0);
+  const pct  = totalBudget > 0 ? Math.min(100, Math.round(used/totalBudget*100)) : 0;
+  const el = document.getElementById('home-budget-pct');
+  if (el) el.textContent = '已用 '+pct+'%';
+}
+
 function renderCategoryBreakdown() {
   const container = document.getElementById('cat-breakdown');
   if (!container) return;
   let html = '';
   CAT_LIST.forEach(cat => {
-    const cfg = CAT_CFG[cat];
-    const total = transactions.filter(t=>t.cat===cat).reduce((s,t)=>s+t.amount,0);
-    const pct = totalBudget>0 ? Math.min(100,Math.round(total/totalBudget*100)) : 0;
-    const pctLabel = total===0 ? '尚未消費' : pct+'%';
+    const cfg   = CAT_CFG[cat];
+    const total = transactions.filter(t=>t.cat===cat).reduce((s,t)=>s+t.amount, 0);
+    const pct   = totalBudget>0 ? Math.min(100,Math.round(total/totalBudget*100)) : 0;
+    const label = total===0 ? '尚未消費' : pct+'%';
     html += `
       <div>
         <div class="flex justify-between items-center mb-2">
@@ -1430,26 +1588,22 @@ function renderCategoryBreakdown() {
         <div class="progress-bar">
           <div class="progress-fill ${cfg.bar}" style="width:${pct}%"></div>
         </div>
-        <p class="text-[0.6rem] text-on-surface-variant mt-1">${pctLabel}</p>
+        <p class="text-[0.6rem] text-on-surface-variant mt-1">${label}</p>
       </div>`;
   });
   container.innerHTML = html || '<p class="text-sm text-on-surface-variant">尚無消費記錄</p>';
 }
 
-// ── Transactions list ──
 function renderTransactions() {
   const list = document.getElementById('transactions-list');
   if (!list) return;
-  document.getElementById('tx-count-label').textContent = `共 ${transactions.length} 筆`;
-  if (transactions.length===0) {
-    list.innerHTML='<p class="text-center text-on-surface-variant text-sm py-6">尚無消費記錄</p>';
-    return;
-  }
+  document.getElementById('tx-count-label').textContent = '共 '+transactions.length+' 筆';
+  if (transactions.length===0) { list.innerHTML='<p class="text-center text-on-surface-variant text-sm py-6">尚無消費記錄</p>'; return; }
   list.innerHTML = transactions.map((tx,idx) => {
-    const cfg = CAT_CFG[tx.cat]||CAT_CFG['其他'];
+    const cfg     = CAT_CFG[tx.cat]||CAT_CFG['其他'];
     const divider = idx<transactions.length-1 ? '<div class="h-px bg-outline-variant/10"></div>' : '';
-    const thumbs = (tx.imgs||[]).slice(0,3).map(src=>`<img src="${src}" class="w-8 h-8 rounded object-cover flex-shrink-0" />`).join('');
-    const extraCount = (tx.imgs||[]).length > 3 ? `<span class="text-[0.6rem] text-on-surface-variant">+${tx.imgs.length-3}</span>` : '';
+    const thumbs  = (tx.imgs||[]).slice(0,3).map(src=>`<img src="${src}" class="w-8 h-8 rounded object-cover flex-shrink-0" />`).join('');
+    const extra   = (tx.imgs||[]).length>3 ? `<span class="text-[0.6rem] text-on-surface-variant">+${tx.imgs.length-3}</span>` : '';
     return `
       <div class="flex items-center justify-between py-3 gap-3">
         <div class="flex items-center gap-3 flex-1 min-w-0">
@@ -1459,7 +1613,7 @@ function renderTransactions() {
           <div class="min-w-0 flex-1">
             <p class="font-bold text-sm truncate">${tx.name}</p>
             <p class="text-xs text-on-surface-variant">${tx.date} · ${tx.cat}</p>
-            ${thumbs ? `<div class="flex items-center gap-1 mt-1">${thumbs}${extraCount}</div>` : ''}
+            ${thumbs ? `<div class="flex items-center gap-1 mt-1">${thumbs}${extra}</div>` : ''}
           </div>
         </div>
         <div class="flex items-center gap-2 flex-shrink-0">
@@ -1472,225 +1626,156 @@ function renderTransactions() {
   }).join('');
 }
 
-// ── Transaction CRUD ──
-function openEditTx(id) {
-  const tx = transactions.find(t=>t.id===id);
-  if (tx) showDynamicModal('editTx', tx);
-}
+// ── CRUD ──
+function openEditTx(id) { const tx=transactions.find(t=>t.id===id); if(tx) showDynamicModal('editTx',tx); }
 function deleteTx(id) {
-  transactions = transactions.filter(t=>t.id!==id);
-  renderAll(); closeModal(); showToast('已刪除消費記錄');
+  transactions=transactions.filter(t=>t.id!==id);
+  saveToStorage(); renderAll(); closeModal(); showToast('已刪除消費記錄');
 }
 function saveEditTx(id) {
-  const name   = document.getElementById('edit-name').value.trim();
-  const amount = parseInt(document.getElementById('edit-amount').value)||0;
-  const date   = document.getElementById('edit-date').value.trim();
-  const cat    = document.querySelector('#edit-cat-pills .selected')?.dataset.cat||'其他';
-  const imgs   = pendingImgs;
-  if (!name||!amount) { showToast('請填寫項目名稱與金額'); return; }
-  const tx = transactions.find(t=>t.id===id);
-  if (tx) { tx.name=name; tx.amount=amount; tx.date=date||tx.date; tx.cat=cat; tx.imgs=imgs; }
-  renderAll(); closeModal(); showToast('消費記錄已更新 ✓');
+  const name=document.getElementById('edit-name').value.trim();
+  const amount=parseInt(document.getElementById('edit-amount').value)||0;
+  const date=document.getElementById('edit-date').value.trim();
+  const cat=document.querySelector('#edit-cat-pills .selected')?.dataset.cat||'其他';
+  if(!name||!amount){showToast('請填寫項目名稱與金額');return;}
+  const tx=transactions.find(t=>t.id===id);
+  if(tx){tx.name=name;tx.amount=amount;tx.date=date||tx.date;tx.cat=cat;tx.imgs=[...pendingImgs];}
+  saveToStorage(); renderAll(); closeModal(); showToast('消費記錄已更新 ✓');
 }
 function addExpense() {
-  const name   = document.getElementById('new-name').value.trim();
-  const amount = parseInt(document.getElementById('new-amount').value)||0;
-  const date   = document.getElementById('new-date').value.trim()||'4/7';
-  const cat    = document.querySelector('#new-cat-pills .selected')?.dataset.cat||'其他';
-  const imgs   = pendingImgs;
-  if (!name)   { showToast('請輸入消費項目名稱'); return; }
-  if (!amount) { showToast('請輸入金額'); return; }
-  transactions.unshift({ id:nextTxId++, name, amount, date, cat, imgs });
-  renderAll(); closeModal(); showToast('✓ 消費記錄已新增');
+  const name=document.getElementById('new-name').value.trim();
+  const amount=parseInt(document.getElementById('new-amount').value)||0;
+  const date=document.getElementById('new-date').value.trim()||'4/7';
+  const cat=document.querySelector('#new-cat-pills .selected')?.dataset.cat||'其他';
+  if(!name){showToast('請輸入消費項目名稱');return;}
+  if(!amount){showToast('請輸入金額');return;}
+  transactions.unshift({id:nextTxId++,name,amount,date,cat,imgs:[...pendingImgs]});
+  saveToStorage(); renderAll(); closeModal(); showToast('✓ 消費記錄已新增');
 }
 
-// ── Image staging ──
-let pendingImgs = []; // base64 strings
-
-function buildImgUploader(prefix, existingImgs) {
-  const imgs = existingImgs||[];
-  return `
-    <div>
-      <p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">收據 / 照片（最多5張）</p>
-      <div id="${prefix}-img-preview" class="flex flex-wrap gap-2 mb-2">
-        ${imgs.map((src,i)=>`
-          <div class="relative w-16 h-16 flex-shrink-0">
-            <img src="${src}" class="w-16 h-16 rounded-DEFAULT object-cover" />
-            <button onclick="removeImg(${i},'${prefix}')" class="absolute -top-1 -right-1 w-5 h-5 bg-error rounded-full flex items-center justify-center text-white text-xs leading-none">×</button>
-          </div>`).join('')}
-        <label id="${prefix}-img-add" class="${imgs.length>=5?'hidden':''} w-16 h-16 rounded-DEFAULT border-2 border-dashed border-outline-variant/40 flex flex-col items-center justify-center cursor-pointer text-on-surface-variant hover:bg-surface-container-low transition-colors flex-shrink-0">
-          <span class="material-symbols-outlined text-xl">add_photo_alternate</span>
-          <span class="text-[0.55rem] mt-0.5">新增</span>
-          <input type="file" accept="image/*" multiple class="hidden" onchange="handleImgUpload(event,'${prefix}')" />
-        </label>
-      </div>
-      <p class="text-[0.6rem] text-on-surface-variant">支援 JPG、PNG、HEIC，可選 ${5-imgs.length} 張</p>
-    </div>`;
+// ── Images ──
+let pendingImgs=[];
+function buildImgUploader(prefix,existingImgs){
+  const imgs=existingImgs||[];
+  return `<div>
+    <p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">收據 / 照片（最多5張）</p>
+    <div id="${prefix}-img-preview" class="flex flex-wrap gap-2 mb-2">
+      ${imgs.map((src,i)=>`<div class="relative w-16 h-16 flex-shrink-0"><img src="${src}" class="w-16 h-16 rounded-DEFAULT object-cover" /><button onclick="removeImg(${i},'${prefix}')" class="absolute -top-1 -right-1 w-5 h-5 bg-error rounded-full flex items-center justify-center text-white text-xs leading-none">×</button></div>`).join('')}
+      <label class="${imgs.length>=5?'hidden':''} w-16 h-16 rounded-DEFAULT border-2 border-dashed border-outline-variant/40 flex flex-col items-center justify-center cursor-pointer text-on-surface-variant hover:bg-surface-container-low transition-colors flex-shrink-0">
+        <span class="material-symbols-outlined text-xl">add_photo_alternate</span>
+        <span class="text-[0.55rem] mt-0.5">新增</span>
+        <input type="file" accept="image/*" multiple class="hidden" onchange="handleImgUpload(event,'${prefix}')" />
+      </label>
+    </div>
+    <p class="text-[0.6rem] text-on-surface-variant">支援 JPG・PNG・HEIC，可上傳 ${5-imgs.length} 張</p>
+  </div>`;
+}
+function handleImgUpload(e,prefix){
+  const files=Array.from(e.target.files);const remaining=5-pendingImgs.length;let loaded=0;
+  files.slice(0,remaining).forEach(file=>{
+    const r=new FileReader();
+    r.onload=ev=>{pendingImgs.push(ev.target.result);loaded++;if(loaded===Math.min(files.length,remaining))refreshImgPreview(prefix);};
+    r.readAsDataURL(file);
+  });e.target.value='';
+}
+function removeImg(idx,prefix){pendingImgs.splice(idx,1);refreshImgPreview(prefix);}
+function refreshImgPreview(prefix){
+  const preview=document.getElementById(prefix+'-img-preview');if(!preview)return;
+  preview.innerHTML=pendingImgs.map((src,i)=>`<div class="relative w-16 h-16 flex-shrink-0"><img src="${src}" class="w-16 h-16 rounded-DEFAULT object-cover" /><button onclick="removeImg(${i},'${prefix}')" class="absolute -top-1 -right-1 w-5 h-5 bg-error rounded-full flex items-center justify-center text-white text-xs leading-none">×</button></div>`).join('')+
+    (pendingImgs.length<5?`<label class="w-16 h-16 rounded-DEFAULT border-2 border-dashed border-outline-variant/40 flex flex-col items-center justify-center cursor-pointer text-on-surface-variant hover:bg-surface-container-low transition-colors flex-shrink-0"><span class="material-symbols-outlined text-xl">add_photo_alternate</span><span class="text-[0.55rem] mt-0.5">新增</span><input type="file" accept="image/*" multiple class="hidden" onchange="handleImgUpload(event,'${prefix}')" /></label>`:'');
 }
 
-function handleImgUpload(e, prefix) {
-  const files = Array.from(e.target.files);
-  const remaining = 5 - pendingImgs.length;
-  files.slice(0, remaining).forEach(file => {
-    const reader = new FileReader();
-    reader.onload = ev => {
-      pendingImgs.push(ev.target.result);
-      refreshImgPreview(prefix);
-    };
-    reader.readAsDataURL(file);
-  });
-  e.target.value = ''; // reset input
-}
-
-function removeImg(idx, prefix) {
-  pendingImgs.splice(idx, 1);
-  refreshImgPreview(prefix);
-}
-
-function refreshImgPreview(prefix) {
-  const preview = document.getElementById(prefix+'-img-preview');
-  if (!preview) return;
-  preview.innerHTML = pendingImgs.map((src,i)=>`
-    <div class="relative w-16 h-16 flex-shrink-0">
-      <img src="${src}" class="w-16 h-16 rounded-DEFAULT object-cover" />
-      <button onclick="removeImg(${i},'${prefix}')" class="absolute -top-1 -right-1 w-5 h-5 bg-error rounded-full flex items-center justify-center text-white text-xs leading-none">×</button>
-    </div>`).join('') +
-    (pendingImgs.length < 5 ? `
-    <label class="w-16 h-16 rounded-DEFAULT border-2 border-dashed border-outline-variant/40 flex flex-col items-center justify-center cursor-pointer text-on-surface-variant hover:bg-surface-container-low transition-colors flex-shrink-0">
-      <span class="material-symbols-outlined text-xl">add_photo_alternate</span>
-      <span class="text-[0.55rem] mt-0.5">新增</span>
-      <input type="file" accept="image/*" multiple class="hidden" onchange="handleImgUpload(event,'${prefix}')" />
-    </label>` : '');
-}
-
-// ── Category pill selection ──
-function selectCatPill(btn, groupId) {
-  document.querySelectorAll('#'+groupId+' .tag-pill').forEach(b => {
-    b.classList.remove('selected','bg-primary','text-white');
-    b.classList.add('bg-surface-container','text-on-surface-variant');
-  });
-  btn.classList.add('selected','bg-primary','text-white');
-  btn.classList.remove('bg-surface-container','text-on-surface-variant');
+// ── Category pills ──
+function selectCatPill(btn,groupId){
+  document.querySelectorAll('#'+groupId+' .tag-pill').forEach(b=>{b.classList.remove('selected','bg-primary','text-white');b.classList.add('bg-surface-container','text-on-surface-variant');});
+  btn.classList.add('selected','bg-primary','text-white');btn.classList.remove('bg-surface-container','text-on-surface-variant');
 }
 
 // ── Dynamic modals ──
-function showDynamicModal(type, data) {
-  const cats = CAT_LIST;
-  let html = '';
-
-  if (type==='addExpense') {
-    pendingImgs = [];
-    html = `
-      <h3 class="font-headline font-bold text-xl mb-5">新增消費記錄</h3>
-      <div class="space-y-4">
-        <div>
-          <p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">消費項目</p>
-          <input id="new-name" type="text" placeholder="例：N首爾塔纜車票" class="w-full bg-surface-container-high rounded-DEFAULT p-3 text-sm outline-none font-body" />
-        </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">金額（₩）</p>
-            <input id="new-amount" type="number" placeholder="11000" class="w-full bg-surface-container-high rounded-DEFAULT p-3 text-sm outline-none font-body" />
-          </div>
-          <div>
-            <p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">日期</p>
-            <input id="new-date" type="text" placeholder="4/7" class="w-full bg-surface-container-high rounded-DEFAULT p-3 text-sm outline-none font-body" />
-          </div>
-        </div>
-        <div>
-          <p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">分類</p>
-          <div id="new-cat-pills" class="flex flex-wrap gap-2">
-            ${cats.map((c,i)=>`<button data-cat="${c}" onclick="selectCatPill(this,'new-cat-pills')" class="tag-pill font-label text-[0.65rem] font-bold px-3 py-1.5 rounded-full ${i===0?'bg-primary text-white selected':'bg-surface-container text-on-surface-variant'}">${c}</button>`).join('')}
-          </div>
-        </div>
-        ${buildImgUploader('new', [])}
+function showDynamicModal(type,data){
+  const cats=CAT_LIST;let html='';
+  if(type==='addExpense'){
+    pendingImgs=[];
+    html=`<h3 class="font-headline font-bold text-xl mb-5">新增消費記錄</h3>
+    <div class="space-y-4">
+      <div><p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">消費項目</p>
+        <input id="new-name" type="text" placeholder="例：N首爾塔纜車票" class="w-full bg-surface-container-high rounded-DEFAULT p-3 text-sm outline-none font-body" /></div>
+      <div class="grid grid-cols-2 gap-3">
+        <div><p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">金額（₩）</p>
+          <input id="new-amount" type="number" placeholder="11000" class="w-full bg-surface-container-high rounded-DEFAULT p-3 text-sm outline-none font-body" /></div>
+        <div><p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">日期</p>
+          <input id="new-date" type="text" placeholder="4/7" class="w-full bg-surface-container-high rounded-DEFAULT p-3 text-sm outline-none font-body" /></div>
       </div>
-      <div class="flex gap-3 mt-6">
-        <button onclick="closeModal()" class="flex-1 bg-surface-container-high text-on-surface font-bold py-3 rounded-full active:scale-95 transition-transform">取消</button>
-        <button onclick="addExpense()" class="flex-1 bg-gradient-to-r from-primary to-primary-container text-white font-bold py-3 rounded-full active:scale-95 transition-transform">儲存</button>
-      </div>`;
+      <div><p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">分類</p>
+        <div id="new-cat-pills" class="flex flex-wrap gap-2">
+          ${cats.map((c,i)=>`<button data-cat="${c}" onclick="selectCatPill(this,'new-cat-pills')" class="tag-pill font-label text-[0.65rem] font-bold px-3 py-1.5 rounded-full ${i===0?'bg-primary text-white selected':'bg-surface-container text-on-surface-variant'}">${c}</button>`).join('')}
+        </div></div>
+      ${buildImgUploader('new',[])}
+    </div>
+    <div class="flex gap-3 mt-6">
+      <button onclick="closeModal()" class="flex-1 bg-surface-container-high text-on-surface font-bold py-3 rounded-full active:scale-95">取消</button>
+      <button onclick="addExpense()" class="flex-1 bg-gradient-to-r from-primary to-primary-container text-white font-bold py-3 rounded-full active:scale-95">儲存</button>
+    </div>`;
   }
-
-  if (type==='editTx') {
-    const tx = data;
-    pendingImgs = [...(tx.imgs||[])];
-    html = `
-      <h3 class="font-headline font-bold text-xl mb-5">編輯消費記錄</h3>
-      <div class="space-y-4">
-        <div>
-          <p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">消費項目</p>
-          <input id="edit-name" type="text" value="${tx.name.replace(/"/g,'&quot;')}" class="w-full bg-surface-container-high rounded-DEFAULT p-3 text-sm outline-none font-body" />
-        </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">金額（₩）</p>
-            <input id="edit-amount" type="number" value="${tx.amount}" class="w-full bg-surface-container-high rounded-DEFAULT p-3 text-sm outline-none font-body" />
-          </div>
-          <div>
-            <p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">日期</p>
-            <input id="edit-date" type="text" value="${tx.date}" class="w-full bg-surface-container-high rounded-DEFAULT p-3 text-sm outline-none font-body" />
-          </div>
-        </div>
-        <div>
-          <p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">分類</p>
-          <div id="edit-cat-pills" class="flex flex-wrap gap-2">
-            ${cats.map(c=>`<button data-cat="${c}" onclick="selectCatPill(this,'edit-cat-pills')" class="tag-pill font-label text-[0.65rem] font-bold px-3 py-1.5 rounded-full ${c===tx.cat?'bg-primary text-white selected':'bg-surface-container text-on-surface-variant'}">${c}</button>`).join('')}
-          </div>
-        </div>
-        ${buildImgUploader('edit', tx.imgs||[])}
+  if(type==='editTx'){
+    const tx=data;pendingImgs=[...(tx.imgs||[])];
+    html=`<h3 class="font-headline font-bold text-xl mb-5">編輯消費記錄</h3>
+    <div class="space-y-4">
+      <div><p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">消費項目</p>
+        <input id="edit-name" type="text" value="${tx.name.replace(/"/g,'&quot;')}" class="w-full bg-surface-container-high rounded-DEFAULT p-3 text-sm outline-none font-body" /></div>
+      <div class="grid grid-cols-2 gap-3">
+        <div><p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">金額（₩）</p>
+          <input id="edit-amount" type="number" value="${tx.amount}" class="w-full bg-surface-container-high rounded-DEFAULT p-3 text-sm outline-none font-body" /></div>
+        <div><p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">日期</p>
+          <input id="edit-date" type="text" value="${tx.date}" class="w-full bg-surface-container-high rounded-DEFAULT p-3 text-sm outline-none font-body" /></div>
       </div>
-      <div class="flex gap-3 mt-6">
-        <button onclick="deleteTx(${tx.id})" class="flex-shrink-0 bg-error-container/20 text-error font-bold py-3 px-4 rounded-full active:scale-95 transition-transform flex items-center gap-1">
-          <span class="material-symbols-outlined text-sm">delete</span> 刪除
-        </button>
-        <button onclick="closeModal()" class="flex-1 bg-surface-container-high text-on-surface font-bold py-3 rounded-full active:scale-95">取消</button>
-        <button onclick="saveEditTx(${tx.id})" class="flex-1 bg-gradient-to-r from-primary to-primary-container text-white font-bold py-3 rounded-full active:scale-95">更新</button>
-      </div>`;
+      <div><p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">分類</p>
+        <div id="edit-cat-pills" class="flex flex-wrap gap-2">
+          ${cats.map(c=>`<button data-cat="${c}" onclick="selectCatPill(this,'edit-cat-pills')" class="tag-pill font-label text-[0.65rem] font-bold px-3 py-1.5 rounded-full ${c===tx.cat?'bg-primary text-white selected':'bg-surface-container text-on-surface-variant'}">${c}</button>`).join('')}
+        </div></div>
+      ${buildImgUploader('edit',tx.imgs||[])}
+    </div>
+    <div class="flex gap-3 mt-6">
+      <button onclick="deleteTx(${tx.id})" class="flex-shrink-0 bg-error-container/20 text-error font-bold py-3 px-4 rounded-full active:scale-95 flex items-center gap-1">
+        <span class="material-symbols-outlined text-sm">delete</span> 刪除</button>
+      <button onclick="closeModal()" class="flex-1 bg-surface-container-high text-on-surface font-bold py-3 rounded-full active:scale-95">取消</button>
+      <button onclick="saveEditTx(${tx.id})" class="flex-1 bg-gradient-to-r from-primary to-primary-container text-white font-bold py-3 rounded-full active:scale-95">更新</button>
+    </div>`;
   }
-
-  document.getElementById('modal-content').innerHTML = html;
+  document.getElementById('modal-content').innerHTML=html;
   document.getElementById('modal-overlay').classList.add('open');
 }
 
 // ── Currency ──
-function doConvert() {
-  const val = parseFloat(document.getElementById('left-input').value)||0;
-  const result = !swapped ? Math.round(val*exchangeRate) : parseFloat((val/exchangeRate).toFixed(1));
-  document.getElementById('right-output').textContent = result.toLocaleString();
+function doConvert(){
+  const val=parseFloat(document.getElementById('left-input').value)||0;
+  const result=!swapped?Math.round(val*exchangeRate):parseFloat((val/exchangeRate).toFixed(1));
+  document.getElementById('right-output').textContent=result.toLocaleString();
 }
-function swapCurrency() {
-  swapped = !swapped;
-  const btn = document.getElementById('swap-btn');
-  btn.style.transform='rotate(180deg)'; setTimeout(()=>btn.style.transform='',300);
-  document.getElementById('left-label').textContent  = swapped ? 'KRW 韓元' : 'TWD 台幣';
-  document.getElementById('right-label').textContent = swapped ? 'TWD 台幣' : 'KRW 韓元';
-  document.getElementById('left-input').value='';
-  document.getElementById('right-output').textContent='0';
+function swapCurrency(){
+  swapped=!swapped;const btn=document.getElementById('swap-btn');
+  btn.style.transform='rotate(180deg)';setTimeout(()=>btn.style.transform='',300);
+  document.getElementById('left-label').textContent=swapped?'KRW 韓元':'TWD 台幣';
+  document.getElementById('right-label').textContent=swapped?'TWD 台幣':'KRW 韓元';
+  document.getElementById('left-input').value='';document.getElementById('right-output').textContent='0';
 }
-function openRateEdit() {
-  const row = document.getElementById('rate-edit-row');
-  document.getElementById('rate-input').value = exchangeRate;
-  row.classList.toggle('hidden');
-  if (!row.classList.contains('hidden')) document.getElementById('rate-input').focus();
+function openRateEdit(){
+  const row=document.getElementById('rate-edit-row');
+  document.getElementById('rate-input').value=exchangeRate;row.classList.toggle('hidden');
+  if(!row.classList.contains('hidden'))document.getElementById('rate-input').focus();
 }
-function saveRate() {
-  const v = parseFloat(document.getElementById('rate-input').value);
-  if (v>0) {
-    exchangeRate=v;
-    document.getElementById('rate-display').textContent=v;
-    document.getElementById('rate-edit-row').classList.add('hidden');
-    renderOverview(); doConvert();
-    showToast('匯率已更新：1 TWD = '+v+' KRW');
-  } else showToast('請輸入有效匯率');
+function saveRate(){
+  const v=parseFloat(document.getElementById('rate-input').value);
+  if(v>0){exchangeRate=v;document.getElementById('rate-display').textContent=v;document.getElementById('rate-edit-row').classList.add('hidden');saveToStorage();renderOverview();doConvert();showToast('匯率已更新：1 TWD = '+v+' KRW');}
+  else showToast('請輸入有效匯率');
 }
-function convertCurrency() { doConvert(); }
+function convertCurrency(){doConvert();}
 
-// ── Static modal contents ──
-const modalContents = {
-  map: `
-    <h3 class="font-headline font-bold text-xl mb-1">飯店位置</h3>
+// ── Static modals ──
+const modalContents={
+  map:`<h3 class="font-headline font-bold text-xl mb-1">飯店位置</h3>
     <p class="text-sm text-on-surface-variant mb-4">Hotel The Designers Seoul Station</p>
-    <a href="https://map.naver.com/p/search/Hotel%20The%20Designers%20Seoul%20Station" target="_blank" rel="noopener" class="block relative rounded-lg overflow-hidden mb-4 group" style="cursor:pointer;">
+    <a href="https://map.naver.com/p/search/Hotel%20The%20Designers%20Seoul%20Station" target="_blank" rel="noopener" class="block relative rounded-lg overflow-hidden mb-4 group">
       <div class="map-placeholder h-48 flex items-center justify-center relative">
         <div class="absolute inset-0 bg-[#2e3335]/0 group-hover:bg-[#2e3335]/10 transition-colors z-10 flex items-center justify-center">
           <div class="bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity shadow-lg">
@@ -1711,98 +1796,70 @@ const modalContents = {
       <span class="material-symbols-outlined text-[#03c75a] text-sm">open_in_new</span>
     </a>
     <div class="space-y-2">
-      <div class="bg-surface-container-low rounded-DEFAULT p-3 flex items-center gap-3">
-        <span class="material-symbols-outlined text-secondary fill-icon">directions_subway</span>
-        <div><p class="font-bold text-sm">首爾地鐵 1號線 / KTX</p><p class="text-xs text-on-surface-variant">首爾站 出口 5 步行 3 分鐘</p></div>
-      </div>
-      <div class="bg-surface-container-low rounded-DEFAULT p-3 flex items-center gap-3">
-        <span class="material-symbols-outlined text-secondary fill-icon">directions_bus</span>
-        <div><p class="font-bold text-sm">公車</p><p class="text-xs text-on-surface-variant">漢江大路405 站 · 0015, 104, 421號</p></div>
-      </div>
+      <div class="bg-surface-container-low rounded-DEFAULT p-3 flex items-center gap-3"><span class="material-symbols-outlined text-secondary fill-icon">directions_subway</span><div><p class="font-bold text-sm">首爾地鐵 1號線 / KTX</p><p class="text-xs text-on-surface-variant">首爾站 出口 5 步行 3 分鐘</p></div></div>
+      <div class="bg-surface-container-low rounded-DEFAULT p-3 flex items-center gap-3"><span class="material-symbols-outlined text-secondary fill-icon">directions_bus</span><div><p class="font-bold text-sm">公車</p><p class="text-xs text-on-surface-variant">漢江大路405 站 · 0015, 104, 421號</p></div></div>
     </div>
-    <button onclick="closeModal()" class="w-full mt-5 bg-gradient-to-r from-primary to-primary-container text-white font-bold py-3 rounded-full active:scale-95 transition-transform">關閉</button>
-  `,
-  transport: `
-    <h3 class="font-headline font-bold text-xl mb-1">首爾地鐵指南</h3>
+    <button onclick="closeModal()" class="w-full mt-5 bg-gradient-to-r from-primary to-primary-container text-white font-bold py-3 rounded-full active:scale-95">關閉</button>`,
+  transport:`<h3 class="font-headline font-bold text-xl mb-1">首爾地鐵指南</h3>
     <p class="text-sm text-on-surface-variant mb-4">Seoul Metro · 서울 지하철</p>
+    <!-- Naver Subway app launch button -->
+    <a href="https://apps.apple.com/kr/app/%EC%B9%B4%EC%B9%B4%EC%98%A4-%EC%A7%80%EC%B2%A0/id317907531" target="_blank" rel="noopener"
+       class="flex items-center gap-3 bg-[#03c75a]/10 border border-[#03c75a]/30 rounded-DEFAULT p-3 mb-5 transition-transform active:scale-95">
+      <div class="w-10 h-10 rounded-full bg-[#03c75a] flex items-center justify-center flex-shrink-0">
+        <span class="material-symbols-outlined text-white fill-icon text-lg">directions_subway</span>
+      </div>
+      <div class="flex-1">
+        <p class="font-bold text-sm text-[#03c75a]">在韓巢 地鐵 App 查詢</p>
+        <p class="text-xs text-on-surface-variant">路線規劃 · 即時班次 · 轉乘換乘</p>
+      </div>
+      <span class="material-symbols-outlined text-[#03c75a] text-sm">open_in_new</span>
+    </a>
     <div class="space-y-3 mb-5">
-      <div class="flex items-center gap-3 p-3 bg-surface-container-low rounded-DEFAULT">
-        <div class="w-6 h-6 rounded-full bg-[#ff5446] flex items-center justify-center flex-shrink-0"><span class="text-white text-[0.55rem] font-black">1</span></div>
-        <div><p class="font-bold text-sm">1號線（深藍）</p><p class="text-xs text-on-surface-variant">仁川機場↔首爾站↔鐘路</p></div>
-      </div>
-      <div class="flex items-center gap-3 p-3 bg-surface-container-low rounded-DEFAULT">
-        <div class="w-6 h-6 rounded-full bg-[#036881] flex items-center justify-center flex-shrink-0"><span class="text-white text-[0.55rem] font-black">2</span></div>
-        <div><p class="font-bold text-sm">2號線（綠色）</p><p class="text-xs text-on-surface-variant">弘大↔市廳↔東大門↔江南</p></div>
-      </div>
-      <div class="flex items-center gap-3 p-3 bg-surface-container-low rounded-DEFAULT">
-        <div class="w-6 h-6 rounded-full bg-[#f59e0b] flex items-center justify-center flex-shrink-0"><span class="text-white text-[0.55rem] font-black">9</span></div>
-        <div><p class="font-bold text-sm">9號線（金色）</p><p class="text-xs text-on-surface-variant">仁川機場↔金浦機場↔江南</p></div>
-      </div>
+      <div class="flex items-center gap-3 p-3 bg-surface-container-low rounded-DEFAULT"><div class="w-6 h-6 rounded-full bg-[#ff5446] flex items-center justify-center flex-shrink-0"><span class="text-white text-[0.55rem] font-black">1</span></div><div><p class="font-bold text-sm">1號線（深藍）</p><p class="text-xs text-on-surface-variant">仁川機場↔首爾站↔鐘路</p></div></div>
+      <div class="flex items-center gap-3 p-3 bg-surface-container-low rounded-DEFAULT"><div class="w-6 h-6 rounded-full bg-[#036881] flex items-center justify-center flex-shrink-0"><span class="text-white text-[0.55rem] font-black">2</span></div><div><p class="font-bold text-sm">2號線（綠色）</p><p class="text-xs text-on-surface-variant">弘大↔市廳↔東大門↔江南</p></div></div>
+      <div class="flex items-center gap-3 p-3 bg-surface-container-low rounded-DEFAULT"><div class="w-6 h-6 rounded-full bg-[#f59e0b] flex items-center justify-center flex-shrink-0"><span class="text-white text-[0.55rem] font-black">9</span></div><div><p class="font-bold text-sm">9號線（金色）</p><p class="text-xs text-on-surface-variant">仁川機場↔金浦機場↔江南</p></div></div>
+      <div class="flex items-center gap-3 p-3 bg-surface-container-low rounded-DEFAULT"><div class="w-6 h-6 rounded-full bg-[#9333ea] flex items-center justify-center flex-shrink-0"><span class="text-white text-[0.55rem] font-black">5</span></div><div><p class="font-bold text-sm">5號線（紫色）</p><p class="text-xs text-on-surface-variant">汝矣나루（汝矣島賞櫻）↔光化門</p></div></div>
+      <div class="flex items-center gap-3 p-3 bg-surface-container-low rounded-DEFAULT"><div class="w-6 h-6 rounded-full bg-[#ac3149] flex items-center justify-center flex-shrink-0"><span class="text-white text-[0.55rem] font-black">8</span></div><div><p class="font-bold text-sm">8號線（粉紅）</p><p class="text-xs text-on-surface-variant">蠶室站（石村湖夜櫻）↔江南</p></div></div>
     </div>
-    <div class="bg-tertiary-container rounded-DEFAULT p-4 mb-4">
-      <p class="font-bold text-on-tertiary-container text-sm mb-1">✓ 旅行小提示</p>
-      <p class="text-xs text-on-tertiary-container/80 leading-relaxed">首爾地鐵全天約 05:30–24:00 運行，T-Money 搭乘基本票 ₩1,400起。轉乘同一條路線30分鐘內免費。</p>
-    </div>
-    <button onclick="closeModal()" class="w-full bg-gradient-to-r from-primary to-primary-container text-white font-bold py-3 rounded-full active:scale-95 transition-transform">關閉</button>
-  `,
-  medical: `
-    <h3 class="font-headline font-bold text-xl mb-1">醫療支援</h3>
+    <div class="bg-tertiary-container rounded-DEFAULT p-4 mb-4"><p class="font-bold text-on-tertiary-container text-sm mb-1">✓ 旅行小提示</p><p class="text-xs text-on-tertiary-container/80 leading-relaxed">首爾地鐵全天約 05:30–24:00 運行，T-Money 搭乘基本票 ₩1,400起。轉乘同一條路線30分鐘內免費。</p></div>
+    <button onclick="closeModal()" class="w-full bg-gradient-to-r from-primary to-primary-container text-white font-bold py-3 rounded-full active:scale-95">關閉</button>`,
+  medical:`<h3 class="font-headline font-bold text-xl mb-1">醫療支援</h3>
     <p class="text-sm text-on-surface-variant mb-5">首爾英語/中文醫療資源</p>
     <div class="space-y-3">
-      <div class="bg-surface-container-lowest rounded-lg p-4 border-l-4 border-tertiary">
-        <p class="font-bold">旅遊諮詢熱線 1330</p><p class="text-xs text-on-surface-variant mt-1">24小時·中英日文服務·免費</p>
-        <a href="tel:1330" class="mt-2 inline-flex items-center gap-1 text-tertiary text-xs font-bold"><span class="material-symbols-outlined text-sm">call</span> 撥打 1330</a>
-      </div>
-      <div class="bg-surface-container-lowest rounded-lg p-4 border-l-4 border-secondary">
-        <p class="font-bold">首爾大學病院</p><p class="text-xs text-on-surface-variant mt-1">鐘路區大學路101 · 設有外籍患者中心</p>
-        <a href="tel:02-2072-2114" class="mt-2 inline-flex items-center gap-1 text-secondary text-xs font-bold"><span class="material-symbols-outlined text-sm">call</span> 02-2072-2114</a>
-      </div>
-      <div class="bg-surface-container-lowest rounded-lg p-4 border-l-4 border-primary">
-        <p class="font-bold">延世大學세브란스醫院</p><p class="text-xs text-on-surface-variant mt-1">西大門區延世路50-1 · 24小時急診</p>
-        <a href="tel:1599-1004" class="mt-2 inline-flex items-center gap-1 text-primary text-xs font-bold"><span class="material-symbols-outlined text-sm">call</span> 1599-1004</a>
-      </div>
+      <div class="bg-surface-container-lowest rounded-lg p-4 border-l-4 border-tertiary"><p class="font-bold">旅遊諮詢熱線 1330</p><p class="text-xs text-on-surface-variant mt-1">24小時·中英日文服務·免費</p><a href="tel:1330" class="mt-2 inline-flex items-center gap-1 text-tertiary text-xs font-bold"><span class="material-symbols-outlined text-sm">call</span> 撥打 1330</a></div>
+      <div class="bg-surface-container-lowest rounded-lg p-4 border-l-4 border-secondary"><p class="font-bold">首爾大學病院</p><p class="text-xs text-on-surface-variant mt-1">鐘路區大學路101 · 設有外籍患者中心</p><a href="tel:02-2072-2114" class="mt-2 inline-flex items-center gap-1 text-secondary text-xs font-bold"><span class="material-symbols-outlined text-sm">call</span> 02-2072-2114</a></div>
+      <div class="bg-surface-container-lowest rounded-lg p-4 border-l-4 border-primary"><p class="font-bold">延世大學세브란스醫院</p><p class="text-xs text-on-surface-variant mt-1">西大門區延世路50-1 · 24小時急診</p><a href="tel:1599-1004" class="mt-2 inline-flex items-center gap-1 text-primary text-xs font-bold"><span class="material-symbols-outlined text-sm">call</span> 1599-1004</a></div>
     </div>
-    <button onclick="closeModal()" class="w-full mt-5 bg-gradient-to-r from-primary to-primary-container text-white font-bold py-3 rounded-full active:scale-95 transition-transform">關閉</button>
-  `,
-  about: `
-    <h3 class="font-headline font-bold text-xl mb-4">關於此行程</h3>
-    <div class="hero-gradient skyline-decoration relative rounded-xl p-6 mb-5 overflow-hidden">
-      <p class="font-headline font-black text-white text-3xl relative z-10">首爾之旅</p>
-      <p class="text-white/80 text-sm mt-1 relative z-10">2025年4月7日 – 4月10日</p>
-    </div>
+    <button onclick="closeModal()" class="w-full mt-5 bg-gradient-to-r from-primary to-primary-container text-white font-bold py-3 rounded-full active:scale-95">關閉</button>`,
+  about:`<h3 class="font-headline font-bold text-xl mb-4">關於此行程</h3>
+    <div class="hero-gradient skyline-decoration relative rounded-xl p-6 mb-5 overflow-hidden"><p class="font-headline font-black text-white text-3xl relative z-10">首爾之旅</p><p class="text-white/80 text-sm mt-1 relative z-10">2025年4月7日 – 4月10日</p></div>
     <p class="text-sm text-on-surface-variant leading-relaxed">此行程由 Seoul Travel Assistant 為您精心規劃，涵蓋首爾3晚4天的醫美療程、賞櫻散策與美食探索。</p>
-    <button onclick="closeModal()" class="w-full mt-5 bg-gradient-to-r from-primary to-primary-container text-white font-bold py-3 rounded-full">關閉</button>
-  `,
-  settings: `
-    <h3 class="font-headline font-bold text-xl mb-5">設定</h3>
+    <button onclick="closeModal()" class="w-full mt-5 bg-gradient-to-r from-primary to-primary-container text-white font-bold py-3 rounded-full">關閉</button>`,
+  settings:`<h3 class="font-headline font-bold text-xl mb-5">設定</h3>
     <div class="space-y-4">
-      <div class="flex justify-between items-center py-3 border-b border-outline-variant/15">
-        <div class="flex items-center gap-3"><span class="material-symbols-outlined text-secondary">language</span><p class="font-bold text-sm">語言</p></div>
-        <span class="text-xs text-on-surface-variant bg-surface-container px-3 py-1 rounded-full">繁體中文</span>
-      </div>
-      <div class="flex justify-between items-center py-3 border-b border-outline-variant/15">
-        <div class="flex items-center gap-3"><span class="material-symbols-outlined text-secondary">currency_exchange</span><p class="font-bold text-sm">預設貨幣</p></div>
-        <span class="text-xs text-on-surface-variant bg-surface-container px-3 py-1 rounded-full">TWD / KRW</span>
-      </div>
-      <div class="flex justify-between items-center py-3 border-b border-outline-variant/15">
-        <div class="flex items-center gap-3"><span class="material-symbols-outlined text-secondary">notifications</span><p class="font-bold text-sm">行程提醒</p></div>
-        <div class="w-11 h-6 bg-primary rounded-full flex items-center px-1"><div class="w-4 h-4 bg-white rounded-full ml-auto"></div></div>
+      <div class="flex justify-between items-center py-3 border-b border-outline-variant/15"><div class="flex items-center gap-3"><span class="material-symbols-outlined text-secondary">language</span><p class="font-bold text-sm">語言</p></div><span class="text-xs text-on-surface-variant bg-surface-container px-3 py-1 rounded-full">繁體中文</span></div>
+      <div class="flex justify-between items-center py-3 border-b border-outline-variant/15"><div class="flex items-center gap-3"><span class="material-symbols-outlined text-secondary">currency_exchange</span><p class="font-bold text-sm">預設貨幣</p></div><span class="text-xs text-on-surface-variant bg-surface-container px-3 py-1 rounded-full">TWD / KRW</span></div>
+      <div class="flex justify-between items-center py-3 border-b border-outline-variant/15"><div class="flex items-center gap-3"><span class="material-symbols-outlined text-secondary">notifications</span><p class="font-bold text-sm">行程提醒</p></div><div class="w-11 h-6 bg-primary rounded-full flex items-center px-1"><div class="w-4 h-4 bg-white rounded-full ml-auto"></div></div></div>
+      <div class="pt-2">
+        <button onclick="clearStorage()" class="w-full flex items-center justify-center gap-2 bg-error-container/20 text-error font-bold py-2.5 rounded-full text-sm active:scale-95"><span class="material-symbols-outlined text-sm">delete_forever</span> 清除所有儲存資料</button>
+        <p class="text-[0.6rem] text-on-surface-variant text-center mt-1.5">清除後資料將恢復為預設值</p>
       </div>
     </div>
-    <button onclick="closeModal()" class="w-full mt-5 bg-gradient-to-r from-primary to-primary-container text-white font-bold py-3 rounded-full">確認</button>
-  `
+    <button onclick="closeModal()" class="w-full mt-5 bg-gradient-to-r from-primary to-primary-container text-white font-bold py-3 rounded-full">確認</button>`
 };
 
-function showModal(type) {
-  if (type==='addExpense') { showDynamicModal('addExpense'); return; }
-  document.getElementById('modal-content').innerHTML = modalContents[type]||'';
+function showModal(type){
+  if(type==='addExpense'){showDynamicModal('addExpense');return;}
+  document.getElementById('modal-content').innerHTML=modalContents[type]||'';
   document.getElementById('modal-overlay').classList.add('open');
 }
-function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
+function closeModal(){document.getElementById('modal-overlay').classList.remove('open');}
 
 // ── Init ──
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded',()=>{
+  loadFromStorage();
   renderAll();
+  updateToolboxBubble(false);
 });
 </script>
 </body>
