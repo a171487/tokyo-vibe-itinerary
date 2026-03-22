@@ -2113,8 +2113,8 @@ const modalContents={
         <span class="material-symbols-outlined text-white fill-icon text-lg">directions_subway</span>
       </div>
       <div class="flex-1">
-        <p class="font-bold text-sm text-[#03c75a]">開啟 카카오지하철 App</p>
-        <p class="text-xs text-on-surface-variant">路線規劃 · 即時班次 · 轉乘換乘</p>
+        <p class="font-bold text-sm text-[#03c75a]">開啟韓巢地鐵地圖</p>
+        <p class="text-xs text-on-surface-variant">map.hanchao.com · 中文路線查詢</p>
       </div>
       <span class="material-symbols-outlined text-[#03c75a] text-sm">open_in_new</span>
     </button>
@@ -2243,18 +2243,9 @@ function modalSwap() {
 }
 
 // ── Open Subway App (platform-aware) ──
-// 카카오지하철 (Kakao Subway) — 韓國最常用地鐵 App，支援路線規劃、即時班次
+// 韓巢地鐵 — https://map.hanchao.com/
 function openSubwayApp() {
-  const ua = navigator.userAgent || '';
-  const isIOS     = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
-  const isAndroid = /Android/.test(ua);
-  // 카카오지하철 App Store / Play Store
-  const iosUrl     = 'https://apps.apple.com/kr/app/%EC%B9%B4%EC%B9%B4%EC%98%A4%EC%A7%80%ED%95%98%EC%B2%A0/id1095533900';
-  const androidUrl = 'https://play.google.com/store/apps/details?id=com.kakao.subway';
-  const fallback   = 'https://map.kakao.com/?target=subway';
-  if (isIOS)          window.open(iosUrl, '_blank');
-  else if (isAndroid) window.open(androidUrl, '_blank');
-  else                window.open(fallback, '_blank');
+  window.open('https://map.hanchao.com/', '_blank');
 }
 
 // ── Init ──
