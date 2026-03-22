@@ -2149,15 +2149,98 @@ const modalContents={
         <p class="text-[0.6rem] text-on-surface-variant text-center mt-1.5">清除後資料將恢復為預設值</p>
       </div>
     </div>
-    <button onclick="closeModal()" class="w-full mt-5 bg-gradient-to-r from-primary to-primary-container text-white font-bold py-3 rounded-full">確認</button>`
+    <button onclick="closeModal()" class="w-full mt-5 bg-gradient-to-r from-primary to-primary-container text-white font-bold py-3 rounded-full">確認</button>`,
+  currency:`<h3 class="font-headline font-bold text-xl mb-1">匯率換算</h3>
+    <p class="text-sm text-on-surface-variant mb-5">台幣 ↔ 韓元（僅供參考）</p>
+    <div class="bg-surface-container-low rounded-lg p-4 mb-5">
+      <div class="flex items-center justify-between mb-3">
+        <p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider">目前匯率</p>
+        <button onclick="document.getElementById('modal-rate-row').classList.toggle('hidden')" class="flex items-center gap-1 text-primary text-xs font-bold">
+          <span class="material-symbols-outlined text-sm">edit</span> 編輯
+        </button>
+      </div>
+      <p class="font-headline font-black text-3xl text-primary" id="modal-rate-display">1 TWD = — KRW</p>
+      <div id="modal-rate-row" class="hidden mt-3 flex items-center gap-2">
+        <span class="text-xs text-on-surface-variant font-bold flex-shrink-0">1 TWD =</span>
+        <input id="modal-rate-input" type="number" step="0.1" placeholder="43.2" class="flex-1 bg-surface-container-high rounded-DEFAULT px-3 py-2 text-sm font-bold outline-none text-primary" />
+        <span class="text-xs text-on-surface-variant font-bold flex-shrink-0">KRW</span>
+        <button onclick="modalSaveRate()" class="bg-primary text-white text-xs font-bold px-3 py-1.5 rounded-full active:scale-95">確認</button>
+      </div>
+    </div>
+    <div class="flex gap-3 items-center mb-5">
+      <div class="flex-1 bg-surface-container-high rounded-DEFAULT p-3">
+        <p class="text-[0.6rem] text-on-surface-variant uppercase tracking-wider mb-1" id="modal-left-label">TWD 台幣</p>
+        <input id="modal-left-input" type="number" placeholder="100" oninput="modalConvert()" class="w-full bg-transparent font-headline font-bold text-xl outline-none text-on-surface" />
+      </div>
+      <button onclick="modalSwap()" id="modal-swap-btn" class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center flex-shrink-0 active:scale-90 transition-transform">
+        <span class="material-symbols-outlined text-on-surface-variant">swap_horiz</span>
+      </button>
+      <div class="flex-1 bg-surface-container-high rounded-DEFAULT p-3">
+        <p class="text-[0.6rem] text-on-surface-variant uppercase tracking-wider mb-1" id="modal-right-label">KRW 韓元</p>
+        <p id="modal-right-output" class="font-headline font-bold text-xl text-primary">—</p>
+      </div>
+    </div>
+    <div class="space-y-2 mb-5" id="modal-quick-table"></div>
+    <button onclick="closeModal()" class="w-full bg-gradient-to-r from-primary to-primary-container text-white font-bold py-3 rounded-full active:scale-95">關閉</button>`
 };
 
 function showModal(type){
   if(type==='addExpense'){showDynamicModal('addExpense');return;}
   document.getElementById('modal-content').innerHTML=modalContents[type]||'';
   document.getElementById('modal-overlay').classList.add('open');
+  if(type==='currency') initCurrencyModal();
 }
 function closeModal(){document.getElementById('modal-overlay').classList.remove('open');}
+
+// ── Currency modal helpers ──
+let modalSwapped = false;
+function initCurrencyModal() {
+  modalSwapped = false;
+  const rateEl = document.getElementById('modal-rate-display');
+  const inp    = document.getElementById('modal-rate-input');
+  if (rateEl) rateEl.textContent = `1 TWD = ${exchangeRate} KRW`;
+  if (inp)    inp.value = exchangeRate;
+  buildQuickTable();
+}
+function buildQuickTable() {
+  const tbl = document.getElementById('modal-quick-table');
+  if (!tbl) return;
+  const amounts = [100, 500, 1000, 3000, 5000, 10000];
+  tbl.innerHTML = amounts.map(t => {
+    const k = Math.round(t * exchangeRate).toLocaleString();
+    return `<div class="flex justify-between items-center py-2 border-b border-outline-variant/10">
+      <span class="text-sm font-body text-on-surface-variant">TWD ${t.toLocaleString()}</span>
+      <span class="font-bold text-sm text-on-surface">₩${k}</span>
+    </div>`;
+  }).join('');
+}
+function modalSaveRate() {
+  const v = parseFloat(document.getElementById('modal-rate-input').value);
+  if (v > 0) {
+    exchangeRate = v;
+    document.getElementById('modal-rate-display').textContent = `1 TWD = ${v} KRW`;
+    document.getElementById('rate-display').textContent = v;
+    document.getElementById('modal-rate-row').classList.add('hidden');
+    buildQuickTable();
+    renderOverview();
+    showToast(`匯率已更新：1 TWD = ${v} KRW`);
+  } else showToast('請輸入有效匯率');
+}
+function modalConvert() {
+  const val = parseFloat(document.getElementById('modal-left-input').value) || 0;
+  const result = !modalSwapped ? Math.round(val * exchangeRate) : parseFloat((val / exchangeRate).toFixed(1));
+  document.getElementById('modal-right-output').textContent = result.toLocaleString();
+}
+function modalSwap() {
+  modalSwapped = !modalSwapped;
+  const btn = document.getElementById('modal-swap-btn');
+  btn.style.transform = 'rotate(180deg)';
+  setTimeout(() => btn.style.transform = '', 300);
+  document.getElementById('modal-left-label').textContent  = modalSwapped ? 'KRW 韓元' : 'TWD 台幣';
+  document.getElementById('modal-right-label').textContent = modalSwapped ? 'TWD 台幣' : 'KRW 韓元';
+  document.getElementById('modal-left-input').value = '';
+  document.getElementById('modal-right-output').textContent = '—';
+}
 
 // ── Open Subway App (platform-aware) ──
 function openSubwayApp() {
