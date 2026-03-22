@@ -368,13 +368,17 @@
   <!-- Weather -->
   <section class="mb-8 animate-in delay-3">
     <span class="font-label text-[0.6rem] text-primary uppercase tracking-[0.15em] font-bold block mb-3 px-1">Weather · 首爾天氣</span>
-    <div class="bg-gradient-to-br from-secondary to-secondary-dim rounded-lg editorial-shadow overflow-hidden">
+    <div class="rounded-lg editorial-shadow overflow-hidden relative">
+      <!-- Sky/cherry blossom background photo -->
+      <div class="absolute inset-0 z-0" style="background:url('https://images.unsplash.com/photo-1508739773434-c26b3d09e071?w=800&q=80') center/cover no-repeat;"></div>
+      <!-- Dark overlay for text legibility, matching hero style -->
+      <div class="absolute inset-0 z-0" style="background:linear-gradient(170deg,rgba(2,55,90,0.60) 0%,rgba(1,30,60,0.82) 100%);"></div>
       <!-- Main weather -->
-      <div class="p-5">
+      <div class="relative z-10 p-5">
         <div class="flex items-start justify-between">
           <div>
             <div class="flex items-end gap-1">
-              <span class="font-headline font-black text-[3.5rem] text-white leading-none tracking-tight">14°</span>
+              <span class="font-headline font-black text-[3.5rem] text-white leading-none tracking-tight" style="text-shadow:0 2px 10px rgba(0,0,0,0.5);">14°</span>
               <span class="text-white/70 font-body text-sm mb-3">C</span>
             </div>
             <p class="text-white font-bold">晴時多雲</p>
@@ -419,7 +423,7 @@
         </div>
       </div>
       <!-- Hourly forecast — horizontal scroll -->
-      <div class="border-t border-white/15 px-3 pb-4 pt-3">
+      <div class="relative z-10 border-t border-white/15 px-3 pb-4 pt-3">
         <p class="text-white/60 text-[0.58rem] uppercase tracking-wider px-2 mb-2">每小時預報</p>
         <div class="flex gap-1 overflow-x-auto pb-1" style="scrollbar-width:none;">
           <!-- each hourly block -->
@@ -915,26 +919,39 @@
   <!-- Hotel Card -->
   <section class="mb-6 animate-in delay-2">
     <div class="bg-surface-container-lowest rounded-lg editorial-shadow overflow-hidden">
-      <div class="w-full h-44 bg-gradient-to-br from-[#ebeef0] to-[#dee3e5] flex items-center justify-center relative overflow-hidden">
-        <div class="absolute inset-0 flex items-center justify-center opacity-10">
-          <span class="material-symbols-outlined text-on-surface" style="font-size:8rem;">hotel</span>
+      <!-- Hotel photo -->
+      <div class="w-full h-48 relative overflow-hidden">
+        <img
+          src="https://cf.bstatic.com/xdata/images/hotel/max1280x900/166518494.jpg?k=2e8939ebff5ec3a4fcaef8b1b2cb2a68a0c4c98c0d3a2e7c8f98b2c5a0e9d4b&o=&hp=1"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
+          class="w-full h-full object-cover"
+          alt="Hotel The Designers Seoul Station" />
+        <!-- Fallback gradient if image fails -->
+        <div class="absolute inset-0 bg-gradient-to-br from-[#1e3a5f] to-[#4a7c9e] hidden items-center justify-center flex-col gap-2">
+          <span class="material-symbols-outlined text-white/60 fill-icon" style="font-size:4rem;">apartment</span>
+          <p class="text-white/70 font-bold text-sm">Hotel The Designers Seoul Station</p>
         </div>
-        <div class="relative z-10 text-center">
-          <span class="material-symbols-outlined text-secondary fill-icon text-5xl">hotel</span>
-          <p class="font-headline font-bold text-secondary mt-1 text-sm">Hotel The Designers</p>
+        <!-- Gradient overlay for text on photo -->
+        <div class="absolute inset-0" style="background:linear-gradient(to top, rgba(0,0,0,0.45) 0%, transparent 60%);"></div>
+        <div class="absolute bottom-3 left-4 right-4">
+          <span class="font-label text-[0.6rem] font-bold tracking-widest text-white/80 uppercase">Accommodation · 住宿</span>
+          <p class="font-headline text-base font-black text-white" style="text-shadow:0 1px 4px rgba(0,0,0,0.6);">Hotel The Designers Seoul Station</p>
         </div>
       </div>
       <div class="p-5">
-        <div class="flex items-center gap-2 mb-1">
-          <span class="material-symbols-outlined text-primary text-sm fill-icon">hotel</span>
-          <span class="font-label text-[0.6rem] font-bold tracking-widest text-secondary uppercase">Accommodation · 住宿</span>
-        </div>
-        <h3 class="font-headline text-lg font-bold mb-1">Hotel The Designers Seoul Station</h3>
-        <p class="text-sm text-on-surface-variant mb-1 leading-relaxed">首爾市龍山區漢江大路305</p>
+        <p class="text-sm text-on-surface-variant mb-1 leading-relaxed">首爾市龍山區漢江大路305（Hangang-daero, Yongsan-gu）</p>
         <div class="flex items-center gap-1 mb-3">
           <span class="material-symbols-outlined text-[#f59e0b] fill-icon text-sm">star</span>
           <span class="text-sm font-bold">4.2</span>
-          <span class="text-xs text-on-surface-variant ml-1">· 3晚（3/22 – 3/25）</span>
+          <span class="text-xs text-on-surface-variant ml-1">· 3晚（4/7 – 4/10）</span>
+        </div>
+        <!-- Subway access highlight -->
+        <div class="bg-secondary-container/60 rounded-DEFAULT p-3 mb-4 flex items-start gap-2">
+          <span class="material-symbols-outlined text-secondary fill-icon text-lg flex-shrink-0">directions_subway</span>
+          <div>
+            <p class="font-bold text-sm text-on-secondary-container">숙대입구역（淑大入口站）4號線</p>
+            <p class="text-xs text-on-surface-variant mt-0.5 leading-relaxed"><strong>10號出口設有電梯 🛗</strong>，出站即到飯店正門，拖行李箱超方便，步行僅約 1 分鐘。</p>
+          </div>
         </div>
         <div class="grid grid-cols-3 gap-2 mb-4">
           <div class="bg-surface-container-low rounded-DEFAULT p-2 text-center">
@@ -942,8 +959,8 @@
             <p class="text-[0.6rem] text-on-surface-variant mt-0.5">免費 WiFi</p>
           </div>
           <div class="bg-surface-container-low rounded-DEFAULT p-2 text-center">
-            <span class="material-symbols-outlined text-secondary text-lg">local_parking</span>
-            <p class="text-[0.6rem] text-on-surface-variant mt-0.5">停車場</p>
+            <span class="material-symbols-outlined text-secondary text-lg">fitness_center</span>
+            <p class="text-[0.6rem] text-on-surface-variant mt-0.5">健身房</p>
           </div>
           <div class="bg-surface-container-low rounded-DEFAULT p-2 text-center">
             <span class="material-symbols-outlined text-secondary text-lg">restaurant</span>
@@ -951,7 +968,7 @@
           </div>
         </div>
         <div class="flex gap-3">
-          <a class="flex items-center gap-2 bg-secondary-container text-on-secondary-container px-4 py-2.5 rounded-full text-xs font-bold transition-transform active:scale-95 flex-1 justify-center" href="tel:+8227031447">
+          <a class="flex items-center gap-2 bg-secondary-container text-on-secondary-container px-4 py-2.5 rounded-full text-xs font-bold transition-transform active:scale-95 flex-1 justify-center" href="tel:+82270362000">
             <span class="material-symbols-outlined text-sm">call</span> 撥打電話
           </a>
           <button onclick="showModal('map')" class="flex items-center gap-2 bg-surface-container-high text-on-surface px-4 py-2.5 rounded-full text-xs font-bold transition-transform active:scale-95 flex-1 justify-center">
@@ -1366,7 +1383,7 @@
     </div>
     <span class="text-[0.58rem] font-bold uppercase tracking-wider font-label">行程</span>
   </button>
-  <button onclick="navigateTo('toolbox')" class="nav-item flex flex-col items-center gap-0.5 -translate-y-2 transition-all duration-200 active:scale-90" id="nav-toolbox">
+  <button onclick="navigateTo('toolbox')" class="nav-item flex flex-col items-center gap-0.5 transition-all duration-200 active:scale-90" id="nav-toolbox">
     <div class="nav-ring-toolbox">
       <span class="material-symbols-outlined text-xl" id="nav-toolbox-icon">construction</span>
     </div>
@@ -1802,8 +1819,8 @@ const modalContents={
   transport:`<h3 class="font-headline font-bold text-xl mb-1">首爾地鐵指南</h3>
     <p class="text-sm text-on-surface-variant mb-4">Seoul Metro · 서울 지하철</p>
     <!-- Naver Subway app launch button -->
-    <a href="https://apps.apple.com/kr/app/%EC%B9%B4%EC%B9%B4%EC%98%A4-%EC%A7%80%EC%B2%A0/id317907531" target="_blank" rel="noopener"
-       class="flex items-center gap-3 bg-[#03c75a]/10 border border-[#03c75a]/30 rounded-DEFAULT p-3 mb-5 transition-transform active:scale-95">
+    <button onclick="openSubwayApp()"
+       class="flex items-center gap-3 bg-[#03c75a]/10 border border-[#03c75a]/30 rounded-DEFAULT p-3 mb-5 transition-transform active:scale-95 w-full text-left">
       <div class="w-10 h-10 rounded-full bg-[#03c75a] flex items-center justify-center flex-shrink-0">
         <span class="material-symbols-outlined text-white fill-icon text-lg">directions_subway</span>
       </div>
@@ -1812,7 +1829,7 @@ const modalContents={
         <p class="text-xs text-on-surface-variant">路線規劃 · 即時班次 · 轉乘換乘</p>
       </div>
       <span class="material-symbols-outlined text-[#03c75a] text-sm">open_in_new</span>
-    </a>
+    </button>
     <div class="space-y-3 mb-5">
       <div class="flex items-center gap-3 p-3 bg-surface-container-low rounded-DEFAULT"><div class="w-6 h-6 rounded-full bg-[#ff5446] flex items-center justify-center flex-shrink-0"><span class="text-white text-[0.55rem] font-black">1</span></div><div><p class="font-bold text-sm">1號線（深藍）</p><p class="text-xs text-on-surface-variant">仁川機場↔首爾站↔鐘路</p></div></div>
       <div class="flex items-center gap-3 p-3 bg-surface-container-low rounded-DEFAULT"><div class="w-6 h-6 rounded-full bg-[#036881] flex items-center justify-center flex-shrink-0"><span class="text-white text-[0.55rem] font-black">2</span></div><div><p class="font-bold text-sm">2號線（綠色）</p><p class="text-xs text-on-surface-variant">弘大↔市廳↔東大門↔江南</p></div></div>
@@ -1853,6 +1870,20 @@ function showModal(type){
   document.getElementById('modal-overlay').classList.add('open');
 }
 function closeModal(){document.getElementById('modal-overlay').classList.remove('open');}
+
+// ── Open Subway App (platform-aware) ──
+function openSubwayApp() {
+  const ua = navigator.userAgent || '';
+  const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+  const isAndroid = /Android/.test(ua);
+  // Naver Maps (includes subway transit) — best universal Korea transit app
+  const iosUrl     = 'https://apps.apple.com/kr/app/naver-map-navigation/id311867728';
+  const androidUrl = 'https://play.google.com/store/apps/details?id=com.nhn.android.nmap';
+  const fallback   = 'https://map.naver.com/p/subway';
+  if (isIOS)     window.open(iosUrl, '_blank');
+  else if (isAndroid) window.open(androidUrl, '_blank');
+  else           window.open(fallback, '_blank');
+}
 
 // ── Init ──
 document.addEventListener('DOMContentLoaded',()=>{
