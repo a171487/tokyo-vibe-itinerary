@@ -1559,7 +1559,6 @@
       <div class="flex justify-between items-start mb-6">
         <div>
           <p class="text-white/60 text-xs uppercase tracking-widest font-label">總預算</p>
-          <span id="sync-status" class="text-white/50 text-[0.58rem]">☁️</span>
           <!-- Editable total budget -->
           <div id="budget-display-row" class="flex items-end gap-2">
             <p class="font-headline font-black text-[2.5rem] leading-tight tracking-tight" id="budget-total-display">₩800,000</p>
@@ -1618,27 +1617,6 @@
         <p class="text-xs text-on-surface-variant font-bold" id="tx-count-label">共 0 筆</p>
         <button onclick="showToast('已顯示全部記錄')" class="text-primary text-xs font-bold">查看全部</button>
       </div>
-    </div>
-  </section>
-
-  <!-- Credit Cards -->
-  <section class="mb-8 animate-in delay-5">
-    <div class="flex justify-between items-end px-1 mb-4">
-      <div>
-        <span class="font-label text-[0.6rem] text-primary uppercase tracking-[0.15em] font-bold block mb-1">Credit Cards</span>
-        <h3 class="font-headline text-lg font-bold">信用卡管理</h3>
-      </div>
-      <button onclick="openAddCard()" class="flex items-center gap-1 text-primary text-xs font-bold bg-primary/8 px-3 py-1.5 rounded-full active:scale-95 transition-transform">
-        <span class="material-symbols-outlined text-sm">add</span> 新增卡片
-      </button>
-    </div>
-    <div id="card-list" class="space-y-3"></div>
-    <div id="card-recommend" class="hidden mt-4 bg-tertiary-container rounded-lg p-4">
-      <div class="flex items-center gap-2 mb-2">
-        <span class="material-symbols-outlined text-tertiary fill-icon text-lg">lightbulb</span>
-        <p class="font-bold text-sm text-on-tertiary-container">最優惠推薦</p>
-      </div>
-      <div id="card-recommend-content"></div>
     </div>
   </section>
 
@@ -1788,126 +1766,37 @@ function expandDay(btn) {
 // ══════════════════════════════════════════════════════════════════
 // ── PERSISTENCE ──
 // ══════════════════════════════════════════════════════════════════
-// ── CLOUD SYNC STORAGE (window.storage — cross-device shared) ──
-// ══════════════════════════════════════════════════════════════════
-const CLOUD_KEY   = 'seoul_budget_v2';
-const LS_FALLBACK = 'seoul_budget_local';
-let _syncPollTimer = null;
-let _lastSavedTs   = 0; // track last-saved timestamp to detect remote changes
+const LS_KEY = 'seoul_travel_v1';
 
-// ── Collect all state into one object ──
-function _getBudgetData() {
-  return {
-    totalBudget, exchangeRate, nextTxId, nextCardId,
-    cards,
-    transactions: transactions.map(tx => ({
-      id:tx.id, name:tx.name, amount:tx.amount,
-      date:tx.date, cat:tx.cat, cardId:tx.cardId||null,
-      imgs:tx.imgs||[]
-    })),
-    _ts: Date.now()
-  };
-}
-
-// ── Apply a loaded data object to JS state ──
-function _applyData(data) {
-  if (!data) return false;
-  if (typeof data.totalBudget  === 'number') totalBudget  = data.totalBudget;
-  if (typeof data.exchangeRate === 'number') exchangeRate = data.exchangeRate;
-  if (typeof data.nextTxId     === 'number') nextTxId     = data.nextTxId;
-  if (typeof data.nextCardId   === 'number') nextCardId   = data.nextCardId;
-  if (Array.isArray(data.transactions))
-    transactions = data.transactions.map(tx => ({...tx, imgs:tx.imgs||[], cardId:tx.cardId||null}));
-  if (Array.isArray(data.cards)) cards = data.cards;
-  _lastSavedTs = data._ts || 0;
-  return true;
-}
-
-// ── SAVE: write to cloud (shared), mirror to localStorage ──
-async function saveToStorage() {
-  const data = _getBudgetData();
-  _lastSavedTs = data._ts;
-  const json = JSON.stringify(data);
-
-  // Try cloud shared storage first
-  if (window.storage) {
-    try {
-      await window.storage.set(CLOUD_KEY, json, true);   // shared = true
-      try { localStorage.setItem(LS_FALLBACK, json); } catch(e) {} // mirror
-      const ss=document.getElementById('sync-status');if(ss){ss.textContent='☁️ 已儲存';setTimeout(()=>{if(ss)ss.textContent='☁️ 雲端同步';},2000);}
-      return;
-    } catch(e) {
-      console.warn('[sync] cloud save failed:', e);
-    }
-  }
-  // Fallback: localStorage only
+function saveToStorage() {
   try {
-    localStorage.setItem(LS_FALLBACK, json);
+    const data = { totalBudget, exchangeRate, nextTxId,
+      transactions: transactions.map(tx => ({ id:tx.id, name:tx.name, amount:tx.amount, date:tx.date, cat:tx.cat, imgs:tx.imgs||[] }))
+    };
+    localStorage.setItem(LS_KEY, JSON.stringify(data));
   } catch(e) {
-    showToast('⚠️ 儲存失敗，圖片可能過大');
+    showToast('⚠️ 圖片過大，儲存可能不完整');
+    console.warn('localStorage save failed:', e);
   }
 }
 
-// ── LOAD: read from cloud, fallback to localStorage ──
-async function loadFromStorage() {
-  if (window.storage) {
-    try {
-      const result = await window.storage.get(CLOUD_KEY, true);
-      if (result && result.value) {
-        const data = JSON.parse(result.value);
-        _applyData(data);
-        try { localStorage.setItem(LS_FALLBACK, result.value); } catch(e) {}
-        return true;
-      }
-    } catch(e) {
-      console.warn('[sync] cloud load failed:', e);
-    }
-  }
-  // Fallback: localStorage
+function loadFromStorage() {
   try {
-    const raw = localStorage.getItem(LS_FALLBACK);
-    if (raw) { _applyData(JSON.parse(raw)); return true; }
-  } catch(e) {}
-  return false;
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) return false;
+    const data = JSON.parse(raw);
+    if (data.totalBudget)  totalBudget  = data.totalBudget;
+    if (data.exchangeRate) exchangeRate = data.exchangeRate;
+    if (data.nextTxId)     nextTxId     = data.nextTxId;
+    if (Array.isArray(data.transactions)) transactions = data.transactions.map(tx => ({ ...tx, imgs:tx.imgs||[] }));
+    return true;
+  } catch(e) { console.warn('localStorage load failed:', e); return false; }
 }
 
-// ── POLL: check every 5s for changes from other devices ──
-function startSyncPoll() {
-  if (_syncPollTimer) return;
-  _syncPollTimer = setInterval(async () => {
-    if (!window.storage) return;
-    try {
-      const result = await window.storage.get(CLOUD_KEY, true);
-      if (!result || !result.value) return;
-      const data = JSON.parse(result.value);
-      const remoteTs = data._ts || 0;
-      if (remoteTs <= _lastSavedTs) return; // nothing new
-      // Remote is newer — apply and re-render
-      _applyData(data);
-      renderAll();
-      showToast('☁️ 已同步最新資料');
-      const ss=document.getElementById('sync-status');if(ss)ss.textContent='☁️ 剛同步';
-    } catch(e) {}
-  }, 5000);
-}
-
-
-async function clearStorage() {
-  if (window.storage) {
-    try {
-      await window.storage.delete(CLOUD_KEY, true);
-      // clean up image keys
-      const keys = await window.storage.list('img:', true);
-      if (keys && keys.keys) {
-        for (const k of keys.keys) {
-          try { await window.storage.delete(k, true); } catch(e) {}
-        }
-      }
-    } catch(e) {}
-  }
-  try { localStorage.removeItem(LS_FALLBACK); } catch(e) {}
+function clearStorage() {
+  localStorage.removeItem(LS_KEY);
   closeModal();
-  showToast('資料已清除');
+  showToast('資料已清除，重新整理頁面生效');
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -1917,11 +1806,6 @@ let totalBudget = 800000;
 let exchangeRate = 43.2;
 let swapped = false;
 let nextTxId = 6;
-
-// ── Credit Cards State ──
-let nextCardId = 1;
-// card: { id, name, color, img, cashbackPct, capTWD, promos:[{spendKRW,discountTWD}], note }
-let cards = [];
 
 const CAT_CFG = {
   '住宿': { icon:'hotel',               bar:'bg-primary',    iconCls:'text-primary fill-icon' },
@@ -1935,11 +1819,11 @@ const CAT_CFG = {
 const CAT_LIST = Object.keys(CAT_CFG);
 
 let transactions = [
-  { id:1, name:'機場快線 AREX',               amount:9500,   date:'4/7',  cat:'交通', imgs:[], cardId:null },
-  { id:2, name:'Hotel The Designers（訂金）', amount:150000, date:'預付', cat:'住宿', imgs:[], cardId:null },
-  { id:3, name:'T-Money 儲值',                amount:30500,  date:'4/7',  cat:'交通', imgs:[], cardId:null },
-  { id:4, name:'N首爾塔纜車票',               amount:22000,  date:'4/7',  cat:'門票', imgs:[], cardId:null },
-  { id:5, name:'望遠市場草莓＋小吃',          amount:18000,  date:'4/8',  cat:'餐飲', imgs:[], cardId:null },
+  { id:1, name:'機場快線 AREX',               amount:9500,   date:'4/7',  cat:'交通', imgs:[] },
+  { id:2, name:'Hotel The Designers（訂金）', amount:150000, date:'預付', cat:'住宿', imgs:[] },
+  { id:3, name:'T-Money 儲值',                amount:30500,  date:'4/7',  cat:'交通', imgs:[] },
+  { id:4, name:'N首爾塔纜車票',               amount:22000,  date:'4/7',  cat:'門票', imgs:[] },
+  { id:5, name:'望遠市場草莓＋小吃',          amount:18000,  date:'4/8',  cat:'餐飲', imgs:[] },
 ];
 
 // ── Budget edit ──
@@ -1953,9 +1837,9 @@ function cancelBudgetEdit() {
   document.getElementById('budget-display-row').classList.remove('hidden');
   document.getElementById('budget-edit-row').classList.add('hidden');
 }
-async function saveBudgetTotal() {
+function saveBudgetTotal() {
   const v = parseInt(document.getElementById('budget-total-input').value);
-  if (v > 0) { totalBudget = v; cancelBudgetEdit(); await saveToStorage(); renderAll(); showToast('總預算已更新 ✓'); }
+  if (v > 0) { totalBudget = v; cancelBudgetEdit(); saveToStorage(); renderAll(); showToast('總預算已更新 ✓'); }
   else showToast('請輸入有效金額');
 }
 
@@ -1965,7 +1849,6 @@ function renderAll() {
   renderCategoryBreakdown();
   renderTransactions();
   renderHomeBudgetCard();
-  renderCards();
 }
 
 function renderOverview() {
@@ -2025,10 +1908,6 @@ function renderTransactions() {
     const divider = idx<transactions.length-1 ? '<div class="h-px bg-outline-variant/10"></div>' : '';
     const thumbs  = (tx.imgs||[]).slice(0,3).map(src=>`<img src="${src}" class="w-8 h-8 rounded object-cover flex-shrink-0" />`).join('');
     const extra   = (tx.imgs||[]).length>3 ? `<span class="text-[0.6rem] text-on-surface-variant">+${tx.imgs.length-3}</span>` : '';
-    const card    = cards.find(c=>c.id===tx.cardId);
-    const twdAmt  = Math.round(tx.amount / (exchangeRate||43.2));
-    const cb      = card ? Math.min(Math.round(twdAmt*(card.cashbackPct||0)/100), calcRemCap(card)) : 0;
-    const cardBadge = card ? `<span class="inline-flex items-center gap-1 text-[0.58rem] font-bold px-2 py-0.5 rounded-full mt-1 flex-shrink-0" style="background:${card.color}22;color:${card.color}"><span class="material-symbols-outlined fill-icon" style="font-size:0.7rem;">credit_card</span>${card.name}${cb>0?` +TWD${cb}`:''}</span>` : '';
     return `
       <div class="flex items-center justify-between py-3 gap-3">
         <div class="flex items-center gap-3 flex-1 min-w-0">
@@ -2038,7 +1917,6 @@ function renderTransactions() {
           <div class="min-w-0 flex-1">
             <p class="font-bold text-sm truncate">${tx.name}</p>
             <p class="text-xs text-on-surface-variant">${tx.date} · ${tx.cat}</p>
-            ${cardBadge}
             ${thumbs ? `<div class="flex items-center gap-1 mt-1">${thumbs}${extra}</div>` : ''}
           </div>
         </div>
@@ -2054,31 +1932,29 @@ function renderTransactions() {
 
 // ── CRUD ──
 function openEditTx(id) { const tx=transactions.find(t=>t.id===id); if(tx) showDynamicModal('editTx',tx); }
-async function deleteTx(id) {
+function deleteTx(id) {
   transactions=transactions.filter(t=>t.id!==id);
-  await saveToStorage(); renderAll(); closeModal(); showToast('已刪除消費記錄');
+  saveToStorage(); renderAll(); closeModal(); showToast('已刪除消費記錄');
 }
-async function saveEditTx(id) {
+function saveEditTx(id) {
   const name=document.getElementById('edit-name').value.trim();
   const amount=parseInt(document.getElementById('edit-amount').value)||0;
   const date=document.getElementById('edit-date').value.trim();
   const cat=document.querySelector('#edit-cat-pills .selected')?.dataset.cat||'其他';
   if(!name||!amount){showToast('請填寫項目名稱與金額');return;}
   const tx=transactions.find(t=>t.id===id);
-  const cardId=parseInt(document.getElementById('edit-card-select')?.value)||null;
-  if(tx){tx.name=name;tx.amount=amount;tx.date=date||tx.date;tx.cat=cat;tx.imgs=[...pendingImgs];tx.cardId=cardId||null;}
-  await saveToStorage(); renderAll(); closeModal(); showToast('消費記錄已更新 ✓');
+  if(tx){tx.name=name;tx.amount=amount;tx.date=date||tx.date;tx.cat=cat;tx.imgs=[...pendingImgs];}
+  saveToStorage(); renderAll(); closeModal(); showToast('消費記錄已更新 ✓');
 }
-async function addExpense() {
+function addExpense() {
   const name=document.getElementById('new-name').value.trim();
   const amount=parseInt(document.getElementById('new-amount').value)||0;
   const date=document.getElementById('new-date').value.trim()||'4/7';
   const cat=document.querySelector('#new-cat-pills .selected')?.dataset.cat||'其他';
   if(!name){showToast('請輸入消費項目名稱');return;}
   if(!amount){showToast('請輸入金額');return;}
-  const cardId=parseInt(document.getElementById('new-card-select')?.value)||null;
-  transactions.unshift({id:nextTxId++,name,amount,date,cat,imgs:[...pendingImgs],cardId:cardId||null});
-  await saveToStorage(); renderAll(); closeModal(); showToast('✓ 消費記錄已新增');
+  transactions.unshift({id:nextTxId++,name,amount,date,cat,imgs:[...pendingImgs]});
+  saveToStorage(); renderAll(); closeModal(); showToast('✓ 消費記錄已新增');
 }
 
 // ── Images ──
@@ -2138,10 +2014,7 @@ function showDynamicModal(type,data){
         <div id="new-cat-pills" class="flex flex-wrap gap-2">
           ${cats.map((c,i)=>`<button data-cat="${c}" onclick="selectCatPill(this,'new-cat-pills')" class="tag-pill font-label text-[0.65rem] font-bold px-3 py-1.5 rounded-full ${i===0?'bg-primary text-white selected':'bg-surface-container text-on-surface-variant'}">${c}</button>`).join('')}
         </div></div>
-      <div class="grid grid-cols-2 gap-3">
-        <div>${buildCardSelector('new',null)}</div>
-        <div>${buildImgUploader('new',[])}</div>
-      </div>
+      ${buildImgUploader('new',[])}
     </div>
     <div class="flex gap-3 mt-6">
       <button onclick="closeModal()" class="flex-1 bg-surface-container-high text-on-surface font-bold py-3 rounded-full active:scale-95">取消</button>
@@ -2164,10 +2037,7 @@ function showDynamicModal(type,data){
         <div id="edit-cat-pills" class="flex flex-wrap gap-2">
           ${cats.map(c=>`<button data-cat="${c}" onclick="selectCatPill(this,'edit-cat-pills')" class="tag-pill font-label text-[0.65rem] font-bold px-3 py-1.5 rounded-full ${c===tx.cat?'bg-primary text-white selected':'bg-surface-container text-on-surface-variant'}">${c}</button>`).join('')}
         </div></div>
-      <div class="grid grid-cols-2 gap-3">
-        <div>${buildCardSelector('edit',tx.cardId||null)}</div>
-        <div>${buildImgUploader('edit',tx.imgs||[])}</div>
-      </div>
+      ${buildImgUploader('edit',tx.imgs||[])}
     </div>
     <div class="flex gap-3 mt-6">
       <button onclick="deleteTx(${tx.id})" class="flex-shrink-0 bg-error-container/20 text-error font-bold py-3 px-4 rounded-full active:scale-95 flex items-center gap-1">
@@ -2178,300 +2048,6 @@ function showDynamicModal(type,data){
   }
   document.getElementById('modal-content').innerHTML=html;
   document.getElementById('modal-overlay').classList.add('open');
-}
-
-
-// ══════════════════════════════════════════════════════════════════
-// ── CREDIT CARDS ──
-// ══════════════════════════════════════════════════════════════════
-
-// ── Helpers ──
-function calcUsedCashback(card) {
-  return transactions.filter(t=>t.cardId===card.id).reduce((s,t)=>{
-    const twdAmt = Math.round(t.amount/(exchangeRate||43.2));
-    const gross  = Math.round(twdAmt*(card.cashbackPct||0)/100);
-    const cap    = card.capTWD>0 ? Math.max(0, card.capTWD-s) : gross;
-    return s + Math.min(gross, cap);
-  }, 0);
-}
-function calcRemCap(card) {
-  if (!card.capTWD) return Infinity;
-  return Math.max(0, card.capTWD - calcUsedCashback(card));
-}
-function calcSpendableKRW(card) {
-  const rem = calcRemCap(card);
-  if (rem===Infinity || !card.cashbackPct) return Infinity;
-  return Math.round((rem/(card.cashbackPct/100))*(exchangeRate||43.2));
-}
-function calcPromoStatus(card) {
-  if (!card.promos||!card.promos.length) return [];
-  const spent = transactions.filter(t=>t.cardId===card.id).reduce((s,t)=>s+t.amount,0);
-  return card.promos.map(p=>({
-    spendKRW:p.spendKRW, discountTWD:p.discountTWD,
-    achieved: spent>=p.spendKRW,
-    pct: Math.min(100,Math.round(spent/p.spendKRW*100)),
-    remaining: Math.max(0,p.spendKRW-spent),
-  }));
-}
-
-// ── Card selector for expense modal ──
-function buildCardSelector(prefix, selectedId) {
-  if (cards.length===0) return '';
-  const options = cards.map(c=>`<option value="${c.id}" ${c.id===selectedId?'selected':''}>${c.name}</option>`).join('');
-  return `<div>
-    <p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">信用卡</p>
-    <select id="${prefix}-card-select" onchange="previewCardCashback('${prefix}')"
-      class="w-full bg-surface-container-high rounded-DEFAULT p-3 text-sm outline-none font-body">
-      <option value="">不使用</option>${options}
-    </select>
-    <p id="${prefix}-cb-preview" class="text-[0.65rem] font-bold text-tertiary mt-1.5 hidden"></p>
-  </div>`;
-}
-function previewCardCashback(prefix) {
-  const sel   = document.getElementById(prefix+'-card-select');
-  const amtEl = document.getElementById(prefix+'-amount');
-  const prev  = document.getElementById(prefix+'-cb-preview');
-  if(!sel||!prev) return;
-  const card   = cards.find(c=>c.id===parseInt(sel.value));
-  const amount = parseInt(amtEl?.value||0)||0;
-  if(!card||!amount){prev.classList.add('hidden');return;}
-  const twdAmt = Math.round(amount/(exchangeRate||43.2));
-  const lines  = [];
-  if(card.cashbackPct){
-    const gross  = Math.round(twdAmt*card.cashbackPct/100);
-    const rem    = calcRemCap(card);
-    const actual = rem===Infinity?gross:Math.min(gross,rem);
-    lines.push(`💳 回饋 TWD ${actual}${card.capTWD?` （剩餘額度 TWD ${rem===Infinity?'無上限':rem}）`:''}`);
-  }
-  if(card.promos){
-    const spent = transactions.filter(t=>t.cardId===card.id).reduce((s,t)=>s+t.amount,0);
-    card.promos.forEach(p=>{
-      const after = spent+amount;
-      if(after>=p.spendKRW) lines.push(`🎉 滿 ₩${p.spendKRW.toLocaleString()} 折 TWD${p.discountTWD} — 本筆達標！`);
-      else lines.push(`📌 再花 ₩${(p.spendKRW-spent).toLocaleString()} 折 TWD${p.discountTWD}`);
-    });
-  }
-  if(lines.length){prev.innerHTML=lines.join('<br>');prev.classList.remove('hidden');}
-  else prev.classList.add('hidden');
-}
-
-// ── Render card list ──
-function renderCards() {
-  const el = document.getElementById('card-list');
-  if(!el) return;
-  if(cards.length===0){
-    el.innerHTML=`<button onclick="openAddCard()" class="w-full flex items-center gap-3 p-5 bg-surface-container-lowest rounded-lg editorial-shadow border-2 border-dashed border-outline-variant/30 text-on-surface-variant active:scale-95 transition-transform">
-      <span class="material-symbols-outlined text-2xl">add_card</span>
-      <span class="text-sm font-bold">點擊新增第一張信用卡</span></button>`;
-    document.getElementById('card-recommend').classList.add('hidden');
-    return;
-  }
-  el.innerHTML=cards.map(card=>{
-    const usedCB  = calcUsedCashback(card);
-    const remCap  = calcRemCap(card);
-    const spendKRW= calcSpendableKRW(card);
-    const capPct  = card.capTWD>0?Math.min(100,Math.round(usedCB/card.capTWD*100)):0;
-    const promos  = calcPromoStatus(card);
-    const bg      = card.img
-      ? `background:url('${card.img}') center/cover no-repeat;`
-      : `background:linear-gradient(135deg,${card.color} 0%,${card.color}bb 100%);`;
-    const promoRows = promos.map(p=>`<div class="bg-surface-container-low rounded-DEFAULT p-3">
-      <div class="flex justify-between items-center mb-1.5">
-        <p class="text-xs font-bold ${p.achieved?'text-tertiary':'text-on-surface'}">${p.achieved?'🎉':'📌'} 滿 ₩${p.spendKRW.toLocaleString()} 折 TWD${p.discountTWD}</p>
-        <span class="text-[0.6rem] font-bold px-2 py-0.5 rounded-full ${p.achieved?'bg-tertiary-container text-on-tertiary-container':'bg-surface-container text-on-surface-variant'}">${p.achieved?'已達標':p.pct+'%'}</span>
-      </div>
-      ${!p.achieved?`<div class="h-1.5 bg-surface-container rounded-full overflow-hidden mb-1"><div class="h-full rounded-full" style="width:${p.pct}%;background:${card.color};transition:width 0.7s"></div></div><p class="text-[0.58rem] text-on-surface-variant">還差 ₩${p.remaining.toLocaleString()}</p>`:''}</div>`).join('');
-    return `<div class="bg-surface-container-lowest rounded-lg editorial-shadow overflow-hidden">
-      <div class="relative h-40 overflow-hidden" style="${bg}">
-        <div class="absolute inset-0" style="background:linear-gradient(135deg,rgba(0,0,0,0.4),rgba(0,0,0,0.05));"></div>
-        <div class="absolute inset-0 p-4 flex flex-col justify-between">
-          <div class="flex justify-between items-start">
-            <p class="font-headline font-black text-white text-lg leading-tight" style="text-shadow:0 1px 6px rgba(0,0,0,0.6);">${card.name}</p>
-            <div class="flex gap-1">
-              <button onclick="openEditCard(${card.id})" class="w-7 h-7 bg-white/25 backdrop-blur-sm rounded-full flex items-center justify-center active:scale-90 transition-transform"><span class="material-symbols-outlined text-white text-sm">edit</span></button>
-              <button onclick="deleteCard(${card.id})" class="w-7 h-7 bg-white/25 backdrop-blur-sm rounded-full flex items-center justify-center active:scale-90 transition-transform"><span class="material-symbols-outlined text-white text-sm">delete</span></button>
-            </div>
-          </div>
-          <div>
-            ${card.cashbackPct?`<p class="text-white/90 text-[0.65rem] font-bold">現金回饋 ${card.cashbackPct}%${card.capTWD?' · 上限 TWD'+card.capTWD:''}</p>`:''}
-            ${promos.length?`<p class="text-white/75 text-[0.6rem]">${promos.length} 個滿額折扣方案</p>`:''}
-            ${card.note?`<p class="text-white/65 text-[0.6rem] mt-0.5">${card.note}</p>`:''}
-          </div>
-        </div>
-      </div>
-      <div class="p-4 space-y-3">
-        <div class="grid grid-cols-3 gap-2 text-center">
-          <div class="bg-surface-container-low rounded-DEFAULT p-2.5"><p class="font-headline font-black text-sm text-on-surface">TWD ${usedCB.toLocaleString()}</p><p class="text-[0.55rem] text-on-surface-variant mt-0.5">已獲回饋</p></div>
-          <div class="bg-surface-container-low rounded-DEFAULT p-2.5"><p class="font-headline font-black text-sm ${remCap!==Infinity?'text-tertiary':'text-secondary'}">${remCap===Infinity?'無上限':'TWD '+remCap.toLocaleString()}</p><p class="text-[0.55rem] text-on-surface-variant mt-0.5">剩餘額度</p></div>
-          <div class="bg-surface-container-low rounded-DEFAULT p-2.5"><p class="font-headline font-black text-sm text-secondary">${spendKRW===Infinity?'—':'₩'+spendKRW.toLocaleString()}</p><p class="text-[0.55rem] text-on-surface-variant mt-0.5">還可消費</p></div>
-        </div>
-        ${card.capTWD?`<div><div class="flex justify-between text-[0.58rem] text-on-surface-variant mb-1"><span>回饋進度</span><span>${capPct}%</span></div><div class="h-1.5 bg-surface-container rounded-full overflow-hidden"><div class="h-full rounded-full" style="width:${capPct}%;background:${card.color};transition:width 0.7s;"></div></div></div>`:''}
-        ${promoRows?`<div class="space-y-2">${promoRows}</div>`:''}
-      </div>
-    </div>`;
-  }).join('');
-  renderCardRecommend();
-}
-
-function renderCardRecommend() {
-  const rec = document.getElementById('card-recommend');
-  const content = document.getElementById('card-recommend-content');
-  if(!rec||!content||cards.length===0){rec&&rec.classList.add('hidden');return;}
-  const scored = cards.map(card=>{
-    const rem = calcRemCap(card);
-    const eff = rem>0&&card.cashbackPct ? card.cashbackPct : 0;
-    return { card, eff, rem, promos:calcPromoStatus(card) };
-  }).sort((a,b)=>b.eff-a.eff||b.rem-a.rem);
-  content.innerHTML='<div class="space-y-2">'+scored.map((s,i)=>{
-    const {card,eff,rem,promos}=s;
-    const isBest=i===0;
-    const hints=[
-      ...promos.filter(p=>p.achieved).map(p=>`🎉 折 TWD${p.discountTWD}`),
-      ...promos.filter(p=>!p.achieved).map(p=>`📌 再 ₩${p.remaining.toLocaleString()} 折 TWD${p.discountTWD}`),
-    ].join(' · ');
-    return `<div class="flex items-start gap-2 ${isBest?'':'opacity-70'}">
-      <div class="w-2.5 h-2.5 rounded-full flex-shrink-0 mt-1" style="background:${card.color}"></div>
-      <div class="flex-1"><div class="flex items-center gap-1 flex-wrap"><p class="font-bold text-sm text-on-tertiary-container">${card.name}</p>${isBest?'<span class="text-[0.55rem] bg-primary text-white px-1.5 py-0.5 rounded-full font-bold">最優</span>':''}</div>
-      <p class="text-xs text-on-tertiary-container/75">${eff>0?`回饋 ${eff}%`:'本期已達上限'}${rem!==Infinity&&eff>0?` · 剩 TWD${rem}`:''}${hints?` · ${hints}`:''}</p></div></div>`;
-  }).join('')+'</div>';
-  rec.classList.remove('hidden');
-}
-
-// ── CRUD ──
-function openAddCard() { showCardModal(null); }
-function openEditCard(id) { const card=cards.find(c=>c.id===id); if(card) showCardModal(card); }
-async function deleteCard(id) {
-  if(!confirm('確認刪除此卡片？')) return;
-  cards=cards.filter(c=>c.id!==id);
-  transactions.forEach(tx=>{if(tx.cardId===id)tx.cardId=null;});
-  await saveToStorage(); renderAll(); showToast('卡片已刪除');
-}
-
-// ── Card modal ──
-let pendingCardImg='';
-function showCardModal(card) {
-  const isNew=!card;
-  pendingCardImg=card?.img||'';
-  const color=card?.color||'#c1000d';
-  const bg=card?.img?`background:url('${card.img}') center/cover no-repeat`:`background:linear-gradient(135deg,${color},${color}bb)`;
-  const promoRows=(card?.promos||[]).map((p,i)=>buildPromoRow(i,p.spendKRW,p.discountTWD)).join('');
-  const html=`<h3 class="font-headline font-bold text-xl mb-5">${isNew?'新增':'編輯'}信用卡</h3>
-  <div class="space-y-4">
-    <div class="relative h-36 rounded-lg overflow-hidden flex items-center justify-center" id="cp-bg" style="${bg}">
-      <img id="cp-img" class="absolute inset-0 w-full h-full object-cover ${card?.img?'':'hidden'}" src="${card?.img||''}" />
-      <div id="cp-placeholder" class="relative z-10 flex flex-col items-center gap-1 text-white/70 ${card?.img?'hidden':''}"><span class="material-symbols-outlined text-4xl">credit_card</span></div>
-      <p id="cp-name-preview" class="absolute bottom-3 left-4 text-white font-headline font-black text-base" style="text-shadow:0 1px 4px rgba(0,0,0,0.5);">${card?.name||'新卡片'}</p>
-    </div>
-    <div class="flex items-center gap-2">
-      <label class="flex-1 flex items-center gap-2 bg-surface-container-high rounded-DEFAULT p-3 cursor-pointer text-on-surface-variant text-xs font-bold hover:bg-surface-container transition-colors">
-        <span class="material-symbols-outlined text-lg">add_photo_alternate</span>${isNew?'上傳卡片圖片（選填）':'更換圖片'}
-        <input type="file" accept="image/*" class="hidden" onchange="handleCardImg(event)" />
-      </label>
-      <button id="cp-remove-img" onclick="removeCardImg()" class="${card?.img?'':'hidden'} text-error text-xs font-bold px-3 py-2 bg-error-container/20 rounded-DEFAULT active:scale-95">移除</button>
-    </div>
-    <div class="grid grid-cols-3 gap-3">
-      <div class="col-span-2"><p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">卡片名稱</p>
-        <input id="cp-name" type="text" placeholder="例：玉山 Wallet" value="${card?.name||''}"
-          oninput="document.getElementById('cp-name-preview').textContent=this.value||'新卡片';if(document.getElementById('cp-img').classList.contains('hidden'))document.getElementById('cp-bg').style.background='linear-gradient(135deg,'+document.getElementById('cp-color').value+','+document.getElementById('cp-color').value+'bb)'"
-          class="w-full bg-surface-container-high rounded-DEFAULT p-3 text-sm outline-none font-body" /></div>
-      <div><p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">顏色</p>
-        <input id="cp-color" type="color" value="${color}"
-          oninput="if(document.getElementById('cp-img').classList.contains('hidden'))document.getElementById('cp-bg').style.background='linear-gradient(135deg,'+this.value+','+this.value+'bb)'"
-          class="w-full h-11 rounded-DEFAULT cursor-pointer border-0 bg-surface-container-high p-1" /></div>
-    </div>
-    <div class="grid grid-cols-2 gap-3">
-      <div><p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">現金回饋 %</p>
-        <input id="cp-pct" type="number" step="0.1" min="0" max="20" placeholder="例：3" value="${card?.cashbackPct||''}" class="w-full bg-surface-container-high rounded-DEFAULT p-3 text-sm outline-none font-body" /></div>
-      <div><p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">每期上限 TWD（0=無）</p>
-        <input id="cp-cap" type="number" placeholder="例：300" value="${card?.capTWD||''}" class="w-full bg-surface-container-high rounded-DEFAULT p-3 text-sm outline-none font-body" /></div>
-    </div>
-    <div>
-      <div class="flex items-center justify-between mb-2">
-        <p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider">滿額折扣方案</p>
-        <button type="button" onclick="addPromoRow()" class="flex items-center gap-1 text-primary text-xs font-bold active:scale-95"><span class="material-symbols-outlined text-sm">add</span> 新增</button>
-      </div>
-      <div id="cp-promos" class="space-y-2">${promoRows}</div>
-      <p class="text-[0.6rem] text-on-surface-variant mt-1">滿 ₩X 元 折 TWD Y</p>
-    </div>
-    <div><p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">備註（選填）</p>
-      <input id="cp-note" type="text" placeholder="例：海外消費 3%" value="${card?.note||''}" class="w-full bg-surface-container-high rounded-DEFAULT p-3 text-sm outline-none font-body" /></div>
-  </div>
-  <div class="flex gap-3 mt-6">
-    ${!isNew?`<button onclick="deleteCard(${card.id});closeModal();" class="flex-shrink-0 bg-error-container/20 text-error font-bold py-3 px-4 rounded-full active:scale-95 flex items-center gap-1"><span class="material-symbols-outlined text-sm">delete</span></button>`:''}
-    <button onclick="closeModal()" class="flex-1 bg-surface-container-high text-on-surface font-bold py-3 rounded-full active:scale-95">取消</button>
-    <button onclick="${isNew?'saveNewCard()':'saveEditCard('+card.id+')'}" class="flex-1 bg-gradient-to-r from-primary to-primary-container text-white font-bold py-3 rounded-full active:scale-95">${isNew?'儲存':'更新'}</button>
-  </div>`;
-  document.getElementById('modal-content').innerHTML=html;
-  document.getElementById('modal-overlay').classList.add('open');
-}
-
-function buildPromoRow(idx,spend='',disc='') {
-  return `<div class="promo-row flex items-center gap-2" data-idx="${idx}">
-    <span class="text-xs text-on-surface-variant flex-shrink-0">滿</span>
-    <input type="number" class="promo-spend flex-1 bg-surface-container-high rounded-DEFAULT px-2 py-2 text-xs outline-none font-body" placeholder="₩" value="${spend}" />
-    <span class="text-xs text-on-surface-variant flex-shrink-0">折 TWD</span>
-    <input type="number" class="promo-disc w-16 bg-surface-container-high rounded-DEFAULT px-2 py-2 text-xs outline-none font-body" placeholder="0" value="${disc}" />
-    <button onclick="this.closest('.promo-row').remove()" class="text-error w-6 h-6 flex items-center justify-center rounded-full hover:bg-error-container/20 flex-shrink-0"><span class="material-symbols-outlined text-sm">close</span></button>
-  </div>`;
-}
-function addPromoRow() {
-  const c=document.getElementById('cp-promos');if(!c)return;
-  const div=document.createElement('div');div.innerHTML=buildPromoRow(Date.now());
-  c.appendChild(div.firstElementChild);
-}
-function collectPromos() {
-  return [...document.querySelectorAll('.promo-row')].map(row=>({
-    spendKRW:parseInt(row.querySelector('.promo-spend').value)||0,
-    discountTWD:parseInt(row.querySelector('.promo-disc').value)||0,
-  })).filter(p=>p.spendKRW>0&&p.discountTWD>0);
-}
-function handleCardImg(e) {
-  const file=e.target.files[0];if(!file)return;
-  const r=new FileReader();
-  r.onload=ev=>{
-    pendingCardImg=ev.target.result;
-    const img=document.getElementById('cp-img');
-    if(img){img.src=ev.target.result;img.classList.remove('hidden');}
-    const ph=document.getElementById('cp-placeholder');if(ph)ph.classList.add('hidden');
-    const rm=document.getElementById('cp-remove-img');if(rm)rm.classList.remove('hidden');
-  };r.readAsDataURL(file);
-}
-function removeCardImg() {
-  pendingCardImg='';
-  const img=document.getElementById('cp-img');if(img){img.src='';img.classList.add('hidden');}
-  const ph=document.getElementById('cp-placeholder');if(ph)ph.classList.remove('hidden');
-  const rm=document.getElementById('cp-remove-img');if(rm)rm.classList.add('hidden');
-  const color=document.getElementById('cp-color')?.value||'#c1000d';
-  const bg=document.getElementById('cp-bg');if(bg)bg.style.background=`linear-gradient(135deg,${color},${color}bb)`;
-}
-async function saveNewCard() {
-  const name=document.getElementById('cp-name').value.trim();
-  if(!name){showToast('請輸入卡片名稱');return;}
-  cards.push({
-    id:nextCardId++,name,
-    color:document.getElementById('cp-color').value||'#c1000d',
-    img:pendingCardImg,
-    cashbackPct:parseFloat(document.getElementById('cp-pct').value)||0,
-    capTWD:parseInt(document.getElementById('cp-cap').value)||0,
-    promos:collectPromos(),
-    note:document.getElementById('cp-note').value.trim(),
-  });
-  await saveToStorage();renderAll();closeModal();showToast('✓ 信用卡已新增');
-}
-async function saveEditCard(id) {
-  const name=document.getElementById('cp-name').value.trim();
-  if(!name){showToast('請輸入卡片名稱');return;}
-  const card=cards.find(c=>c.id===id);
-  if(card){
-    card.name=name;
-    card.color=document.getElementById('cp-color').value||'#c1000d';
-    card.img=pendingCardImg;
-    card.cashbackPct=parseFloat(document.getElementById('cp-pct').value)||0;
-    card.capTWD=parseInt(document.getElementById('cp-cap').value)||0;
-    card.promos=collectPromos();
-    card.note=document.getElementById('cp-note').value.trim();
-  }
-  await saveToStorage();renderAll();closeModal();showToast('卡片已更新 ✓');
 }
 
 // ── Currency ──
@@ -2494,7 +2070,7 @@ function openRateEdit(){
 }
 function saveRate(){
   const v=parseFloat(document.getElementById('rate-input').value);
-  if(v>0){exchangeRate=v;document.getElementById('rate-display').textContent=v;document.getElementById('rate-edit-row').classList.add('hidden');saveToStorage().then(()=>{});renderOverview();doConvert();showToast('匯率已更新：1 TWD = '+v+' KRW');}
+  if(v>0){exchangeRate=v;document.getElementById('rate-display').textContent=v;document.getElementById('rate-edit-row').classList.add('hidden');saveToStorage();renderOverview();doConvert();showToast('匯率已更新：1 TWD = '+v+' KRW');}
   else showToast('請輸入有效匯率');
 }
 function convertCurrency(){doConvert();}
@@ -2673,17 +2249,11 @@ function openSubwayApp() {
 }
 
 // ── Init ──
-document.addEventListener('DOMContentLoaded', async () => {
-  const ss = document.getElementById('sync-status');
-  if (ss) ss.textContent = '☁️ 載入中…';
-
-  await loadFromStorage();
+document.addEventListener('DOMContentLoaded',()=>{
+  loadFromStorage();
   renderAll();
   updateToolboxBubble(false);
   initWeather();
-  startSyncPoll();
-
-  if (ss) ss.textContent = window.storage ? '☁️ 雲端同步' : '💾 本機儲存';
 });
 
 // ── Weather: render hourly strip with current Seoul-time highlight ──
