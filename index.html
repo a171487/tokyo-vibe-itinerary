@@ -1558,7 +1558,7 @@
     <div class="bg-gradient-to-br from-on-surface to-[#5a6062] rounded-lg p-6 editorial-shadow text-white">
       <div class="flex justify-between items-start mb-6">
         <div>
-          <p class="text-white/60 text-xs uppercase tracking-widest font-label">總預算</p>
+          <div class="flex items-center gap-2"><p class="text-white/60 text-xs uppercase tracking-widest font-label">總預算</p><span id="sync-badge" class="text-white/50 text-[0.6rem]">☁️</span></div>
           <!-- Editable total budget -->
           <div id="budget-display-row" class="flex items-end gap-2">
             <p class="font-headline font-black text-[2.5rem] leading-tight tracking-tight" id="budget-total-display">₩800,000</p>
@@ -1788,112 +1788,71 @@ function expandDay(btn) {
 // ── PERSISTENCE ──
 // ══════════════════════════════════════════════════════════════════
 // ══════════════════════════════════════════════════════════════════
-// ── CLOUD SYNC STORAGE (window.storage shared — cross-device) ──
+// ── CLOUD SYNC STORAGE (window.storage shared=true → cross-device) ──
 // ══════════════════════════════════════════════════════════════════
-const CLOUD_KEY  = 'seoul_budget_v1';   // shared across all users/devices
-const LS_FALLBACK = 'seoul_budget_local'; // local fallback if cloud unavailable
+const CLOUD_KEY   = 'seoul_budget_v3';  // shared key (all devices read/write)
+const LS_FALLBACK = 'seoul_budget_local';
 
-let _syncPollTimer = null;
-let _lastSavedHash = '';   // detect remote changes
+let _syncTimer  = null;
+let _lastSavedTs = 0;  // track timestamp to detect remote changes
 
-// Serialize budget state
+// ── Collect all budget state ──
 function _getBudgetData() {
   return {
-    totalBudget, exchangeRate, nextTxId, nextCardId, cards,
+    totalBudget, exchangeRate, nextTxId, nextCardId,
+    cards,
     transactions: transactions.map(tx => ({
       id:tx.id, name:tx.name, amount:tx.amount,
       date:tx.date, cat:tx.cat, cardId:tx.cardId||null,
-      imgs: tx.imgs||[]   // base64 included; large imgs may exceed quota
+      imgs:tx.imgs||[]
     })),
-    _ts: Date.now()  // timestamp for conflict resolution (last-write-wins)
+    _ts: Date.now()
   };
 }
 
-// Apply loaded data to state
-function _applyData(data) {
-  if (!data) return false;
-  if (typeof data.totalBudget === 'number')  totalBudget  = data.totalBudget;
-  if (typeof data.exchangeRate === 'number') exchangeRate = data.exchangeRate;
-  if (typeof data.nextTxId === 'number')     nextTxId     = data.nextTxId;
-  if (typeof data.nextCardId === 'number')   nextCardId   = data.nextCardId;
-  if (Array.isArray(data.transactions)) {
-    transactions = data.transactions.map(tx => ({...tx, imgs:tx.imgs||[], cardId:tx.cardId||null}));
-  }
-  if (Array.isArray(data.cards)) cards = data.cards;
-  _lastSavedHash = JSON.stringify(data).length + ':' + (data._ts||0);
-  return true;
+// ── Apply loaded data into JS variables ──
+function _applyData(d) {
+  if (!d) return;
+  if (typeof d.totalBudget  === 'number') totalBudget  = d.totalBudget;
+  if (typeof d.exchangeRate === 'number') exchangeRate = d.exchangeRate;
+  if (typeof d.nextTxId     === 'number') nextTxId     = d.nextTxId;
+  if (typeof d.nextCardId   === 'number') nextCardId   = d.nextCardId;
+  if (Array.isArray(d.transactions))
+    transactions = d.transactions.map(tx => ({...tx, imgs:tx.imgs||[], cardId:tx.cardId||null}));
+  if (Array.isArray(d.cards)) cards = d.cards;
+  _lastSavedTs = d._ts || 0;
 }
 
-// Save to cloud storage (shared), fallback to localStorage
+// ── SAVE: write to cloud shared storage ──
 async function saveToStorage() {
   const data = _getBudgetData();
+  _lastSavedTs = data._ts;
   const json = JSON.stringify(data);
-  _lastSavedHash = json.length + ':' + data._ts;
-
-  // 1. Try cloud shared storage
   if (window.storage) {
     try {
-      // Split large data: separate imgs from main record to avoid 5MB per-key limit
-      const imgMap = {};
-      const lightData = {
-        ...data,
-        transactions: data.transactions.map(tx => {
-          const key = 'img:'+tx.id;
-          if (tx.imgs && tx.imgs.length) {
-            imgMap[key] = tx.imgs;
-            return {...tx, imgs:[], _hasImgs:true};
-          }
-          return tx;
-        })
-      };
-      // Save main record
-      await window.storage.set(CLOUD_KEY, JSON.stringify(lightData), true);
-      // Save image records
-      for (const [key, imgs] of Object.entries(imgMap)) {
-        try { await window.storage.set(key, JSON.stringify(imgs), true); } catch(e) {}
-      }
-      // Also mirror to localStorage for offline fallback
+      await window.storage.set(CLOUD_KEY, json, true);   // <-- shared=true
       try { localStorage.setItem(LS_FALLBACK, json); } catch(e) {}
+      _setSyncBadge('✓ 已儲存', 2000);
       return;
-    } catch(e) {
-      console.warn('Cloud save failed, using localStorage:', e);
-    }
+    } catch(e) { console.warn('[sync] save failed:', e); }
   }
-  // 2. Fallback: localStorage only
-  try {
-    localStorage.setItem(LS_FALLBACK, json);
-  } catch(e) {
-    showToast('⚠️ 圖片過大，儲存可能不完整');
+  try { localStorage.setItem(LS_FALLBACK, json); } catch(e) {
+    showToast('⚠️ 儲存失敗');
   }
 }
 
-// Load from cloud, fallback to localStorage
+// ── LOAD: read from cloud shared storage ──
 async function loadFromStorage() {
-  // 1. Try cloud shared storage
   if (window.storage) {
     try {
-      const result = await window.storage.get(CLOUD_KEY, true);
-      if (result && result.value) {
-        const data = JSON.parse(result.value);
-        // Reattach images
-        if (Array.isArray(data.transactions)) {
-          for (const tx of data.transactions) {
-            if (tx._hasImgs) {
-              try {
-                const imgResult = await window.storage.get('img:'+tx.id, true);
-                if (imgResult) tx.imgs = JSON.parse(imgResult.value);
-              } catch(e) { tx.imgs = []; }
-            }
-          }
-        }
-        _applyData(data);
+      const r = await window.storage.get(CLOUD_KEY, true);
+      if (r && r.value) {
+        _applyData(JSON.parse(r.value));
+        try { localStorage.setItem(LS_FALLBACK, r.value); } catch(e) {}
         return true;
       }
-    } catch(e) {
-      console.warn('Cloud load failed, trying localStorage:', e);
-    }
+    } catch(e) { console.warn('[sync] load failed:', e); }
   }
-  // 2. Fallback: localStorage
   try {
     const raw = localStorage.getItem(LS_FALLBACK);
     if (raw) { _applyData(JSON.parse(raw)); return true; }
@@ -1901,53 +1860,42 @@ async function loadFromStorage() {
   return false;
 }
 
-// Poll for remote changes every 8 seconds
+// ── POLL: every 3s check if cloud data is newer than what we last saved ──
 function startSyncPoll() {
-  if (_syncPollTimer) return;
-  _syncPollTimer = setInterval(async () => {
+  if (_syncTimer) return;
+  _syncTimer = setInterval(async () => {
     if (!window.storage) return;
     try {
-      const result = await window.storage.get(CLOUD_KEY, true);
-      if (!result || !result.value) return;
-      const data = JSON.parse(result.value);
-      const hash = result.value.length + ':' + (data._ts||0);
-      if (hash === _lastSavedHash) return; // no change
-      // Remote change detected — reload images and apply
-      if (Array.isArray(data.transactions)) {
-        for (const tx of data.transactions) {
-          if (tx._hasImgs) {
-            try {
-              const imgResult = await window.storage.get('img:'+tx.id, true);
-              if (imgResult) tx.imgs = JSON.parse(imgResult.value);
-            } catch(e) { tx.imgs = []; }
-          }
-        }
-      }
-      _applyData(data);
+      const r = await window.storage.get(CLOUD_KEY, true);
+      if (!r || !r.value) return;
+      const d = JSON.parse(r.value);
+      if ((d._ts || 0) <= _lastSavedTs) return;  // we already have this or newer
+      _applyData(d);
+      _lastSavedTs = d._ts;
       renderAll();
-      showToast('☁️ 資料已由其他裝置更新同步');
-      _lastSavedHash = hash;
+      showToast('☁️ 已同步最新資料');
     } catch(e) {}
-  }, 8000);
+  }, 3000);
 }
 
+// ── CLEAR ──
 async function clearStorage() {
   if (window.storage) {
-    try {
-      await window.storage.delete(CLOUD_KEY, true);
-      // clean up image keys
-      const keys = await window.storage.list('img:', true);
-      if (keys && keys.keys) {
-        for (const k of keys.keys) {
-          try { await window.storage.delete(k, true); } catch(e) {}
-        }
-      }
-    } catch(e) {}
+    try { await window.storage.delete(CLOUD_KEY, true); } catch(e) {}
   }
   try { localStorage.removeItem(LS_FALLBACK); } catch(e) {}
   closeModal();
   showToast('資料已清除');
 }
+
+// ── Sync badge helper ──
+function _setSyncBadge(msg, clearAfterMs) {
+  const el = document.getElementById('sync-badge');
+  if (!el) return;
+  el.textContent = msg;
+  if (clearAfterMs) setTimeout(() => { if(el) el.textContent = window.storage ? '☁️' : '💾'; }, clearAfterMs);
+}
+
 
 // ══════════════════════════════════════════════════════════════════
 // ── BUDGET STATE ──
@@ -1992,9 +1940,9 @@ function cancelBudgetEdit() {
   document.getElementById('budget-display-row').classList.remove('hidden');
   document.getElementById('budget-edit-row').classList.add('hidden');
 }
-function saveBudgetTotal() {
+async function saveBudgetTotal() {
   const v = parseInt(document.getElementById('budget-total-input').value);
-  if (v > 0) { totalBudget = v; cancelBudgetEdit(); saveToStorage(); renderAll(); showToast('總預算已更新 ✓'); }
+  if (v > 0) { totalBudget = v; cancelBudgetEdit(); await saveToStorage(); renderAll(); showToast('總預算已更新 ✓'); }
   else showToast('請輸入有效金額');
 }
 
@@ -2093,11 +2041,11 @@ function renderTransactions() {
 
 // ── CRUD ──
 function openEditTx(id) { const tx=transactions.find(t=>t.id===id); if(tx) showDynamicModal('editTx',tx); }
-function deleteTx(id) {
+async function deleteTx(id) {
   transactions=transactions.filter(t=>t.id!==id);
-  saveToStorage(); renderAll(); closeModal(); showToast('已刪除消費記錄');
+  await saveToStorage(); renderAll(); closeModal(); showToast('已刪除消費記錄');
 }
-function saveEditTx(id) {
+async function saveEditTx(id) {
   const name=document.getElementById('edit-name').value.trim();
   const amount=parseInt(document.getElementById('edit-amount').value)||0;
   const date=document.getElementById('edit-date').value.trim();
@@ -2106,9 +2054,9 @@ function saveEditTx(id) {
   const tx=transactions.find(t=>t.id===id);
   const cardId=parseInt(document.getElementById('edit-card-select')?.value)||null;
   if(tx){tx.name=name;tx.amount=amount;tx.date=date||tx.date;tx.cat=cat;tx.imgs=[...pendingImgs];tx.cardId=cardId||null;}
-  saveToStorage(); renderAll(); closeModal(); showToast('消費記錄已更新 ✓');
+  await saveToStorage(); renderAll(); closeModal(); showToast('消費記錄已更新 ✓');
 }
-function addExpense() {
+async function addExpense() {
   const name=document.getElementById('new-name').value.trim();
   const amount=parseInt(document.getElementById('new-amount').value)||0;
   const date=document.getElementById('new-date').value.trim()||'4/7';
@@ -2117,7 +2065,7 @@ function addExpense() {
   if(!amount){showToast('請輸入金額');return;}
   const cardId=parseInt(document.getElementById('new-card-select')?.value)||null;
   transactions.unshift({id:nextTxId++,name,amount,date,cat,imgs:[...pendingImgs],cardId:cardId||null});
-  saveToStorage(); renderAll(); closeModal(); showToast('✓ 消費記錄已新增');
+  await saveToStorage(); renderAll(); closeModal(); showToast('✓ 消費記錄已新增');
 }
 
 // ── Images ──
@@ -2379,11 +2327,11 @@ function renderCardRecommend() {
 // ── CRUD ──
 function openAddCard() { showCardModal(null); }
 function openEditCard(id) { const card=cards.find(c=>c.id===id); if(card) showCardModal(card); }
-function deleteCard(id) {
+async function deleteCard(id) {
   if(!confirm('確認刪除此卡片？')) return;
   cards=cards.filter(c=>c.id!==id);
   transactions.forEach(tx=>{if(tx.cardId===id)tx.cardId=null;});
-  saveToStorage(); renderAll(); showToast('卡片已刪除');
+  await saveToStorage(); renderAll(); showToast('卡片已刪除');
 }
 
 // ── Card modal ──
@@ -2483,7 +2431,7 @@ function removeCardImg() {
   const color=document.getElementById('cp-color')?.value||'#c1000d';
   const bg=document.getElementById('cp-bg');if(bg)bg.style.background=`linear-gradient(135deg,${color},${color}bb)`;
 }
-function saveNewCard() {
+async function saveNewCard() {
   const name=document.getElementById('cp-name').value.trim();
   if(!name){showToast('請輸入卡片名稱');return;}
   cards.push({
@@ -2495,9 +2443,9 @@ function saveNewCard() {
     promos:collectPromos(),
     note:document.getElementById('cp-note').value.trim(),
   });
-  saveToStorage();renderAll();closeModal();showToast('✓ 信用卡已新增');
+  await saveToStorage();renderAll();closeModal();showToast('✓ 信用卡已新增');
 }
-function saveEditCard(id) {
+async function saveEditCard(id) {
   const name=document.getElementById('cp-name').value.trim();
   if(!name){showToast('請輸入卡片名稱');return;}
   const card=cards.find(c=>c.id===id);
@@ -2510,7 +2458,7 @@ function saveEditCard(id) {
     card.promos=collectPromos();
     card.note=document.getElementById('cp-note').value.trim();
   }
-  saveToStorage();renderAll();closeModal();showToast('卡片已更新 ✓');
+  await saveToStorage();renderAll();closeModal();showToast('卡片已更新 ✓');
 }
 
 // ── Currency ──
@@ -2533,7 +2481,7 @@ function openRateEdit(){
 }
 function saveRate(){
   const v=parseFloat(document.getElementById('rate-input').value);
-  if(v>0){exchangeRate=v;document.getElementById('rate-display').textContent=v;document.getElementById('rate-edit-row').classList.add('hidden');saveToStorage();renderOverview();doConvert();showToast('匯率已更新：1 TWD = '+v+' KRW');}
+  if(v>0){exchangeRate=v;document.getElementById('rate-display').textContent=v;document.getElementById('rate-edit-row').classList.add('hidden');saveToStorage().then(()=>{});renderOverview();doConvert();showToast('匯率已更新：1 TWD = '+v+' KRW');}
   else showToast('請輸入有效匯率');
 }
 function convertCurrency(){doConvert();}
@@ -2713,17 +2661,13 @@ function openSubwayApp() {
 
 // ── Init ──
 document.addEventListener('DOMContentLoaded', async () => {
-  // Show loading indicator on budget card area
-  const budgetBar = document.getElementById('budget-bar');
-  if (budgetBar) budgetBar.style.opacity = '0.3';
-
+  _setSyncBadge('載入中…');
   await loadFromStorage();
   renderAll();
   updateToolboxBubble(false);
   initWeather();
-  startSyncPoll(); // start cross-device sync polling
-
-  if (budgetBar) budgetBar.style.opacity = '1';
+  startSyncPoll();
+  _setSyncBadge(window.storage ? '☁️' : '💾');
 });
 
 // ── Weather: render hourly strip with current Seoul-time highlight ──
