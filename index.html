@@ -1620,6 +1620,30 @@
     </div>
   </section>
 
+
+  <!-- Credit Cards -->
+  <section class="mb-8 animate-in delay-5">
+    <div class="flex justify-between items-end px-1 mb-4">
+      <div>
+        <span class="font-label text-[0.6rem] text-primary uppercase tracking-[0.15em] font-bold block mb-1">Credit Cards</span>
+        <h3 class="font-headline text-lg font-bold">信用卡管理</h3>
+      </div>
+      <button onclick="openAddCard()" class="flex items-center gap-1 text-primary text-xs font-bold bg-primary/8 px-3 py-1.5 rounded-full active:scale-95 transition-transform">
+        <span class="material-symbols-outlined text-sm">add</span> 新增卡片
+      </button>
+    </div>
+    <!-- Card list rendered by JS -->
+    <div id="card-list" class="space-y-3"></div>
+    <!-- Recommendation -->
+    <div id="card-recommend" class="hidden mt-4 bg-tertiary-container rounded-lg p-4">
+      <div class="flex items-center gap-2 mb-2">
+        <span class="material-symbols-outlined text-tertiary fill-icon text-lg">lightbulb</span>
+        <p class="font-bold text-sm text-on-tertiary-container">最優惠推薦</p>
+      </div>
+      <div id="card-recommend-content"></div>
+    </div>
+  </section>
+
   <!-- Currency Quick -->
   <section class="mb-8 animate-in delay-5">
     <div class="bg-surface-container-lowest rounded-lg editorial-shadow p-5">
@@ -1770,8 +1794,9 @@ const LS_KEY = 'seoul_travel_v1';
 
 function saveToStorage() {
   try {
-    const data = { totalBudget, exchangeRate, nextTxId,
-      transactions: transactions.map(tx => ({ id:tx.id, name:tx.name, amount:tx.amount, date:tx.date, cat:tx.cat, imgs:tx.imgs||[] }))
+    const data = { totalBudget, exchangeRate, nextTxId, nextCardId,
+      cards,
+      transactions: transactions.map(tx => ({ id:tx.id, name:tx.name, amount:tx.amount, date:tx.date, cat:tx.cat, imgs:tx.imgs||[], cardId:tx.cardId||null }))
     };
     localStorage.setItem(LS_KEY, JSON.stringify(data));
   } catch(e) {
@@ -1788,7 +1813,9 @@ function loadFromStorage() {
     if (data.totalBudget)  totalBudget  = data.totalBudget;
     if (data.exchangeRate) exchangeRate = data.exchangeRate;
     if (data.nextTxId)     nextTxId     = data.nextTxId;
-    if (Array.isArray(data.transactions)) transactions = data.transactions.map(tx => ({ ...tx, imgs:tx.imgs||[] }));
+    if (Array.isArray(data.transactions)) transactions = data.transactions.map(tx => ({ ...tx, imgs:tx.imgs||[], cardId:tx.cardId||null }));
+    if (Array.isArray(data.cards)) cards = data.cards;
+    if (data.nextCardId) nextCardId = data.nextCardId;
     return true;
   } catch(e) { console.warn('localStorage load failed:', e); return false; }
 }
@@ -1818,12 +1845,25 @@ const CAT_CFG = {
 };
 const CAT_LIST = Object.keys(CAT_CFG);
 
+// ── CREDIT CARDS STATE ──
+let nextCardId = 1;
+let cards = [];
+// Card shape: {
+//   id, name, color, img,
+//   cashbackPct: number,       // 現金回饋 %
+//   capTWD: number,            // 每期回饋上限 TWD (0=無)
+//   promos: [                  // 滿額折扣方案陣列
+//     { spendKRW: number, discountTWD: number, used: bool }
+//   ],
+//   note: string
+// }
+
 let transactions = [
-  { id:1, name:'機場快線 AREX',               amount:9500,   date:'4/7',  cat:'交通', imgs:[] },
-  { id:2, name:'Hotel The Designers（訂金）', amount:150000, date:'預付', cat:'住宿', imgs:[] },
-  { id:3, name:'T-Money 儲值',                amount:30500,  date:'4/7',  cat:'交通', imgs:[] },
-  { id:4, name:'N首爾塔纜車票',               amount:22000,  date:'4/7',  cat:'門票', imgs:[] },
-  { id:5, name:'望遠市場草莓＋小吃',          amount:18000,  date:'4/8',  cat:'餐飲', imgs:[] },
+  { id:1, name:'機場快線 AREX',               amount:9500,   date:'4/7',  cat:'交通', imgs:[], cardId:null },
+  { id:2, name:'Hotel The Designers（訂金）', amount:150000, date:'預付', cat:'住宿', imgs:[], cardId:null },
+  { id:3, name:'T-Money 儲值',                amount:30500,  date:'4/7',  cat:'交通', imgs:[], cardId:null },
+  { id:4, name:'N首爾塔纜車票',               amount:22000,  date:'4/7',  cat:'門票', imgs:[], cardId:null },
+  { id:5, name:'望遠市場草莓＋小吃',          amount:18000,  date:'4/8',  cat:'餐飲', imgs:[], cardId:null },
 ];
 
 // ── Budget edit ──
@@ -1849,6 +1889,7 @@ function renderAll() {
   renderCategoryBreakdown();
   renderTransactions();
   renderHomeBudgetCard();
+  renderCards();
 }
 
 function renderOverview() {
@@ -1908,6 +1949,14 @@ function renderTransactions() {
     const divider = idx<transactions.length-1 ? '<div class="h-px bg-outline-variant/10"></div>' : '';
     const thumbs  = (tx.imgs||[]).slice(0,3).map(src=>`<img src="${src}" class="w-8 h-8 rounded object-cover flex-shrink-0" />`).join('');
     const extra   = (tx.imgs||[]).length>3 ? `<span class="text-[0.6rem] text-on-surface-variant">+${tx.imgs.length-3}</span>` : '';
+    const card    = cards.find(c=>c.id===tx.cardId);
+    const cashback = card ? Math.round(tx.amount * (card.cashbackPct/100)) : 0;
+    const cardBadge = card
+      ? `<span class="inline-flex items-center gap-1 text-[0.58rem] font-bold px-2 py-0.5 rounded-full mt-1" style="background:${card.color}22;color:${card.color}">
+           <span class="material-symbols-outlined fill-icon" style="font-size:0.75rem;">credit_card</span>${card.name}
+           ${cashback>0?`<span class="opacity-70">回饋 TWD${cashback}</span>`:''}
+         </span>`
+      : '';
     return `
       <div class="flex items-center justify-between py-3 gap-3">
         <div class="flex items-center gap-3 flex-1 min-w-0">
@@ -1917,6 +1966,7 @@ function renderTransactions() {
           <div class="min-w-0 flex-1">
             <p class="font-bold text-sm truncate">${tx.name}</p>
             <p class="text-xs text-on-surface-variant">${tx.date} · ${tx.cat}</p>
+            ${cardBadge}
             ${thumbs ? `<div class="flex items-center gap-1 mt-1">${thumbs}${extra}</div>` : ''}
           </div>
         </div>
@@ -1943,7 +1993,8 @@ function saveEditTx(id) {
   const cat=document.querySelector('#edit-cat-pills .selected')?.dataset.cat||'其他';
   if(!name||!amount){showToast('請填寫項目名稱與金額');return;}
   const tx=transactions.find(t=>t.id===id);
-  if(tx){tx.name=name;tx.amount=amount;tx.date=date||tx.date;tx.cat=cat;tx.imgs=[...pendingImgs];}
+  const cardId = parseInt(document.getElementById('edit-card-select')?.value)||null;
+  if(tx){tx.name=name;tx.amount=amount;tx.date=date||tx.date;tx.cat=cat;tx.imgs=[...pendingImgs];tx.cardId=cardId||null;}
   saveToStorage(); renderAll(); closeModal(); showToast('消費記錄已更新 ✓');
 }
 function addExpense() {
@@ -1953,8 +2004,97 @@ function addExpense() {
   const cat=document.querySelector('#new-cat-pills .selected')?.dataset.cat||'其他';
   if(!name){showToast('請輸入消費項目名稱');return;}
   if(!amount){showToast('請輸入金額');return;}
-  transactions.unshift({id:nextTxId++,name,amount,date,cat,imgs:[...pendingImgs]});
+  const cardId = parseInt(document.getElementById('new-card-select')?.value)||null;
+  transactions.unshift({id:nextTxId++,name,amount,date,cat,imgs:[...pendingImgs],cardId:cardId||null});
   saveToStorage(); renderAll(); closeModal(); showToast('✓ 消費記錄已新增');
+}
+
+// ── Card selector for expense modal ──
+// ── Cashback helpers ──
+function cardUsedCashback(card) {
+  // Sum actual cashback earned by this card across all transactions
+  return transactions.filter(t=>t.cardId===card.id).reduce((s,t)=>{
+    const twdAmt = t.amount / (exchangeRate||43.2);
+    const raw = Math.round(twdAmt * (card.cashbackPct||0) / 100);
+    const cap = card.capTWD > 0 ? Math.max(0, card.capTWD - s) : raw;
+    return s + Math.min(raw, cap);
+  }, 0);
+}
+function cardRemainingCap(card) {
+  if (!card.capTWD) return Infinity;
+  return Math.max(0, card.capTWD - cardUsedCashback(card));
+}
+function cardSpendableKRW(card) {
+  // How much more ₩ can be spent before hitting the cashback cap
+  const rem = cardRemainingCap(card);
+  if (rem === Infinity || !card.cashbackPct) return Infinity;
+  return Math.round((rem / (card.cashbackPct/100)) * (exchangeRate||43.2));
+}
+function promoStatus(card) {
+  // Returns list of promo items with used/available status
+  if (!card.promos || !card.promos.length) return [];
+  const totalSpentKRW = transactions.filter(t=>t.cardId===card.id).reduce((s,t)=>s+t.amount,0);
+  return card.promos.map(p=>({
+    spendKRW: p.spendKRW,
+    discountTWD: p.discountTWD,
+    achieved: totalSpentKRW >= p.spendKRW,
+    progressPct: Math.min(100, Math.round(totalSpentKRW/p.spendKRW*100)),
+    remaining: Math.max(0, p.spendKRW - totalSpentKRW),
+  }));
+}
+
+function buildCardSelector(prefix, selectedId) {
+  if (cards.length === 0) return '';
+  const options = cards.map(c =>
+    `<option value="${c.id}" ${c.id===selectedId?'selected':''}>${c.name}</option>`
+  ).join('');
+  return `<div>
+    <p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">使用信用卡</p>
+    <select id="${prefix}-card-select" class="w-full bg-surface-container-high rounded-DEFAULT p-3 text-sm outline-none font-body" onchange="previewCashback('${prefix}')">
+      <option value="">不使用信用卡</option>
+      ${options}
+    </select>
+    <div id="${prefix}-cashback-preview" class="hidden mt-2 space-y-1"></div>
+  </div>`;
+}
+function previewCashback(prefix) {
+  const sel   = document.getElementById(prefix+'-card-select');
+  const amtEl = document.getElementById(prefix+'-amount');
+  const prev  = document.getElementById(prefix+'-cashback-preview');
+  if (!sel||!prev) return;
+  const cardId = parseInt(sel.value);
+  const amount = parseInt(amtEl?.value||0)||0;
+  const card = cards.find(c=>c.id===cardId);
+  if (!card) { prev.classList.add('hidden'); prev.innerHTML=''; return; }
+  const rate = exchangeRate||43.2;
+  const twdAmt = Math.round(amount/rate);
+  const lines = [];
+  // Cashback line
+  if (card.cashbackPct) {
+    const gross = Math.round(twdAmt * card.cashbackPct / 100);
+    const rem = cardRemainingCap(card);
+    const actual = rem===Infinity ? gross : Math.min(gross, rem);
+    lines.push(`<p class="text-[0.65rem] font-bold text-tertiary">💳 現金回饋 TWD ${actual}${card.capTWD?` （本期剩餘額度 TWD ${rem===Infinity?'無上限':rem}）`:''}</p>`);
+  }
+  // Promo lines
+  if (card.promos&&card.promos.length) {
+    const spentAlready = transactions.filter(t=>t.cardId===card.id&&t.id!==undefined).reduce((s,t)=>s+t.amount,0);
+    card.promos.forEach(p=>{
+      const totalAfter = spentAlready + amount;
+      const needMore = Math.max(0, p.spendKRW - spentAlready);
+      if (totalAfter >= p.spendKRW) {
+        lines.push(`<p class="text-[0.65rem] font-bold text-primary">🎉 滿額 ₩${p.spendKRW.toLocaleString()} 折 TWD${p.discountTWD} — 本筆達標！</p>`);
+      } else {
+        lines.push(`<p class="text-[0.65rem] text-on-surface-variant">📌 再花 ₩${needMore.toLocaleString()} 可得折 TWD${p.discountTWD}</p>`);
+      }
+    });
+  }
+  if (lines.length) {
+    prev.innerHTML = lines.join('');
+    prev.classList.remove('hidden');
+  } else {
+    prev.classList.add('hidden');
+  }
 }
 
 // ── Images ──
@@ -2014,7 +2154,10 @@ function showDynamicModal(type,data){
         <div id="new-cat-pills" class="flex flex-wrap gap-2">
           ${cats.map((c,i)=>`<button data-cat="${c}" onclick="selectCatPill(this,'new-cat-pills')" class="tag-pill font-label text-[0.65rem] font-bold px-3 py-1.5 rounded-full ${i===0?'bg-primary text-white selected':'bg-surface-container text-on-surface-variant'}">${c}</button>`).join('')}
         </div></div>
-      ${buildImgUploader('new',[])}
+      <div class="grid grid-cols-2 gap-3">
+        ${buildCardSelector('new', null)}
+        ${buildImgUploader('new',[])}
+      </div>
     </div>
     <div class="flex gap-3 mt-6">
       <button onclick="closeModal()" class="flex-1 bg-surface-container-high text-on-surface font-bold py-3 rounded-full active:scale-95">取消</button>
@@ -2037,7 +2180,10 @@ function showDynamicModal(type,data){
         <div id="edit-cat-pills" class="flex flex-wrap gap-2">
           ${cats.map(c=>`<button data-cat="${c}" onclick="selectCatPill(this,'edit-cat-pills')" class="tag-pill font-label text-[0.65rem] font-bold px-3 py-1.5 rounded-full ${c===tx.cat?'bg-primary text-white selected':'bg-surface-container text-on-surface-variant'}">${c}</button>`).join('')}
         </div></div>
-      ${buildImgUploader('edit',tx.imgs||[])}
+      <div class="grid grid-cols-2 gap-3">
+        ${buildCardSelector('edit', tx.cardId||null)}
+        ${buildImgUploader('edit',tx.imgs||[])}
+      </div>
     </div>
     <div class="flex gap-3 mt-6">
       <button onclick="deleteTx(${tx.id})" class="flex-shrink-0 bg-error-container/20 text-error font-bold py-3 px-4 rounded-full active:scale-95 flex items-center gap-1">
@@ -2046,305 +2192,351 @@ function showDynamicModal(type,data){
       <button onclick="saveEditTx(${tx.id})" class="flex-1 bg-gradient-to-r from-primary to-primary-container text-white font-bold py-3 rounded-full active:scale-95">更新</button>
     </div>`;
   }
-  document.getElementById('modal-content').innerHTML=html;
+
+  if(type==='addCard'){
+    pendingCardImg='';
+    html=`<h3 class="font-headline font-bold text-xl mb-5">新增信用卡</h3>
+    <div class="space-y-4">${buildCardFields(null)}</div>
+    <div class="flex gap-3 mt-6">
+      <button onclick="closeModal()" class="flex-1 bg-surface-container-high text-on-surface font-bold py-3 rounded-full active:scale-95">取消</button>
+      <button onclick="saveNewCard()" class="flex-1 bg-gradient-to-r from-primary to-primary-container text-white font-bold py-3 rounded-full active:scale-95">儲存</button>
+    </div>`;
+  }
+  if(type==='editCard'){
+    const card=data; pendingCardImg=card.img||'';
+    html=`<h3 class="font-headline font-bold text-xl mb-5">編輯信用卡</h3>
+    <div class="space-y-4">${buildCardFields(card)}</div>
+    <div class="flex gap-3 mt-6">
+      <button onclick="deleteCard(${card.id})" class="flex-shrink-0 bg-error-container/20 text-error font-bold py-3 px-4 rounded-full active:scale-95 flex items-center gap-1">
+        <span class="material-symbols-outlined text-sm">delete</span></button>
+      <button onclick="closeModal()" class="flex-1 bg-surface-container-high text-on-surface font-bold py-3 rounded-full active:scale-95">取消</button>
+      <button onclick="saveEditCard(${card.id})" class="flex-1 bg-gradient-to-r from-primary to-primary-container text-white font-bold py-3 rounded-full active:scale-95">更新</button>
+    </div>`;
+  }
+      document.getElementById('modal-content').innerHTML=html;
   document.getElementById('modal-overlay').classList.add('open');
 }
 
-// ── Currency ──
-function doConvert(){
-  const val=parseFloat(document.getElementById('left-input').value)||0;
-  const result=!swapped?Math.round(val*exchangeRate):parseFloat((val/exchangeRate).toFixed(1));
-  document.getElementById('right-output').textContent=result.toLocaleString();
-}
-function swapCurrency(){
-  swapped=!swapped;const btn=document.getElementById('swap-btn');
-  btn.style.transform='rotate(180deg)';setTimeout(()=>btn.style.transform='',300);
-  document.getElementById('left-label').textContent=swapped?'KRW 韓元':'TWD 台幣';
-  document.getElementById('right-label').textContent=swapped?'TWD 台幣':'KRW 韓元';
-  document.getElementById('left-input').value='';document.getElementById('right-output').textContent='0';
-}
-function openRateEdit(){
-  const row=document.getElementById('rate-edit-row');
-  document.getElementById('rate-input').value=exchangeRate;row.classList.toggle('hidden');
-  if(!row.classList.contains('hidden'))document.getElementById('rate-input').focus();
-}
-function saveRate(){
-  const v=parseFloat(document.getElementById('rate-input').value);
-  if(v>0){exchangeRate=v;document.getElementById('rate-display').textContent=v;document.getElementById('rate-edit-row').classList.add('hidden');saveToStorage();renderOverview();doConvert();showToast('匯率已更新：1 TWD = '+v+' KRW');}
-  else showToast('請輸入有效匯率');
-}
-function convertCurrency(){doConvert();}
 
-// ── Static modals ──
-const modalContents={
-  map:`<h3 class="font-headline font-bold text-xl mb-1">飯店位置</h3>
-    <p class="text-sm text-on-surface-variant mb-4">Hotel The Designers Seoul Station</p>
-    <a href="https://map.naver.com/p/search/Hotel%20The%20Designers%20Seoul%20Station" target="_blank" rel="noopener" class="block relative rounded-lg overflow-hidden mb-4 group">
-      <div class="map-placeholder h-48 flex items-center justify-center relative">
-        <div class="absolute inset-0 bg-[#2e3335]/0 group-hover:bg-[#2e3335]/10 transition-colors z-10 flex items-center justify-center">
-          <div class="bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity shadow-lg">
-            <span class="material-symbols-outlined text-secondary fill-icon text-lg">open_in_new</span>
-            <span class="font-bold text-sm text-secondary">在 Naver Maps 開啟</span>
+// ══════════════════════════════════════════════════════════════════
+// ── CREDIT CARDS ──
+// ══════════════════════════════════════════════════════════════════
+
+function renderCards() {
+  const el = document.getElementById('card-list');
+  if (!el) return;
+  if (cards.length === 0) {
+    el.innerHTML = `<button onclick="openAddCard()" class="w-full flex items-center gap-3 p-5 bg-surface-container-lowest rounded-lg editorial-shadow border-2 border-dashed border-outline-variant/30 text-on-surface-variant active:scale-95 transition-transform">
+      <span class="material-symbols-outlined text-2xl">add_card</span>
+      <span class="text-sm font-bold">點擊新增第一張信用卡</span>
+    </button>`;
+    document.getElementById('card-recommend').classList.add('hidden');
+    return;
+  }
+  el.innerHTML = cards.map(card => {
+    const usedCB     = cardUsedCashback(card);
+    const remCap     = cardRemainingCap(card);
+    const spendable  = cardSpendableKRW(card);
+    const capPct     = card.capTWD > 0 ? Math.min(100, Math.round(usedCB/card.capTWD*100)) : 0;
+    const promos     = promoStatus(card);
+    const spentKRW   = transactions.filter(t=>t.cardId===card.id).reduce((s,t)=>s+t.amount,0);
+
+    // Card visual
+    const imgStyle = card.img
+      ? `background:url('${card.img}') center/cover no-repeat;`
+      : `background:linear-gradient(135deg,${card.color} 0%,${card.color}bb 100%);`;
+
+    // Promo rows
+    const promoRows = promos.map(p=>`
+      <div class="bg-surface-container-low rounded-DEFAULT p-3">
+        <div class="flex justify-between items-center mb-1.5">
+          <p class="text-xs font-bold ${p.achieved?'text-tertiary':'text-on-surface'}">
+            ${p.achieved?'🎉':'📌'} 滿 ₩${p.spendKRW.toLocaleString()} 折 TWD${p.discountTWD}
+          </p>
+          <span class="text-[0.6rem] font-bold ${p.achieved?'bg-tertiary-container text-on-tertiary-container':'bg-surface-container text-on-surface-variant'} px-2 py-0.5 rounded-full">
+            ${p.achieved?'已達標':p.progressPct+'%'}
+          </span>
+        </div>
+        ${!p.achieved?`
+        <div class="h-1.5 bg-surface-container rounded-full overflow-hidden mb-1">
+          <div class="h-full rounded-full transition-all duration-700" style="width:${p.progressPct}%;background:${card.color};"></div>
+        </div>
+        <p class="text-[0.58rem] text-on-surface-variant">還差 ₩${p.remaining.toLocaleString()} 才達標</p>`:''}
+      </div>`).join('');
+
+    return `<div class="bg-surface-container-lowest rounded-lg editorial-shadow overflow-hidden">
+      <!-- Card visual -->
+      <div class="relative h-40 overflow-hidden" style="${imgStyle}">
+        <div class="absolute inset-0" style="background:linear-gradient(135deg,rgba(0,0,0,0.4),rgba(0,0,0,0.05));"></div>
+        <div class="absolute inset-0 p-4 flex flex-col justify-between">
+          <div class="flex justify-between items-start">
+            <p class="font-headline font-black text-white text-lg leading-tight" style="text-shadow:0 1px 4px rgba(0,0,0,0.6);">${card.name}</p>
+            <div class="flex gap-1">
+              <button onclick="openEditCard(${card.id})" class="w-7 h-7 bg-white/25 backdrop-blur-sm rounded-full flex items-center justify-center active:scale-90 transition-transform">
+                <span class="material-symbols-outlined text-white text-sm">edit</span>
+              </button>
+              <button onclick="deleteCard(${card.id})" class="w-7 h-7 bg-white/25 backdrop-blur-sm rounded-full flex items-center justify-center active:scale-90 transition-transform">
+                <span class="material-symbols-outlined text-white text-sm">delete</span>
+              </button>
+            </div>
+          </div>
+          <div>
+            ${card.cashbackPct?`<p class="text-white/90 text-[0.65rem] font-bold">現金回饋 ${card.cashbackPct}%${card.capTWD?' · 上限 TWD'+card.capTWD:''}</p>`:''}
+            ${promos.length?`<p class="text-white/80 text-[0.6rem]">${promos.length} 個滿額折扣方案</p>`:''}
+            ${card.note?`<p class="text-white/65 text-[0.6rem] mt-0.5">${card.note}</p>`:''}
           </div>
         </div>
-        <div class="relative z-10 text-center">
-          <span class="material-symbols-outlined text-primary fill-icon text-5xl">location_on</span>
-          <p class="text-sm font-bold mt-1">龍山區漢江大路305</p>
-          <p class="text-xs text-on-surface-variant">點擊開啟 Naver Maps</p>
+      </div>
+      <!-- Stats grid -->
+      <div class="p-4 space-y-3">
+        <div class="grid grid-cols-3 gap-2 text-center">
+          <div class="bg-surface-container-low rounded-DEFAULT p-2.5">
+            <p class="font-headline font-black text-sm text-on-surface">TWD ${usedCB.toLocaleString()}</p>
+            <p class="text-[0.55rem] text-on-surface-variant mt-0.5">已獲回饋</p>
+          </div>
+          <div class="bg-surface-container-low rounded-DEFAULT p-2.5">
+            <p class="font-headline font-black text-sm ${remCap!==Infinity?'text-tertiary':'text-secondary'}">
+              ${remCap===Infinity?'無上限':'TWD '+remCap.toLocaleString()}
+            </p>
+            <p class="text-[0.55rem] text-on-surface-variant mt-0.5">剩餘額度</p>
+          </div>
+          <div class="bg-surface-container-low rounded-DEFAULT p-2.5">
+            <p class="font-headline font-black text-sm text-secondary">
+              ${spendable===Infinity?'—':'₩'+spendable.toLocaleString()}
+            </p>
+            <p class="text-[0.55rem] text-on-surface-variant mt-0.5">還可消費</p>
+          </div>
         </div>
+        <!-- Cashback progress bar -->
+        ${card.capTWD?`
+        <div>
+          <div class="flex justify-between text-[0.58rem] text-on-surface-variant mb-1">
+            <span>回饋使用進度</span><span>${capPct}%</span>
+          </div>
+          <div class="h-1.5 bg-surface-container rounded-full overflow-hidden">
+            <div class="h-full rounded-full transition-all duration-700" style="width:${capPct}%;background:${card.color};"></div>
+          </div>
+        </div>`:''}
+        <!-- Spend-to-get promos -->
+        ${promoRows?`<div class="space-y-2">${promoRows}</div>`:''}
       </div>
-    </a>
-    <a href="https://map.naver.com/p/search/Hotel%20The%20Designers%20Seoul%20Station" target="_blank" rel="noopener" class="flex items-center gap-3 bg-[#03c75a]/10 border border-[#03c75a]/30 rounded-DEFAULT p-3 mb-3 transition-transform active:scale-95">
-      <div class="w-10 h-10 rounded-full bg-[#03c75a] flex items-center justify-center flex-shrink-0"><span class="text-white font-black text-xs">N</span></div>
-      <div class="flex-1"><p class="font-bold text-sm text-[#03c75a]">在 Naver Maps 查看</p><p class="text-xs text-on-surface-variant">龍山區漢江大路305</p></div>
-      <span class="material-symbols-outlined text-[#03c75a] text-sm">open_in_new</span>
-    </a>
-    <div class="space-y-2">
-      <div class="bg-surface-container-low rounded-DEFAULT p-3 flex items-center gap-3"><span class="material-symbols-outlined text-secondary fill-icon">directions_subway</span><div><p class="font-bold text-sm">首爾地鐵 1號線 / KTX</p><p class="text-xs text-on-surface-variant">首爾站 出口 5 步行 3 分鐘</p></div></div>
-      <div class="bg-surface-container-low rounded-DEFAULT p-3 flex items-center gap-3"><span class="material-symbols-outlined text-secondary fill-icon">directions_bus</span><div><p class="font-bold text-sm">公車</p><p class="text-xs text-on-surface-variant">漢江大路405 站 · 0015, 104, 421號</p></div></div>
-    </div>
-    <button onclick="closeModal()" class="w-full mt-5 bg-gradient-to-r from-primary to-primary-container text-white font-bold py-3 rounded-full active:scale-95">關閉</button>`,
-  transport:`<h3 class="font-headline font-bold text-xl mb-1">首爾地鐵指南</h3>
-    <p class="text-sm text-on-surface-variant mb-4">Seoul Metro · 서울 지하철</p>
-    <!-- Naver Subway app launch button -->
-    <button onclick="openSubwayApp()"
-       class="flex items-center gap-3 bg-[#03c75a]/10 border border-[#03c75a]/30 rounded-DEFAULT p-3 mb-5 transition-transform active:scale-95 w-full text-left">
-      <div class="w-10 h-10 rounded-full bg-[#03c75a] flex items-center justify-center flex-shrink-0">
-        <span class="material-symbols-outlined text-white fill-icon text-lg">directions_subway</span>
+    </div>`;
+  }).join('');
+  renderCardRecommend();
+}
+
+function renderCardRecommend()s="font-headline font-black text-sm text-secondary">
+              ${spendable===Infinity?'—':'₩'+spendable.toLocaleString()}
+            </p>
+            <p class="text-[0.55rem] text-on-surface-variant mt-0.5">還可消費</p>
+          </div>
+        </div>
+        <!-- Cashback progress bar -->
+        ${card.capTWD?`
+        <div>
+          <div class="flex justify-between text-[0.58rem] text-on-surface-variant mb-1">
+            <span>回饋使用進度</span><span>${capPct}%</span>
+          </div>
+          <div class="h-1.5 bg-surface-container rounded-full overflow-hidden">
+            <div class="h-full rounded-full transition-all duration-700" style="width:${capPct}%;background:${card.color};"></div>
+          </div>
+        </div>`:''}
+        <!-- Spend-to-get promos -->
+        ${promoRows?`<div class="space-y-2">${promoRows}</div>`:''}
       </div>
+    </div>`;
+  }).join('');
+function renderCardRecommend() {
+  const rec     = document.getElementById('card-recommend');
+  const content = document.getElementById('card-recommend-content');
+  if (!rec||!content||cards.length===0) { rec&&rec.classList.add('hidden'); return; }
+  const scored = cards.map(card => {
+    const remCap  = cardRemainingCap(card);
+    const effPct  = remCap > 0 && card.cashbackPct ? card.cashbackPct : 0;
+    const promos  = promoStatus(card);
+    return { card, effPct, remCap,
+      pendingPromos: promos.filter(p=>!p.achieved),
+      achievedPromos: promos.filter(p=>p.achieved) };
+  }).sort((a,b)=>b.effPct-a.effPct||b.remCap-a.remCap);
+
+  const lines = scored.map((s,i)=>{
+    const { card, effPct, remCap, pendingPromos, achievedPromos } = s;
+    const isBest = i===0;
+    const promoHints = [
+      ...achievedPromos.map(p=>`🎉 已達 ₩${p.spendKRW.toLocaleString()} 折 TWD${p.discountTWD}`),
+      ...pendingPromos.map(p=>`📌 再花 ₩${p.remaining.toLocaleString()} 折 TWD${p.discountTWD}`),
+    ].join(' · ');
+    return `<div class="flex items-start gap-2 ${isBest?'':'opacity-70'}">
+      <div class="w-2.5 h-2.5 rounded-full flex-shrink-0 mt-1" style="background:${card.color}"></div>
       <div class="flex-1">
-        <p class="font-bold text-sm text-[#03c75a]">開啟韓巢地鐵地圖</p>
-        <p class="text-xs text-on-surface-variant">map.hanchao.com · 中文路線查詢</p>
+        <div class="flex items-center gap-1 flex-wrap">
+          <p class="font-bold text-sm text-on-tertiary-container">${card.name}</p>
+          ${isBest?'<span class="text-[0.55rem] bg-primary text-white px-1.5 py-0.5 rounded-full font-bold">最優</span>':''}
+        </div>
+        <p class="text-xs text-on-tertiary-container/75">
+          ${effPct>0?`回饋 ${effPct}%`:'本期已達上限'}${remCap!==Infinity&&effPct>0?` · 剩 TWD${remCap}`:''}${promoHints?` · ${promoHints}`:''}
+        </p>
       </div>
-      <span class="material-symbols-outlined text-[#03c75a] text-sm">open_in_new</span>
-    </button>
-    <div class="space-y-3 mb-5">
-      <div class="flex items-center gap-3 p-3 bg-surface-container-low rounded-DEFAULT"><div class="w-6 h-6 rounded-full bg-[#ff5446] flex items-center justify-center flex-shrink-0"><span class="text-white text-[0.55rem] font-black">1</span></div><div><p class="font-bold text-sm">1號線（深藍）</p><p class="text-xs text-on-surface-variant">仁川機場↔首爾站↔鐘路</p></div></div>
-      <div class="flex items-center gap-3 p-3 bg-surface-container-low rounded-DEFAULT"><div class="w-6 h-6 rounded-full bg-[#036881] flex items-center justify-center flex-shrink-0"><span class="text-white text-[0.55rem] font-black">2</span></div><div><p class="font-bold text-sm">2號線（綠色）</p><p class="text-xs text-on-surface-variant">弘大↔市廳↔東大門↔江南</p></div></div>
-      <div class="flex items-center gap-3 p-3 bg-surface-container-low rounded-DEFAULT"><div class="w-6 h-6 rounded-full bg-[#f59e0b] flex items-center justify-center flex-shrink-0"><span class="text-white text-[0.55rem] font-black">9</span></div><div><p class="font-bold text-sm">9號線（金色）</p><p class="text-xs text-on-surface-variant">仁川機場↔金浦機場↔江南</p></div></div>
-      <div class="flex items-center gap-3 p-3 bg-surface-container-low rounded-DEFAULT"><div class="w-6 h-6 rounded-full bg-[#9333ea] flex items-center justify-center flex-shrink-0"><span class="text-white text-[0.55rem] font-black">5</span></div><div><p class="font-bold text-sm">5號線（紫色）</p><p class="text-xs text-on-surface-variant">汝矣나루（汝矣島賞櫻）↔光化門</p></div></div>
-      <div class="flex items-center gap-3 p-3 bg-surface-container-low rounded-DEFAULT"><div class="w-6 h-6 rounded-full bg-[#ac3149] flex items-center justify-center flex-shrink-0"><span class="text-white text-[0.55rem] font-black">8</span></div><div><p class="font-bold text-sm">8號線（粉紅）</p><p class="text-xs text-on-surface-variant">蠶室站（石村湖夜櫻）↔江南</p></div></div>
+    </div>`;
+  });
+  content.innerHTML = `<div class="space-y-2">${lines.join('')}</div>`;
+  rec.classList.remove('hidden');
+}
+
+function openAddCard() { showDynamicModal('addCard', null); }
+function openEditCard(id) { const card=cards.find(c=>c.id===id); if(card) showDynamicModal('editCard',card); }
+function deleteCard(id) {
+  cards=cards.filter(c=>c.id!==id);
+  transactions.forEach(tx=>{ if(tx.cardId===id) tx.cardId=null; });
+  saveToStorage(); renderAll(); showToast('卡片已刪除');
+}
+function collectPromos() {
+  const rows=document.querySelectorAll('.promo-row'); const promos=[];
+  rows.forEach(row=>{
+    const spend=parseInt(row.querySelector('.promo-spend')?.value)||0;
+    const disc=parseInt(row.querySelector('.promo-disc')?.value)||0;
+    if(spend>0&&disc>0) promos.push({spendKRW:spend,discountTWD:disc});
+  });
+  return promos;
+}
+function addPromoRow(containerId,spend='',disc='') {
+  const c=document.getElementById(containerId); if(!c) return;
+  const div=document.createElement('div'); div.className='promo-row flex items-center gap-2';
+  div.innerHTML=`<span class="text-xs text-on-surface-variant flex-shrink-0">滿</span>
+    <input type="number" placeholder="消費 ₩" class="promo-spend flex-1 bg-surface-container-high rounded-DEFAULT px-2 py-2 text-xs outline-none font-body" value="${spend}" />
+    <span class="text-xs text-on-surface-variant flex-shrink-0">折</span>
+    <input type="number" placeholder="TWD" class="promo-disc w-20 bg-surface-container-high rounded-DEFAULT px-2 py-2 text-xs outline-none font-body" value="${disc}" />
+    <span class="text-xs text-on-surface-variant flex-shrink-0">元</span>
+    <button onclick="this.closest('.promo-row').remove()" class="text-error w-6 h-6 flex items-center justify-center rounded-full hover:bg-error-container/20 flex-shrink-0">
+      <span class="material-symbols-outlined text-sm">close</span></button>`;
+  c.appendChild(div);
+}
+function saveNewCard() {
+  const name=document.getElementById('card-name-input').value.trim();
+  const pct=parseFloat(document.getElementById('card-pct-input').value)||0;
+  const cap=parseInt(document.getElementById('card-cap-input').value)||0;
+  const note=document.getElementById('card-note-input').value.trim();
+  const color=document.getElementById('card-color-input').value||'#c1000d';
+  const promos=collectPromos();
+  if(!name){showToast('請輸入卡片名稱');return;}
+  cards.push({id:nextCardId++,name,cashbackPct:pct,capTWD:cap,promos,note,color,img:pendingCardImg});
+  saveToStorage();renderAll();closeModal();showToast('✓ 信用卡已新增');
+}
+function saveEditCard(id) {
+  const name=document.getElementById('card-name-input').value.trim();
+  const pct=parseFloat(document.getElementById('card-pct-input').value)||0;
+  const cap=parseInt(document.getElementById('card-cap-input').value)||0;
+  const note=document.getElementById('card-note-input').value.trim();
+  const color=document.getElementById('card-color-input').value||'#c1000d';
+  const promos=collectPromos();
+  if(!name){showToast('請輸入卡片名稱');return;}
+  const card=cards.find(c=>c.id===id);
+  if(card){card.name=name;card.cashbackPct=pct;card.capTWD=cap;card.promos=promos;card.note=note;card.color=color;card.img=pendingCardImg;}
+  saveToStorage();renderAll();closeModal();showToast('卡片已更新 ✓');
+}
+let pendingCardImg='';
+function handleCardImgUpload(e){
+  const file=e.target.files[0];if(!file)return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    pendingCardImg=ev.target.result;
+    const prev=document.getElementById('card-img-preview');
+    if(prev){prev.src=ev.target.result;prev.classList.remove('hidden');}
+    const ph=document.getElementById('card-img-placeholder');
+    if(ph)ph.classList.add('hidden');
+    const rm=document.getElementById('card-img-remove');
+    if(rm)rm.classList.remove('hidden');
+  };
+  r.readAsDataURL(file);
+}
+function removeCardImg(){
+  pendingCardImg='';
+  const prev=document.getElementById('card-img-preview');if(prev){prev.src='';prev.classList.add('hidden');}
+  const ph=document.getElementById('card-img-placeholder');if(ph)ph.classList.remove('hidden');
+  const rm=document.getElementById('card-img-remove');if(rm)rm.classList.add('hidden');
+}
+
+// ── Card modal helper: shared field template ──
+function buildCardFields(card) {
+  const isNew = !card;
+  const name  = card?.name||'';
+  const color = card?.color||'#c1000d';
+  const pct   = card?.cashbackPct||'';
+  const cap   = card?.capTWD||'';
+  const note  = card?.note||'';
+  const img   = card?.img||'';
+  const bg    = img?`background:url('${img}') center/cover no-repeat`:`background:linear-gradient(135deg,${color},${color}bb)`;
+  const promoId = isNew?'new-promos':'edit-promos';
+  const existingRows = (card?.promos||[]).map(p=>`<div class="promo-row flex items-center gap-2">
+    <span class="text-xs text-on-surface-variant flex-shrink-0">滿</span>
+    <input type="number" class="promo-spend flex-1 bg-surface-container-high rounded-DEFAULT px-2 py-2 text-xs outline-none font-body" value="${p.spendKRW}" />
+    <span class="text-xs text-on-surface-variant flex-shrink-0">折</span>
+    <input type="number" class="promo-disc w-20 bg-surface-container-high rounded-DEFAULT px-2 py-2 text-xs outline-none font-body" value="${p.discountTWD}" />
+    <span class="text-xs text-on-surface-variant flex-shrink-0">元</span>
+    <button onclick="this.closest('.promo-row').remove()" class="text-error w-6 h-6 flex items-center justify-center rounded-full hover:bg-error-container/20 flex-shrink-0">
+      <span class="material-symbols-outlined text-sm">close</span></button>
+  </div>`).join('');
+  return `
+    <!-- Card preview -->
+    <div class="relative h-36 rounded-lg overflow-hidden flex items-center justify-center" id="card-preview-bg" style="${bg}">
+      <img id="card-img-preview" class="absolute inset-0 w-full h-full object-cover ${img?'':'hidden'}" src="${img}" />
+      <div id="card-img-placeholder" class="relative z-10 flex flex-col items-center gap-1 text-white/70 ${img?'hidden':''}">
+        <span class="material-symbols-outlined text-4xl">credit_card</span>
+      </div>
+      <p id="card-name-preview" class="absolute bottom-3 left-4 text-white font-headline font-black text-base" style="text-shadow:0 1px 4px rgba(0,0,0,0.5);">${name||'新卡片'}</p>
     </div>
-    <div class="bg-tertiary-container rounded-DEFAULT p-4 mb-4"><p class="font-bold text-on-tertiary-container text-sm mb-1">✓ 旅行小提示</p><p class="text-xs text-on-tertiary-container/80 leading-relaxed">首爾地鐵全天約 05:30–24:00 運行，T-Money 搭乘基本票 ₩1,400起。轉乘同一條路線30分鐘內免費。</p></div>
-    <button onclick="closeModal()" class="w-full bg-gradient-to-r from-primary to-primary-container text-white font-bold py-3 rounded-full active:scale-95">關閉</button>`,
-  medical:`<h3 class="font-headline font-bold text-xl mb-1">醫療支援</h3>
-    <p class="text-sm text-on-surface-variant mb-5">首爾英語/中文醫療資源</p>
-    <div class="space-y-3">
-      <div class="bg-surface-container-lowest rounded-lg p-4 border-l-4 border-tertiary"><p class="font-bold">旅遊諮詢熱線 1330</p><p class="text-xs text-on-surface-variant mt-1">24小時·中英日文服務·免費</p><a href="tel:1330" class="mt-2 inline-flex items-center gap-1 text-tertiary text-xs font-bold"><span class="material-symbols-outlined text-sm">call</span> 撥打 1330</a></div>
-      <div class="bg-surface-container-lowest rounded-lg p-4 border-l-4 border-secondary"><p class="font-bold">首爾大學病院</p><p class="text-xs text-on-surface-variant mt-1">鐘路區大學路101 · 設有外籍患者中心</p><a href="tel:02-2072-2114" class="mt-2 inline-flex items-center gap-1 text-secondary text-xs font-bold"><span class="material-symbols-outlined text-sm">call</span> 02-2072-2114</a></div>
-      <div class="bg-surface-container-lowest rounded-lg p-4 border-l-4 border-primary"><p class="font-bold">延世大學세브란스醫院</p><p class="text-xs text-on-surface-variant mt-1">西大門區延世路50-1 · 24小時急診</p><a href="tel:1599-1004" class="mt-2 inline-flex items-center gap-1 text-primary text-xs font-bold"><span class="material-symbols-outlined text-sm">call</span> 1599-1004</a></div>
+    <!-- Image upload -->
+    <div class="flex items-center gap-2">
+      <label class="flex-1 flex items-center gap-2 bg-surface-container-high rounded-DEFAULT p-3 cursor-pointer text-on-surface-variant hover:bg-surface-container transition-colors text-xs font-bold">
+        <span class="material-symbols-outlined text-lg">add_photo_alternate</span> ${isNew?'上傳卡片圖片（選填）':'更換卡片圖片'}
+        <input type="file" accept="image/*" class="hidden" onchange="handleCardImgUpload(event)" />
+      </label>
+      <button id="card-img-remove" onclick="removeCardImg()" class="${img?'':'hidden'} text-error text-xs font-bold px-3 py-2 bg-error-container/20 rounded-DEFAULT active:scale-95">移除</button>
     </div>
-    <button onclick="closeModal()" class="w-full mt-5 bg-gradient-to-r from-primary to-primary-container text-white font-bold py-3 rounded-full active:scale-95">關閉</button>`,
-  about:`<h3 class="font-headline font-bold text-xl mb-4">關於此行程</h3>
-    <div class="hero-gradient skyline-decoration relative rounded-xl p-6 mb-5 overflow-hidden"><p class="font-headline font-black text-white text-3xl relative z-10">首爾之旅</p><p class="text-white/80 text-sm mt-1 relative z-10">2025年4月7日 – 4月10日</p></div>
-    <p class="text-sm text-on-surface-variant leading-relaxed">此行程由 Seoul Travel Assistant 為您精心規劃，涵蓋首爾3晚4天的醫美療程、賞櫻散策與美食探索。</p>
-    <button onclick="closeModal()" class="w-full mt-5 bg-gradient-to-r from-primary to-primary-container text-white font-bold py-3 rounded-full">關閉</button>`,
-  settings:`<h3 class="font-headline font-bold text-xl mb-5">設定</h3>
-    <div class="space-y-4">
-      <div class="flex justify-between items-center py-3 border-b border-outline-variant/15"><div class="flex items-center gap-3"><span class="material-symbols-outlined text-secondary">language</span><p class="font-bold text-sm">語言</p></div><span class="text-xs text-on-surface-variant bg-surface-container px-3 py-1 rounded-full">繁體中文</span></div>
-      <div class="flex justify-between items-center py-3 border-b border-outline-variant/15"><div class="flex items-center gap-3"><span class="material-symbols-outlined text-secondary">currency_exchange</span><p class="font-bold text-sm">預設貨幣</p></div><span class="text-xs text-on-surface-variant bg-surface-container px-3 py-1 rounded-full">TWD / KRW</span></div>
-      <div class="flex justify-between items-center py-3 border-b border-outline-variant/15"><div class="flex items-center gap-3"><span class="material-symbols-outlined text-secondary">notifications</span><p class="font-bold text-sm">行程提醒</p></div><div class="w-11 h-6 bg-primary rounded-full flex items-center px-1"><div class="w-4 h-4 bg-white rounded-full ml-auto"></div></div></div>
-      <div class="pt-2">
-        <button onclick="clearStorage()" class="w-full flex items-center justify-center gap-2 bg-error-container/20 text-error font-bold py-2.5 rounded-full text-sm active:scale-95"><span class="material-symbols-outlined text-sm">delete_forever</span> 清除所有儲存資料</button>
-        <p class="text-[0.6rem] text-on-surface-variant text-center mt-1.5">清除後資料將恢復為預設值</p>
+    <!-- Name + Color -->
+    <div class="grid grid-cols-3 gap-3">
+      <div class="col-span-2">
+        <p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">卡片名稱</p>
+        <input id="card-name-input" type="text" placeholder="例：玉山 Wallet 卡" value="${name}"
+          oninput="document.getElementById('card-name-preview').textContent=this.value||'新卡片';document.getElementById('card-preview-bg').style.background=document.getElementById('card-img-preview').classList.contains('hidden')?'linear-gradient(135deg,'+document.getElementById('card-color-input').value+','+document.getElementById('card-color-input').value+'bb)':document.getElementById('card-preview-bg').style.background"
+          class="w-full bg-surface-container-high rounded-DEFAULT p-3 text-sm outline-none font-body" />
+      </div>
+      <div>
+        <p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">卡片顏色</p>
+        <input id="card-color-input" type="color" value="${color}"
+          oninput="if(document.getElementById('card-img-preview').classList.contains('hidden'))document.getElementById('card-preview-bg').style.background='linear-gradient(135deg,'+this.value+','+this.value+'bb)'"
+          class="w-full h-11 rounded-DEFAULT cursor-pointer border-0 bg-surface-container-high p-1" />
       </div>
     </div>
-    <button onclick="closeModal()" class="w-full mt-5 bg-gradient-to-r from-primary to-primary-container text-white font-bold py-3 rounded-full">確認</button>`,
-  currency:`<h3 class="font-headline font-bold text-xl mb-1">匯率換算</h3>
-    <p class="text-sm text-on-surface-variant mb-5">台幣 ↔ 韓元（僅供參考）</p>
-    <div class="bg-surface-container-low rounded-lg p-4 mb-5">
-      <div class="flex items-center justify-between mb-3">
-        <p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider">目前匯率</p>
-        <button onclick="document.getElementById('modal-rate-row').classList.toggle('hidden')" class="flex items-center gap-1 text-primary text-xs font-bold">
-          <span class="material-symbols-outlined text-sm">edit</span> 編輯
+    <!-- Cashback % + Cap -->
+    <div class="grid grid-cols-2 gap-3">
+      <div>
+        <p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">現金回饋 %</p>
+        <input id="card-pct-input" type="number" step="0.1" min="0" max="20" placeholder="例：3" value="${pct}" class="w-full bg-surface-container-high rounded-DEFAULT p-3 text-sm outline-none font-body" />
+      </div>
+      <div>
+        <p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">每期上限 TWD（0=無）</p>
+        <input id="card-cap-input" type="number" placeholder="例：300" value="${cap}" class="w-full bg-surface-container-high rounded-DEFAULT p-3 text-sm outline-none font-body" />
+      </div>
+    </div>
+    <!-- Spend-to-get promos -->
+    <div>
+      <div class="flex items-center justify-between mb-2">
+        <p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider">滿額折扣方案</p>
+        <button type="button" onclick="addPromoRow('${promoId}')" class="flex items-center gap-1 text-primary text-xs font-bold active:scale-95">
+          <span class="material-symbols-outlined text-sm">add</span> 新增方案
         </button>
       </div>
-      <p class="font-headline font-black text-3xl text-primary" id="modal-rate-display">1 TWD = — KRW</p>
-      <div id="modal-rate-row" class="hidden mt-3 flex items-center gap-2">
-        <span class="text-xs text-on-surface-variant font-bold flex-shrink-0">1 TWD =</span>
-        <input id="modal-rate-input" type="number" step="0.1" placeholder="43.2" class="flex-1 bg-surface-container-high rounded-DEFAULT px-3 py-2 text-sm font-bold outline-none text-primary" />
-        <span class="text-xs text-on-surface-variant font-bold flex-shrink-0">KRW</span>
-        <button onclick="modalSaveRate()" class="bg-primary text-white text-xs font-bold px-3 py-1.5 rounded-full active:scale-95">確認</button>
-      </div>
+      <div id="${promoId}" class="space-y-2">${existingRows}</div>
+      <p class="text-[0.6rem] text-on-surface-variant mt-1">例：消費滿 ₩200,000 折 TWD 200</p>
     </div>
-    <div class="flex gap-3 items-center mb-5">
-      <div class="flex-1 bg-surface-container-high rounded-DEFAULT p-3">
-        <p class="text-[0.6rem] text-on-surface-variant uppercase tracking-wider mb-1" id="modal-left-label">TWD 台幣</p>
-        <input id="modal-left-input" type="number" placeholder="100" oninput="modalConvert()" class="w-full bg-transparent font-headline font-bold text-xl outline-none text-on-surface" />
-      </div>
-      <button onclick="modalSwap()" id="modal-swap-btn" class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center flex-shrink-0 active:scale-90 transition-transform">
-        <span class="material-symbols-outlined text-on-surface-variant">swap_horiz</span>
-      </button>
-      <div class="flex-1 bg-surface-container-high rounded-DEFAULT p-3">
-        <p class="text-[0.6rem] text-on-surface-variant uppercase tracking-wider mb-1" id="modal-right-label">KRW 韓元</p>
-        <p id="modal-right-output" class="font-headline font-bold text-xl text-primary">—</p>
-      </div>
-    </div>
-    <div class="space-y-2 mb-5" id="modal-quick-table"></div>
-    <button onclick="closeModal()" class="w-full bg-gradient-to-r from-primary to-primary-container text-white font-bold py-3 rounded-full active:scale-95">關閉</button>`
-};
-
-function showModal(type){
-  if(type==='addExpense'){showDynamicModal('addExpense');return;}
-  document.getElementById('modal-content').innerHTML=modalContents[type]||'';
-  document.getElementById('modal-overlay').classList.add('open');
-  if(type==='currency') initCurrencyModal();
-}
-function closeModal(){document.getElementById('modal-overlay').classList.remove('open');}
-
-// ── Currency modal helpers ──
-let modalSwapped = false;
-function initCurrencyModal() {
-  modalSwapped = false;
-  const rateEl = document.getElementById('modal-rate-display');
-  const inp    = document.getElementById('modal-rate-input');
-  if (rateEl) rateEl.textContent = `1 TWD = ${exchangeRate} KRW`;
-  if (inp)    inp.value = exchangeRate;
-  buildQuickTable();
-}
-function buildQuickTable() {
-  const tbl = document.getElementById('modal-quick-table');
-  if (!tbl) return;
-  const amounts = [100, 500, 1000, 3000, 5000, 10000];
-  tbl.innerHTML = amounts.map(t => {
-    const k = Math.round(t * exchangeRate).toLocaleString();
-    return `<div class="flex justify-between items-center py-2 border-b border-outline-variant/10">
-      <span class="text-sm font-body text-on-surface-variant">TWD ${t.toLocaleString()}</span>
-      <span class="font-bold text-sm text-on-surface">₩${k}</span>
+    <!-- Note -->
+    <div>
+      <p class="font-label text-[0.65rem] text-on-surface-variant uppercase tracking-wider mb-2">優惠備註（選填）</p>
+      <input id="card-note-input" type="text" placeholder="例：海外消費 3%，國內 1%" value="${note}" class="w-full bg-surface-container-high rounded-DEFAULT p-3 text-sm outline-none font-body" />
     </div>`;
-  }).join('');
-}
-function modalSaveRate() {
-  const v = parseFloat(document.getElementById('modal-rate-input').value);
-  if (v > 0) {
-    exchangeRate = v;
-    document.getElementById('modal-rate-display').textContent = `1 TWD = ${v} KRW`;
-    document.getElementById('rate-display').textContent = v;
-    document.getElementById('modal-rate-row').classList.add('hidden');
-    buildQuickTable();
-    renderOverview();
-    showToast(`匯率已更新：1 TWD = ${v} KRW`);
-  } else showToast('請輸入有效匯率');
-}
-function modalConvert() {
-  const val = parseFloat(document.getElementById('modal-left-input').value) || 0;
-  const result = !modalSwapped ? Math.round(val * exchangeRate) : parseFloat((val / exchangeRate).toFixed(1));
-  document.getElementById('modal-right-output').textContent = result.toLocaleString();
-}
-function modalSwap() {
-  modalSwapped = !modalSwapped;
-  const btn = document.getElementById('modal-swap-btn');
-  btn.style.transform = 'rotate(180deg)';
-  setTimeout(() => btn.style.transform = '', 300);
-  document.getElementById('modal-left-label').textContent  = modalSwapped ? 'KRW 韓元' : 'TWD 台幣';
-  document.getElementById('modal-right-label').textContent = modalSwapped ? 'TWD 台幣' : 'KRW 韓元';
-  document.getElementById('modal-left-input').value = '';
-  document.getElementById('modal-right-output').textContent = '—';
 }
 
-// ── Open Subway App (platform-aware) ──
-// 韓巢地鐵 — https://map.hanchao.com/
-function openSubwayApp() {
-  window.open('https://map.hanchao.com/', '_blank');
-}
-
-// ── Init ──
-document.addEventListener('DOMContentLoaded',()=>{
-  loadFromStorage();
-  renderAll();
-  updateToolboxBubble(false);
-  initWeather();
-});
-
-// ── Weather: render hourly strip with current Seoul-time highlight ──
-function initWeather() {
-  const now = new Date();
-  const seoulTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Seoul' }));
-  const seoulHour = seoulTime.getHours();
-  const seoulMin  = seoulTime.getMinutes();
-  const pad = n => String(n).padStart(2, '0');
-
-  // Sync label
-  const syncEl = document.getElementById('weather-sync-time');
-  if (syncEl) syncEl.textContent = `首爾時間 ${pad(seoulHour)}:${pad(seoulMin)} 同步`;
-
-  // Icon config: Material Symbol + Chinese description
-  const ICON_CFG = {
-    sunny:    { sym: 'wb_sunny',          desc: '晴天' },
-    partly:   { sym: 'partly_cloudy_day', desc: '晴時多雲' },
-    cloudy:   { sym: 'cloudy',            desc: '多雲' },
-    twilight: { sym: 'wb_twilight',       desc: '晨昏時分' },
-    night:    { sym: 'nights_stay',       desc: '夜間晴' },
-  };
-
-  // 24h hourly data (Seoul April sample)
-  const hourly = [
-    { h: 0, icon:'night',    temp: 8,  feels: 5,  uv: 0, hum: 72 },
-    { h: 1, icon:'night',    temp: 8,  feels: 5,  uv: 0, hum: 73 },
-    { h: 2, icon:'night',    temp: 7,  feels: 4,  uv: 0, hum: 74 },
-    { h: 3, icon:'night',    temp: 7,  feels: 4,  uv: 0, hum: 75 },
-    { h: 4, icon:'night',    temp: 7,  feels: 4,  uv: 0, hum: 75 },
-    { h: 5, icon:'night',    temp: 7,  feels: 4,  uv: 0, hum: 74 },
-    { h: 6, icon:'twilight', temp: 8,  feels: 5,  uv: 0, hum: 70 },
-    { h: 7, icon:'twilight', temp: 9,  feels: 6,  uv: 1, hum: 68 },
-    { h: 8, icon:'sunny',    temp: 10, feels: 8,  uv: 2, hum: 64 },
-    { h: 9, icon:'sunny',    temp: 12, feels: 10, uv: 3, hum: 60 },
-    { h:10, icon:'sunny',    temp: 14, feels: 12, uv: 4, hum: 55 },
-    { h:11, icon:'sunny',    temp: 15, feels: 13, uv: 5, hum: 51 },
-    { h:12, icon:'sunny',    temp: 17, feels: 15, uv: 5, hum: 48 },
-    { h:13, icon:'partly',   temp: 19, feels: 17, uv: 4, hum: 45 },
-    { h:14, icon:'partly',   temp: 18, feels: 16, uv: 4, hum: 46 },
-    { h:15, icon:'partly',   temp: 18, feels: 16, uv: 3, hum: 48 },
-    { h:16, icon:'partly',   temp: 17, feels: 15, uv: 2, hum: 50 },
-    { h:17, icon:'partly',   temp: 16, feels: 13, uv: 1, hum: 52 },
-    { h:18, icon:'twilight', temp: 14, feels: 11, uv: 0, hum: 57 },
-    { h:19, icon:'twilight', temp: 13, feels: 10, uv: 0, hum: 60 },
-    { h:20, icon:'night',    temp: 11, feels: 8,  uv: 0, hum: 63 },
-    { h:21, icon:'night',    temp: 10, feels: 7,  uv: 0, hum: 65 },
-    { h:22, icon:'night',    temp:  9, feels: 6,  uv: 0, hum: 67 },
-    { h:23, icon:'night',    temp:  8, feels: 5,  uv: 0, hum: 70 },
-  ];
-
-  const startIdx = hourly.findIndex(d => d.h === seoulHour);
-  const cur = hourly[startIdx >= 0 ? startIdx : 0];
-  const cfg = ICON_CFG[cur.icon] || ICON_CFG.partly;
-
-  // ── Update main display from current slot ──
-  const set = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
-  set('weather-temp',     `${cur.temp}`);
-  set('weather-desc',     cfg.desc);
-  set('weather-location', `首爾，韓國 · ${pad(seoulHour)}:${pad(seoulMin)}`);
-  set('weather-feels',    `${cur.feels}°`);
-  set('weather-hum',      `${cur.hum}%`);
-  set('weather-uv',       cur.uv === 0 ? 'UV 0' : `UV ${cur.uv}`);
-  const iconEl = document.getElementById('weather-icon');
-  if (iconEl) iconEl.textContent = cfg.sym;
-
-  // ── Build hourly strip: current + next 11 ──
-  const slots = Array.from({ length: 12 }, (_, i) => hourly[(startIdx + i) % 24]);
-  const scroll = document.getElementById('hourly-scroll');
-  if (!scroll) return;
-
-  scroll.innerHTML = slots.map((d, i) => {
-    const isCurrent = (i === 0);
-    const slotCfg = ICON_CFG[d.icon] || ICON_CFG.partly;
-    const boxCls  = isCurrent
-      ? 'flex-shrink-0 w-14 bg-white/22 rounded-DEFAULT px-1 py-2.5 text-center border border-white/70'
-      : 'flex-shrink-0 w-14 bg-white/10 rounded-DEFAULT px-1 py-2.5 text-center';
-    const timeCls = isCurrent ? 'text-white text-[0.58rem] font-black' : 'text-white/70 text-[0.58rem]';
-    const tempCls = isCurrent ? 'text-white font-black text-xs'        : 'text-white font-bold text-xs';
-    const dataCls = isCurrent ? 'text-white/90 text-[0.5rem] mt-0.5'  : 'text-white/55 text-[0.5rem] mt-0.5';
-    return `<div class="${boxCls}">
-      <p class="${timeCls}">${pad(d.h)}時</p>
-      <span class="material-symbols-outlined text-white fill-icon text-lg my-1">${slotCfg.sym}</span>
-      <p class="${tempCls}">${d.temp}°</p>
-      <p class="${dataCls}">${d.uv === 0 ? 'UV—' : 'UV'+d.uv}</p>
-      <p class="text-white/55 text-[0.5rem]">${d.hum}%</p>
-    </div>`;
-  }).join('');
-
-  scroll.scrollLeft = 0;
-}
 </script>
 </body>
 </html>
