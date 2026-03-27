@@ -1799,13 +1799,32 @@ function expandDay(btn) {
 // ── PERSISTENCE ──
 // ══════════════════════════════════════════════════════════════════
 // ══════════════════════════════════════════════════════════════════
-// ── CLOUD SYNC STORAGE (window.storage shared=true → cross-device) ──
+// ── FIREBASE REALTIME DATABASE — 真正跨裝置即時同步 ──
 // ══════════════════════════════════════════════════════════════════
-const CLOUD_KEY   = 'seoul_budget_v3';  // shared key (all devices read/write)
-const LS_FALLBACK = 'seoul_budget_local';
+//
+//  使用免費 Firebase Realtime Database。
+//  資料路徑：/seoul_trip/budget  （所有裝置讀寫同一節點）
+//
+// ══════════════════════════════════════════════════════════════════
+// ── ⚙️  同步設定 — 請在此填入你的 Firebase 資料庫網址 ──
+// ══════════════════════════════════════════════════════════════════
+//
+//  步驟：
+//  1. 前往 https://console.firebase.google.com/
+//  2. 建立新專案（免費）→ Realtime Database → 建立資料庫
+//  3. 規則設定為 read/write = true（公開測試用）
+//  4. 複製資料庫 URL（格式：https://xxx-default-rtdb.firebaseio.com）
+//  5. 貼在下方 FB_URL 的引號內
+//
+//  ⚠️  若 FB_URL 保持預設值「」，將自動退回本機 localStorage（無法跨裝置）
+//
+const FB_URL  = '';   // ← 填入你的 Firebase URL，例如：'https://my-trip-abc-default-rtdb.firebaseio.com'
+const FB_PATH = '/seoul_trip/budget';
+const LS_KEY  = 'seoul_budget_local';
 
-let _syncTimer  = null;
-let _lastSavedTs = 0;  // track timestamp to detect remote changes
+let _lastSavedTs = 0;
+let _syncTimer   = null;
+let _fbReady     = false;   // true once first load succeeds
 
 // ── Collect all budget state ──
 function _getBudgetData() {
@@ -1834,98 +1853,114 @@ function _applyData(d) {
   _lastSavedTs = d._ts || 0;
 }
 
-// ── SAVE: write to cloud shared storage ──
+// ── Firebase REST helpers ──
+async function _fbGet() {
+  if (!FB_URL) return null;
+  const res = await fetch(`${FB_URL}${FB_PATH}.json`, { cache: 'no-store' });
+  if (!res.ok) throw new Error('fb get ' + res.status);
+  return res.json();   // null if nothing stored yet
+}
+async function _fbSet(data) {
+  if (!FB_URL) return;
+  const res = await fetch(`${FB_URL}${FB_PATH}.json`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  if (!res.ok) throw new Error('fb set ' + res.status);
+}
+async function _fbDelete() {
+  if (!FB_URL) return;
+  await fetch(`${FB_URL}${FB_PATH}.json`, { method: 'DELETE' });
+}
+
+// ── SAVE ──
 async function saveToStorage() {
   const data = _getBudgetData();
   _lastSavedTs = data._ts;
-  const json = JSON.stringify(data);
-  if (window.storage) {
-    try {
-      await window.storage.set(CLOUD_KEY, json, true);   // <-- shared=true
-      try { localStorage.setItem(LS_FALLBACK, json); } catch(e) {}
-      _setSyncBadge('✓ 已儲存', 2000);
-      _updateSyncTime();
-      // Green dot on success
-      const dot = document.getElementById('sync-dot');
-      if (dot) { dot.style.background = '#4ade80'; }
-      return;
-    } catch(e) { console.warn('[sync] save failed:', e); }
+  // always write localStorage as backup
+  try { localStorage.setItem(LS_KEY, JSON.stringify(data)); } catch(e) {}
+  if (!FB_URL) {
+    _setSyncBadge('本機儲存');
+    _setDot('#fbbf24');
+    return;
   }
-  try { localStorage.setItem(LS_FALLBACK, json); } catch(e) {
-    showToast('⚠️ 儲存失敗');
+  // write to Firebase
+  try {
+    await _fbSet(data);
+    _setSyncBadge('✓ 已儲存', 2000);
+    _updateSyncTime();
+    _setDot('#4ade80');
+  } catch(e) {
+    console.warn('[fb] save failed:', e);
+    _setSyncBadge('⚠️ 離線儲存');
+    _setDot('#fbbf24');
   }
 }
 
-// ── LOAD: read from cloud shared storage ──
+// ── LOAD ──
 async function loadFromStorage() {
-  if (window.storage) {
+  if (FB_URL) {
     try {
-      const r = await window.storage.get(CLOUD_KEY, true);
-      if (r && r.value) {
-        _applyData(JSON.parse(r.value));
-        try { localStorage.setItem(LS_FALLBACK, r.value); } catch(e) {}
+      const d = await _fbGet();
+      if (d && typeof d === 'object' && d._ts) {
+        _applyData(d);
+        try { localStorage.setItem(LS_KEY, JSON.stringify(d)); } catch(e) {}
+        _fbReady = true;
         return true;
       }
-    } catch(e) { console.warn('[sync] load failed:', e); }
+    } catch(e) {
+      console.warn('[fb] load failed, using localStorage:', e);
+    }
   }
+  // fallback to localStorage
   try {
-    const raw = localStorage.getItem(LS_FALLBACK);
+    const raw = localStorage.getItem(LS_KEY);
     if (raw) { _applyData(JSON.parse(raw)); return true; }
   } catch(e) {}
   return false;
 }
 
-// ── POLL: every 2s check if cloud data is newer than what we last saved ──
+// ── POLL: every 2 s pull Firebase and re-render if newer ──
 function startSyncPoll() {
   if (_syncTimer) return;
   _syncTimer = setInterval(async () => {
-    if (!window.storage) return;
+    if (!FB_URL) return;
     try {
-      const r = await window.storage.get(CLOUD_KEY, true);
-      if (!r || !r.value) return;
-      const d = JSON.parse(r.value);
-      if ((d._ts || 0) <= _lastSavedTs) return;  // we already have this or newer
+      const d = await _fbGet();
+      if (!d || !d._ts) return;
+      if (d._ts <= _lastSavedTs) return;   // already up-to-date
       _applyData(d);
-      _lastSavedTs = d._ts;
       renderAll();
       _updateSyncTime();
-      // Flash green dot to indicate remote update received
-      const dot = document.getElementById('sync-dot');
-      if (dot) {
-        dot.style.background = '#4ade80';
-        dot.style.boxShadow = '0 0 6px #4ade80';
-        setTimeout(() => { dot.style.boxShadow = ''; }, 1500);
-      }
+      _setDot('#4ade80', true);
       showToast('☁️ 已同步最新資料');
-    } catch(e) {}
+    } catch(e) { /* network offline, ignore */ }
   }, 2000);
 }
 
 // ── CLEAR ──
 async function clearStorage() {
-  if (window.storage) {
-    try { await window.storage.delete(CLOUD_KEY, true); } catch(e) {}
-  }
-  try { localStorage.removeItem(LS_FALLBACK); } catch(e) {}
+  try { await _fbDelete(); } catch(e) {}
+  try { localStorage.removeItem(LS_KEY); } catch(e) {}
   closeModal();
   showToast('資料已清除');
 }
 
-// ── Sync badge helper ──
+// ── UI helpers ──
+function _setDot(color, glow) {
+  const dot = document.getElementById('sync-dot');
+  if (!dot) return;
+  dot.style.background  = color;
+  dot.style.boxShadow   = glow ? `0 0 6px ${color}` : '';
+  if (glow) setTimeout(() => { if(dot) dot.style.boxShadow = ''; }, 1500);
+}
 function _setSyncBadge(msg, clearAfterMs) {
   const badge = document.getElementById('sync-badge');
-  const dot   = document.getElementById('sync-dot');
   if (!badge) return;
   badge.textContent = msg;
-  if (clearAfterMs) {
-    setTimeout(() => {
-      if (badge) badge.textContent = window.storage ? '多人共編中' : '本機儲存';
-      if (dot)   dot.style.background = window.storage ? '#4ade80' : '#fbbf24';
-    }, clearAfterMs);
-  }
+  if (clearAfterMs) setTimeout(() => { if(badge) badge.textContent = '多人共編中'; }, clearAfterMs);
 }
-
-// ── Update sync time label ──
 function _updateSyncTime() {
   const el = document.getElementById('sync-last-time');
   if (!el) return;
@@ -2699,18 +2734,21 @@ function openSubwayApp() {
 
 // ── Init ──
 document.addEventListener('DOMContentLoaded', async () => {
-  const dot = document.getElementById('sync-dot');
   _setSyncBadge('載入中…');
-  if (dot) dot.style.background = '#fbbf24'; // yellow while loading
+  _setDot('#fbbf24');
   await loadFromStorage();
   renderAll();
   updateToolboxBubble(false);
   initWeather();
   startSyncPoll();
   _updateSyncTime();
-  const hasCloud = !!window.storage;
-  _setSyncBadge(hasCloud ? '多人共編中' : '本機儲存');
-  if (dot) dot.style.background = hasCloud ? '#4ade80' : '#fbbf24';
+  if (FB_URL) {
+    _setSyncBadge('多人共編中');
+    _setDot('#4ade80');
+  } else {
+    _setSyncBadge('⚠️ 請設定 Firebase');
+    _setDot('#fbbf24');
+  }
 });
 
 // ── Weather: render hourly strip with current Seoul-time highlight ──
