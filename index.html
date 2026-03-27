@@ -1558,11 +1558,18 @@
     <div class="bg-gradient-to-br from-on-surface to-[#5a6062] rounded-lg p-6 editorial-shadow text-white">
       <div class="flex justify-between items-start mb-6">
         <div>
-          <div class="flex items-center gap-2"><p class="text-white/60 text-xs uppercase tracking-widest font-label">總預算</p><span id="sync-badge" class="text-white/50 text-[0.6rem]">☁️</span></div>
+          <div class="flex items-center gap-2 mb-1">
+            <p class="text-white/60 text-xs uppercase tracking-widest font-label">總預算</p>
+            <!-- Multi-user sync status pill -->
+            <div id="sync-pill" class="flex items-center gap-1 bg-white/10 rounded-full px-2 py-0.5 border border-white/20">
+              <span id="sync-dot" class="w-1.5 h-1.5 rounded-full bg-white/40 flex-shrink-0"></span>
+              <span id="sync-badge" class="text-white/60 text-[0.55rem] font-bold tracking-wide">同步中…</span>
+            </div>
+          </div>
           <!-- Editable total budget -->
           <div id="budget-display-row" class="flex items-end gap-2">
             <p class="font-headline font-black text-[2.5rem] leading-tight tracking-tight" id="budget-total-display">₩800,000</p>
-            <button onclick="openBudgetEdit()" class="mb-2 bg-white/15 rounded-full p-1 active:scale-90 transition-transform">
+            <button onclick="openBudgetEdit()" class="mb-2 bg-white/15 rounded-full p-1 active:scale-90 transition-transform" title="多人共同編輯此金額">
               <span class="material-symbols-outlined text-white/70 text-base">edit</span>
             </button>
           </div>
@@ -1573,6 +1580,10 @@
             <button onclick="cancelBudgetEdit()" class="text-white/60 text-xs">取消</button>
           </div>
           <p class="text-white/60 text-xs mt-1" id="budget-twd-equiv">≈ TWD 18,519</p>
+          <p class="text-white/40 text-[0.58rem] mt-0.5 flex items-center gap-1">
+            <span class="material-symbols-outlined text-[0.7rem]">group</span>
+            <span id="sync-last-time">多人共編 · 即時同步</span>
+          </p>
         </div>
         <button onclick="showModal('addExpense')" class="bg-white/15 backdrop-blur-sm text-white rounded-full px-4 py-2 text-xs font-bold flex items-center gap-1 border border-white/20 active:scale-95 transition-transform flex-shrink-0">
           <span class="material-symbols-outlined text-sm">add</span> 新增消費
@@ -1833,6 +1844,10 @@ async function saveToStorage() {
       await window.storage.set(CLOUD_KEY, json, true);   // <-- shared=true
       try { localStorage.setItem(LS_FALLBACK, json); } catch(e) {}
       _setSyncBadge('✓ 已儲存', 2000);
+      _updateSyncTime();
+      // Green dot on success
+      const dot = document.getElementById('sync-dot');
+      if (dot) { dot.style.background = '#4ade80'; }
       return;
     } catch(e) { console.warn('[sync] save failed:', e); }
   }
@@ -1860,7 +1875,7 @@ async function loadFromStorage() {
   return false;
 }
 
-// ── POLL: every 3s check if cloud data is newer than what we last saved ──
+// ── POLL: every 2s check if cloud data is newer than what we last saved ──
 function startSyncPoll() {
   if (_syncTimer) return;
   _syncTimer = setInterval(async () => {
@@ -1873,9 +1888,17 @@ function startSyncPoll() {
       _applyData(d);
       _lastSavedTs = d._ts;
       renderAll();
+      _updateSyncTime();
+      // Flash green dot to indicate remote update received
+      const dot = document.getElementById('sync-dot');
+      if (dot) {
+        dot.style.background = '#4ade80';
+        dot.style.boxShadow = '0 0 6px #4ade80';
+        setTimeout(() => { dot.style.boxShadow = ''; }, 1500);
+      }
       showToast('☁️ 已同步最新資料');
     } catch(e) {}
-  }, 3000);
+  }, 2000);
 }
 
 // ── CLEAR ──
@@ -1890,10 +1913,25 @@ async function clearStorage() {
 
 // ── Sync badge helper ──
 function _setSyncBadge(msg, clearAfterMs) {
-  const el = document.getElementById('sync-badge');
+  const badge = document.getElementById('sync-badge');
+  const dot   = document.getElementById('sync-dot');
+  if (!badge) return;
+  badge.textContent = msg;
+  if (clearAfterMs) {
+    setTimeout(() => {
+      if (badge) badge.textContent = window.storage ? '多人共編中' : '本機儲存';
+      if (dot)   dot.style.background = window.storage ? '#4ade80' : '#fbbf24';
+    }, clearAfterMs);
+  }
+}
+
+// ── Update sync time label ──
+function _updateSyncTime() {
+  const el = document.getElementById('sync-last-time');
   if (!el) return;
-  el.textContent = msg;
-  if (clearAfterMs) setTimeout(() => { if(el) el.textContent = window.storage ? '☁️' : '💾'; }, clearAfterMs);
+  const now = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  el.textContent = `多人共編 · ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())} 已同步`;
 }
 
 
@@ -2661,13 +2699,18 @@ function openSubwayApp() {
 
 // ── Init ──
 document.addEventListener('DOMContentLoaded', async () => {
+  const dot = document.getElementById('sync-dot');
   _setSyncBadge('載入中…');
+  if (dot) dot.style.background = '#fbbf24'; // yellow while loading
   await loadFromStorage();
   renderAll();
   updateToolboxBubble(false);
   initWeather();
   startSyncPoll();
-  _setSyncBadge(window.storage ? '☁️' : '💾');
+  _updateSyncTime();
+  const hasCloud = !!window.storage;
+  _setSyncBadge(hasCloud ? '多人共編中' : '本機儲存');
+  if (dot) dot.style.background = hasCloud ? '#4ade80' : '#fbbf24';
 });
 
 // ── Weather: render hourly strip with current Seoul-time highlight ──
