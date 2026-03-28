@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -1610,14 +1611,26 @@
 
   <!-- Category Breakdown — fully dynamic, rendered by JS -->
   <section class="mb-6 animate-in delay-3">
-    <h3 class="font-headline text-lg font-bold px-1 mb-4">分類支出</h3>
+    <div class="flex items-center justify-between px-1 mb-4">
+      <h3 class="font-headline text-lg font-bold">分類支出</h3>
+      <div id="cat-sync-pill" class="flex items-center gap-1 bg-surface-container rounded-full px-2 py-0.5 border border-outline-variant/30">
+        <span id="cat-sync-dot" class="w-1.5 h-1.5 rounded-full bg-outline-variant flex-shrink-0"></span>
+        <span id="cat-sync-badge" class="text-on-surface-variant text-[0.55rem] font-bold tracking-wide">同步中…</span>
+      </div>
+    </div>
     <div class="bg-surface-container-lowest rounded-lg editorial-shadow p-5 space-y-5" id="cat-breakdown"></div>
   </section>
 
   <!-- Recent Transactions -->
   <section class="mb-8 animate-in delay-4">
     <div class="flex justify-between items-end px-1 mb-4">
-      <h3 class="font-headline text-lg font-bold">消費記錄</h3>
+      <div class="flex items-center gap-2">
+        <h3 class="font-headline text-lg font-bold">消費記錄</h3>
+        <div id="tx-sync-pill" class="flex items-center gap-1 bg-surface-container rounded-full px-2 py-0.5 border border-outline-variant/30">
+          <span id="tx-sync-dot" class="w-1.5 h-1.5 rounded-full bg-outline-variant flex-shrink-0"></span>
+          <span id="tx-sync-badge" class="text-on-surface-variant text-[0.55rem] font-bold tracking-wide">同步中…</span>
+        </div>
+      </div>
       <button onclick="showToast('匯出功能開發中')" class="text-primary text-xs font-bold uppercase tracking-widest flex items-center gap-1">
         匯出 <span class="material-symbols-outlined text-sm">download</span>
       </button>
@@ -1949,17 +1962,21 @@ async function clearStorage() {
 
 // ── UI helpers ──
 function _setDot(color, glow) {
-  const dot = document.getElementById('sync-dot');
-  if (!dot) return;
-  dot.style.background  = color;
-  dot.style.boxShadow   = glow ? `0 0 6px ${color}` : '';
-  if (glow) setTimeout(() => { if(dot) dot.style.boxShadow = ''; }, 1500);
+  ['sync-dot', 'cat-sync-dot', 'tx-sync-dot'].forEach(id => {
+    const dot = document.getElementById(id);
+    if (!dot) return;
+    dot.style.background = color;
+    dot.style.boxShadow  = glow ? `0 0 6px ${color}` : '';
+    if (glow) setTimeout(() => { if(dot) dot.style.boxShadow = ''; }, 1500);
+  });
 }
 function _setSyncBadge(msg, clearAfterMs) {
-  const badge = document.getElementById('sync-badge');
-  if (!badge) return;
-  badge.textContent = msg;
-  if (clearAfterMs) setTimeout(() => { if(badge) badge.textContent = '多人共編中'; }, clearAfterMs);
+  [['sync-badge','多人共編中'], ['cat-sync-badge','多人共編中'], ['tx-sync-badge','多人共編中']].forEach(([id, def]) => {
+    const badge = document.getElementById(id);
+    if (!badge) return;
+    badge.textContent = msg;
+    if (clearAfterMs) setTimeout(() => { if(badge) badge.textContent = def; }, clearAfterMs);
+  });
 }
 function _updateSyncTime() {
   const el = document.getElementById('sync-last-time');
