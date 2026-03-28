@@ -2056,6 +2056,8 @@ function renderOverview() {
   document.getElementById('budget-used-pct').textContent      = pct+'%';
   document.getElementById('budget-remaining').textContent     = '剩餘 ₩'+fmt(Math.max(0,rem));
   document.getElementById('budget-bar').style.width           = pct+'%';
+  const rateDisplayEl = document.getElementById('rate-display');
+  if (rateDisplayEl) rateDisplayEl.textContent = exchangeRate;
 }
 
 function renderHomeBudgetCard() {
@@ -2070,10 +2072,11 @@ function renderCategoryBreakdown() {
   if (!container) return;
   let html = '';
   CAT_LIST.forEach(cat => {
-    const cfg   = CAT_CFG[cat];
-    const total = transactions.filter(t=>t.cat===cat).reduce((s,t)=>s+t.amount, 0);
-    const pct   = totalBudget>0 ? Math.min(100,Math.round(total/totalBudget*100)) : 0;
-    const label = total===0 ? '尚未消費' : pct+'%';
+    const cfg    = CAT_CFG[cat];
+    const total  = transactions.filter(t=>t.cat===cat).reduce((s,t)=>s+t.amount, 0);
+    const pct    = totalBudget>0 ? Math.min(100,Math.round(total/totalBudget*100)) : 0;
+    const label  = total===0 ? '尚未消費' : pct+'%';
+    const twdAmt = total>0 ? '≈ TWD '+Math.round(total/(exchangeRate||43.2)).toLocaleString() : '';
     html += `
       <div>
         <div class="flex justify-between items-center mb-2">
@@ -2081,7 +2084,10 @@ function renderCategoryBreakdown() {
             <span class="material-symbols-outlined ${cfg.iconCls} text-lg">${cfg.icon}</span>
             <span class="font-bold text-sm">${cat}</span>
           </div>
-          <span class="font-bold text-sm">₩${total.toLocaleString()}</span>
+          <div class="text-right">
+            <p class="font-bold text-sm">₩${total.toLocaleString()}</p>
+            ${twdAmt ? `<p class="text-[0.6rem] text-on-surface-variant">${twdAmt}</p>` : ''}
+          </div>
         </div>
         <div class="progress-bar">
           <div class="progress-fill ${cfg.bar}" style="width:${pct}%"></div>
