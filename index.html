@@ -1556,11 +1556,17 @@
 
   <!-- Budget Overview -->
   <section class="mb-6 animate-in delay-2">
-    <div class="bg-gradient-to-br from-on-surface to-[#5a6062] rounded-lg p-6 editorial-shadow text-white">
+    <div class="relative rounded-lg editorial-shadow overflow-hidden text-white">
+      <!-- Background photo -->
+      <div class="absolute inset-0 z-0" style="background:url('https://images.unsplash.com/photo-1522383225653-ed111181a951?w=800&q=80') center/cover no-repeat;"></div>
+      <!-- Dark overlay — low opacity so image shows through but text stays readable -->
+      <div class="absolute inset-0 z-0" style="background:linear-gradient(150deg, rgba(20,8,8,0.62) 0%, rgba(100,10,10,0.52) 60%, rgba(30,10,10,0.68) 100%);"></div>
+      <!-- Content -->
+      <div class="relative z-10 p-6">
       <div class="flex justify-between items-start mb-6">
         <div>
           <div class="flex items-center gap-2 mb-1">
-            <p class="text-white/60 text-xs uppercase tracking-widest font-label">總預算</p>
+            <p class="text-white/70 text-xs uppercase tracking-widest font-label">總預算</p>
             <!-- Multi-user sync status pill -->
             <div id="sync-pill" class="flex items-center gap-1 bg-white/10 rounded-full px-2 py-0.5 border border-white/20">
               <span id="sync-dot" class="w-1.5 h-1.5 rounded-full bg-white/40 flex-shrink-0"></span>
@@ -1569,7 +1575,7 @@
           </div>
           <!-- Editable total budget -->
           <div id="budget-display-row" class="flex items-end gap-2">
-            <p class="font-headline font-black text-[2.5rem] leading-tight tracking-tight" id="budget-total-display">₩800,000</p>
+            <p class="font-headline font-black text-[2.5rem] leading-tight tracking-tight" id="budget-total-display" style="text-shadow:0 2px 10px rgba(0,0,0,0.5);">₩800,000</p>
             <button onclick="openBudgetEdit()" class="mb-2 bg-white/15 rounded-full p-1 active:scale-90 transition-transform" title="多人共同編輯此金額">
               <span class="material-symbols-outlined text-white/70 text-base">edit</span>
             </button>
@@ -1580,8 +1586,8 @@
             <button onclick="saveBudgetTotal()" class="bg-white text-on-surface font-bold text-xs px-3 py-1.5 rounded-full active:scale-90 transition-transform">確認</button>
             <button onclick="cancelBudgetEdit()" class="text-white/60 text-xs">取消</button>
           </div>
-          <p class="text-white/60 text-xs mt-1" id="budget-twd-equiv">≈ TWD 18,519</p>
-          <p class="text-white/40 text-[0.58rem] mt-0.5 flex items-center gap-1">
+          <p class="text-white/70 text-xs mt-1" id="budget-twd-equiv">≈ TWD 18,519</p>
+          <p class="text-white/50 text-[0.58rem] mt-0.5 flex items-center gap-1">
             <span class="material-symbols-outlined text-[0.7rem]">group</span>
             <span id="sync-last-time">多人共編 · 即時同步</span>
           </p>
@@ -1592,19 +1598,20 @@
       </div>
       <div>
         <div class="flex justify-between items-end mb-2">
-          <p class="text-white/60 text-xs">已使用</p>
+          <p class="text-white/70 text-xs">已使用</p>
           <div class="text-right">
             <p class="text-white font-bold" id="budget-used-amount">₩0</p>
-            <p class="text-white/60 text-xs" id="budget-used-pct">0%</p>
+            <p class="text-white/70 text-xs" id="budget-used-pct">0%</p>
           </div>
         </div>
         <div class="h-2 bg-white/20 rounded-full overflow-hidden">
           <div class="h-full bg-gradient-to-r from-white to-white/70 rounded-full transition-all duration-700" id="budget-bar" style="width:0%"></div>
         </div>
         <div class="flex justify-between mt-2">
-          <p class="text-white/60 text-xs" id="budget-remaining">剩餘 ₩800,000</p>
-          <p class="text-white/60 text-xs">還有 3 天</p>
+          <p class="text-white/70 text-xs" id="budget-remaining">剩餘 ₩800,000</p>
+          <p class="text-white/70 text-xs">還有 3 天</p>
         </div>
+      </div>
       </div>
     </div>
   </section>
