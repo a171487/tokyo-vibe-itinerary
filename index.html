@@ -1740,6 +1740,14 @@
 <!-- ══════════════════════════ TOAST ══════════════════════════ -->
 <div id="toast"></div>
 
+<!-- ══════════════════════════ IMAGE LIGHTBOX ══════════════════════════ -->
+<div id="img-lightbox" onclick="closeImgLightbox()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:300;align-items:center;justify-content:center;backdrop-filter:blur(6px);">
+  <button onclick="closeImgLightbox()" style="position:absolute;top:1.2rem;right:1.2rem;background:rgba(255,255,255,0.15);border:none;border-radius:9999px;width:2.5rem;height:2.5rem;display:flex;align-items:center;justify-content:center;cursor:pointer;">
+    <span class="material-symbols-outlined" style="color:#fff;font-size:1.3rem;">close</span>
+  </button>
+  <img id="img-lightbox-src" src="" onclick="event.stopPropagation()" style="max-width:92vw;max-height:82vh;border-radius:1rem;object-fit:contain;box-shadow:0 8px 40px rgba(0,0,0,0.6);" />
+</div>
+
 <!-- ══════════════════════════ MODAL ══════════════════════════ -->
 <div id="modal-overlay" onclick="closeModal()">
   <div id="modal-sheet" onclick="event.stopPropagation()">
@@ -2113,7 +2121,7 @@ function renderTransactions() {
   list.innerHTML = transactions.map((tx,idx) => {
     const cfg     = CAT_CFG[tx.cat]||CAT_CFG['其他'];
     const divider = idx<transactions.length-1 ? '<div class="h-px bg-outline-variant/10"></div>' : '';
-    const thumbs  = (tx.imgs||[]).slice(0,3).map(src=>`<img src="${src}" class="w-8 h-8 rounded object-cover flex-shrink-0" />`).join('');
+    const thumbs  = (tx.imgs||[]).slice(0,3).map(src=>`<img src="${src}" class="w-8 h-8 rounded object-cover flex-shrink-0 cursor-pointer active:scale-90 transition-transform" onclick="openImgLightbox('${src}')" />`).join('');
     const extra   = (tx.imgs||[]).length>3 ? `<span class="text-[0.6rem] text-on-surface-variant">+${tx.imgs.length-3}</span>` : '';
     const card    = cards.find(c=>c.id===tx.cardId);
     const twdAmt  = Math.round(tx.amount / (exchangeRate||43.2));
@@ -2708,6 +2716,19 @@ function showModal(type){
   if(type==='currency') initCurrencyModal();
 }
 function closeModal(){document.getElementById('modal-overlay').classList.remove('open');}
+
+// ── Image Lightbox ──
+function openImgLightbox(src) {
+  const lb = document.getElementById('img-lightbox');
+  document.getElementById('img-lightbox-src').src = src;
+  lb.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+function closeImgLightbox() {
+  document.getElementById('img-lightbox').style.display = 'none';
+  document.getElementById('img-lightbox-src').src = '';
+  document.body.style.overflow = '';
+}
 
 // ── Currency modal helpers ──
 let modalSwapped = false;
