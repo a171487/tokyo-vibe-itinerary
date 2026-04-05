@@ -2716,52 +2716,84 @@ const modalContents={
     <button onclick="closeModal()" class="w-full mt-5 bg-gradient-to-r from-primary to-primary-container text-white font-bold py-3 rounded-full active:scale-95">關閉</button>`,
   touristbus: (function(){
     const stops = [
-      ['1','光化門站','發車·終點',true],
-      ['2','明洞','',''],
-      ['3','南山谷韓屋村','',''],
-      ['4','曼格德蘭大使酒店','',''],
-      ['5','新羅飯店／獎忠壇公園','',''],
-      ['6','N首爾塔','🗼 必訪',''],
-      ['7','首爾君悅酒店','',''],
-      ['8','東大門DDP','🛍 購物',''],
-      ['9','惠化大學路','',''],
-      ['10','昌慶宮','',''],
-      ['11','昌德宮','🏯 世界遺產',''],
-      ['12','仁寺洞／北村','',''],
-      ['13','青瓦台前','',''],
-      ['14','景福宮／現代美術館','🏯 必訪',''],
-      ['15','世宗文化會館／光化門前','',''],
+      ['1','光化門站','發車·終點',true,[72,62]],
+      ['2','明洞','','',[103,104]],
+      ['3','南山谷韓屋村','','',[131,128]],
+      ['4','曼格德蘭大使酒店','','',[168,134]],
+      ['5','新羅飯店／獎忠壇公園','','',[179,117]],
+      ['6','N首爾塔','🗼 必訪','',[116,128]],
+      ['7','首爾君悅酒店','','',[120,148]],
+      ['8','東大門DDP','🛍 購物','',[193,88]],
+      ['9','惠化大學路','','',[160,39]],
+      ['10','昌慶宮','','',[138,53]],
+      ['11','昌德宮','🏯 世界遺產','',[123,53]],
+      ['12','仁寺洞／北村','','',[97,50]],
+      ['13','青瓦台前','','',[60,34]],
+      ['14','景福宮／現代美術館','🏯 必訪','',[72,52]],
+      ['15','世宗文化會館／光化門前','','',[64,72]],
     ];
     const times = ['9:30','10:10','10:50','11:30','12:10','12:50','13:30','14:10','14:50','15:30','16:10','16:50'];
     const keyStops = [['明洞','9:39'],['N首爾塔','10:00'],['東大門DDP','10:22'],['昌德宮','10:41'],['景福宮','10:51'],['光化門（回）','11:00']];
     const oc = '#e65100';
+    const pts = stops.map(s=>s[4].join(',')).join(' ');
+    const svgDots = stops.map(([no,name,tag,first,xy])=>`<circle cx="${xy[0]}" cy="${xy[1]}" r="6.5" fill="${first?oc:'#fff'}" stroke="${oc}" stroke-width="1.8"/><text x="${xy[0]}" y="${xy[1]+2.2}" text-anchor="middle" dominant-baseline="middle" font-size="5.5" font-family="sans-serif" font-weight="bold" fill="${first?'#fff':oc}">${no}</text>`).join('');
     return `<div class="flex items-center gap-2 mb-1">
       <div class="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style="background:${oc}18">
         <span class="material-symbols-outlined fill-icon text-xl" style="color:${oc}">directions_bus</span>
       </div>
       <div><h3 class="font-headline font-bold text-xl leading-tight">首爾觀光巴士</h3><p class="text-xs text-on-surface-variant">Seoul City Tour Bus</p></div>
     </div>
-    <div class="rounded-full px-3 py-1 inline-flex items-center gap-1.5 mb-4 mt-2" style="background:${oc}">
+    <div class="rounded-full px-3 py-1 inline-flex items-center gap-1.5 mb-3 mt-2" style="background:${oc}">
       <span class="material-symbols-outlined text-white text-sm fill-icon">route</span>
       <span class="text-white text-xs font-bold">都心古宮南山路線　間隔40分發車</span>
     </div>
-    <p class="font-label text-[0.6rem] uppercase tracking-[0.12em] font-bold mb-2" style="color:${oc}">🗺 行駛站點</p>
-    <div class="relative mb-4">
-      <div class="absolute top-3 bottom-3 w-0.5 rounded-full" style="left:1.1rem;background:linear-gradient(to bottom,${oc},${oc}66,${oc})"></div>
-      <div>${stops.map(([no,name,tag,first])=>`
-      <div class="flex items-center gap-3 py-1.5 pl-1">
-        <div class="w-[1.4rem] h-[1.4rem] rounded-full flex items-center justify-center flex-shrink-0 z-10" style="${first?`background:${oc}`:`background:#ebeef0;border:2px solid ${oc}66`}">
-          <span class="font-bold text-[0.55rem]" style="color:${first?'#fff':oc}">${no}</span>
+    <div id="tb-now" class="rounded-DEFAULT px-3 py-2.5 mb-4 leading-relaxed" style="background:${oc}10;border:1px solid ${oc}30;min-height:2.5rem"></div>
+    <p class="font-label text-[0.6rem] uppercase tracking-[0.12em] font-bold mb-2" style="color:${oc}">🗺 行駛站點與地圖</p>
+    <div class="flex gap-2 mb-4">
+      <div class="flex-1 min-w-0">
+        <div class="relative">
+          <div class="absolute top-3 bottom-3 w-0.5 rounded-full" style="left:0.9rem;background:linear-gradient(to bottom,${oc},${oc}55,${oc})"></div>
+          <div>${stops.map(([no,name,tag,first])=>`
+          <div class="flex items-center gap-2 py-[3px] pl-0.5">
+            <div class="w-[1.2rem] h-[1.2rem] rounded-full flex items-center justify-center flex-shrink-0 z-10" style="${first?`background:${oc}`:`background:#ebeef0;border:1.5px solid ${oc}66`}">
+              <span style="font-size:0.42rem;font-weight:700;color:${first?'#fff':oc}">${no}</span>
+            </div>
+            <div class="flex items-center gap-1 flex-1 min-w-0">
+              <p class="font-bold truncate" style="font-size:0.6rem">${name}</p>
+              ${tag?`<span style="font-size:0.45rem;background:${oc}18;color:${oc};padding:1px 4px;border-radius:999px;font-weight:700;flex-shrink:0">${tag}</span>`:''}
+            </div>
+          </div>`).join('')}</div>
         </div>
-        <div class="flex items-center gap-1.5 flex-1">
-          <p class="text-xs font-bold">${name}</p>
-          ${tag?`<span class="text-[0.55rem] px-1.5 py-0.5 rounded-full font-bold" style="background:${oc}18;color:${oc}">${tag}</span>`:''}
-        </div>
-      </div>`).join('')}</div>
+      </div>
+      <div style="width:128px;flex-shrink:0">
+        <svg viewBox="0 0 240 210" width="128" height="112" style="border-radius:10px;display:block">
+          <rect width="240" height="210" fill="#eef2ee"/>
+          <ellipse cx="128" cy="136" rx="36" ry="24" fill="#c5d9c0" opacity="0.8"/>
+          <text x="128" y="133" text-anchor="middle" font-size="7.5" font-family="sans-serif" fill="#4a6a4a" font-weight="bold" opacity="0.9">南山</text>
+          <rect x="0" y="190" width="240" height="20" fill="#a8c8e8" opacity="0.7" rx="2"/>
+          <text x="120" y="202" text-anchor="middle" font-size="7" font-family="sans-serif" fill="#2a5a88" opacity="0.9">漢　江</text>
+          <polyline points="${pts}" fill="none" stroke="${oc}" stroke-width="2" stroke-dasharray="4,3" opacity="0.65" stroke-linejoin="round"/>
+          <line x1="64" y1="72" x2="72" y2="62" stroke="${oc}" stroke-width="1.5" stroke-dasharray="3,3" opacity="0.4"/>
+          ${svgDots}
+          <g transform="translate(218,18)">
+            <circle r="13" fill="white" opacity="0.9"/>
+            <polygon points="0,-8 2,-2 -2,-2" fill="${oc}"/>
+            <polygon points="0,8 2,2 -2,2" fill="#aaa"/>
+            <polygon points="-8,0 -2,-2 -2,2" fill="#aaa"/>
+            <polygon points="8,0 2,-2 2,2" fill="#aaa"/>
+            <text x="0" y="-9.5" text-anchor="middle" font-size="6.5" font-family="sans-serif" font-weight="bold" fill="${oc}">N</text>
+            <text x="0" y="14" text-anchor="middle" font-size="5.5" font-family="sans-serif" fill="#888">S</text>
+            <text x="-13" y="3" text-anchor="middle" font-size="5.5" font-family="sans-serif" fill="#888">W</text>
+            <text x="13" y="3" text-anchor="middle" font-size="5.5" font-family="sans-serif" fill="#888">E</text>
+          </g>
+          <text x="4" y="208" font-size="5" font-family="sans-serif" fill="#999">示意圖·非等比</text>
+        </svg>
+        <p style="font-size:0.48rem;text-align:center;color:#888;margin-top:2px">圖中數字對應左側站號</p>
+      </div>
     </div>
     <p class="font-label text-[0.6rem] uppercase tracking-[0.12em] font-bold mb-2" style="color:${oc}">🕐 發車時刻表（光化門站出發）</p>
     <div class="grid grid-cols-4 gap-1.5 mb-1">
-      ${times.map((t,i)=>`<div class="bg-surface-container-low rounded-DEFAULT px-2 py-2 text-center"><p class="text-[0.6rem] text-on-surface-variant font-bold">班次${i+1}</p><p class="font-headline font-bold text-sm" style="color:${oc}">${t}</p></div>`).join('')}
+      ${times.map((t,i)=>`<div id="tb-dep-${i}" class="bg-surface-container-low rounded-DEFAULT px-2 py-2 text-center transition-all"><p class="text-[0.6rem] text-on-surface-variant font-bold">班次${i+1}</p><p class="font-headline font-bold text-sm" style="color:${oc}">${t}</p></div>`).join('')}
     </div>
     <p class="text-[0.6rem] text-on-surface-variant mb-4">↩ 回到光化門站：約出發後90分鐘</p>
     <p class="font-label text-[0.6rem] uppercase tracking-[0.12em] font-bold mb-2" style="color:${oc}">⏱ 主要站點到達時間（第1班 9:30發）</p>
@@ -2860,6 +2892,56 @@ function showModal(type){
   document.getElementById('modal-content').innerHTML=modalContents[type]||'';
   document.getElementById('modal-overlay').classList.add('open');
   if(type==='currency') initCurrencyModal();
+  if(type==='touristbus') initTouristBus();
+}
+// ── Tourist Bus current time ──
+function initTouristBus() {
+  const el = document.getElementById('tb-now');
+  if (!el) return;
+  const now = new Date();
+  const seoulMin = ((now.getUTCHours() + 9) % 24) * 60 + now.getUTCMinutes();
+  const deps  = [570,610,650,690,730,770,810,850,890,930,970,1010];
+  const offs  = [0,9,11,17,20,30,41,52,62,67,71,75,78,81,85,90];
+  const names = ['光化門站','明洞','南山谷韓屋村','曼格德蘭大使酒店','新羅飯店','N首爾塔','首爾君悅酒店','東大門DDP','惠化大學路','昌慶宮','昌德宮','仁寺洞/北村','青瓦台前','景福宮','世宗文化會館'];
+  const pad = n => String(n).padStart(2,'0');
+  const fmt = m => `${pad(Math.floor(m/60))}:${pad(m%60)}`;
+  const oc = '#e65100';
+  const nextDep = deps.find(d => d > seoulMin);
+  let html = `<p style="font-size:0.6rem;color:#888;margin-bottom:3px">🕐 首爾現在時間：<strong style="color:#2e3335">${fmt(seoulMin)}</strong></p>`;
+  if (seoulMin < deps[0]) {
+    html += `<p style="font-size:0.8rem;font-weight:700;color:${oc}">⏳ 首班車 09:30 尚未發車</p>`;
+  } else if (seoulMin > deps[deps.length-1] + 90) {
+    html += `<p style="font-size:0.8rem;font-weight:700;color:#888">🚌 今日班車已結束（末班 16:50）</p>`;
+  } else {
+    let running = null, stopIdx = 0;
+    for (const dep of deps) {
+      if (seoulMin >= dep && seoulMin < dep + 90) {
+        running = dep;
+        const elapsed = seoulMin - dep;
+        for (let i = 0; i < offs.length - 1; i++) {
+          if (elapsed >= offs[i] && elapsed < offs[i+1]) { stopIdx = i; break; }
+          if (i === offs.length - 2 && elapsed >= offs[i]) stopIdx = offs.length - 2;
+        }
+        break;
+      }
+    }
+    if (running !== null) {
+      html += `<p style="font-size:0.82rem;font-weight:700;color:${oc}">🚌 ${fmt(running)} 發車班次行駛中</p>`;
+      html += `<p style="font-size:0.75rem;margin-top:2px">📍 目前約在 <strong>${names[stopIdx]}</strong>（站${stopIdx+1}）附近</p>`;
+      if (nextDep) html += `<p style="font-size:0.6rem;color:#888;margin-top:3px">下一班：<strong>${fmt(nextDep)}</strong> 從光化門出發</p>`;
+      // Highlight current departure in grid
+      deps.forEach((d,i)=>{
+        const el2=document.getElementById(`tb-dep-${i}`);
+        if(el2) el2.style.cssText = d===running ? `background:${oc};border-radius:0.5rem` : '';
+        if(el2 && d===running) el2.querySelectorAll('p').forEach(p=>p.style.color='#fff');
+      });
+    } else if (nextDep) {
+      const wait = nextDep - seoulMin;
+      html += `<p style="font-size:0.82rem;font-weight:700;color:${oc}">⏳ 下一班：${fmt(nextDep)} 從光化門出發</p>`;
+      html += `<p style="font-size:0.7rem;color:#888;margin-top:2px">約 ${wait} 分鐘後發車</p>`;
+    }
+  }
+  el.innerHTML = html;
 }
 function closeModal(){document.getElementById('modal-overlay').classList.remove('open');}
 
