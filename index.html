@@ -1825,6 +1825,14 @@
 <!-- ══════════════════════════ TOAST ══════════════════════════ -->
 <div id="toast"></div>
 
+<!-- ══════════════════════════ BUS MAP LIGHTBOX ══════════════════════════ -->
+<div id="bus-map-lb" onclick="closeBusMap()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:400;align-items:center;justify-content:center;backdrop-filter:blur(8px);flex-direction:column;gap:0.75rem">
+  <button onclick="closeBusMap()" style="position:absolute;top:1.2rem;right:1.2rem;background:rgba(255,255,255,0.15);border:none;border-radius:9999px;width:2.4rem;height:2.4rem;display:flex;align-items:center;justify-content:center;cursor:pointer">
+    <span class="material-symbols-outlined" style="color:#fff;font-size:1.3rem">close</span>
+  </button>
+  <div id="bus-map-lb-svg" onclick="event.stopPropagation()"></div>
+  <p style="color:rgba(255,255,255,0.4);font-size:0.6rem">點擊任意處關閉</p>
+</div>
 <!-- ══════════════════════════ IMAGE LIGHTBOX ══════════════════════════ -->
 <div id="img-lightbox" onclick="closeImgLightbox()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:300;align-items:center;justify-content:center;backdrop-filter:blur(6px);">
   <button onclick="closeImgLightbox()" style="position:absolute;top:1.2rem;right:1.2rem;background:rgba(255,255,255,0.15);border:none;border-radius:9999px;width:2.5rem;height:2.5rem;display:flex;align-items:center;justify-content:center;cursor:pointer;">
@@ -2716,21 +2724,21 @@ const modalContents={
     <button onclick="closeModal()" class="w-full mt-5 bg-gradient-to-r from-primary to-primary-container text-white font-bold py-3 rounded-full active:scale-95">關閉</button>`,
   touristbus: (function(){
     const stops = [
-      ['1','光化門站','發車·終點',true,[72,62]],
-      ['2','明洞','','',[103,104]],
-      ['3','南山谷韓屋村','','',[131,128]],
-      ['4','曼格德蘭大使酒店','','',[168,134]],
-      ['5','新羅飯店／獎忠壇公園','','',[179,117]],
-      ['6','N首爾塔','🗼 必訪','',[116,128]],
-      ['7','首爾君悅酒店','','',[120,148]],
-      ['8','東大門DDP','🛍 購物','',[193,88]],
-      ['9','惠化大學路','','',[160,39]],
-      ['10','昌慶宮','','',[138,53]],
-      ['11','昌德宮','🏯 世界遺產','',[123,53]],
-      ['12','仁寺洞／北村','','',[97,50]],
-      ['13','青瓦台前','','',[60,34]],
-      ['14','景福宮／現代美術館','🏯 必訪','',[72,52]],
-      ['15','世宗文化會館／光化門前','','',[64,72]],
+      ['1','光化門站','發車·終點',true,[72,62],'종로구 세종대로 지하 172','https://maps.google.com/?q=광화문역+서울시티투어버스'],
+      ['2','明洞','','',[103,104],'중구 남대문로 81 (명동역 8번 출구)','https://maps.google.com/?q=명동+시티투어버스정류장+서울'],
+      ['3','南山谷韓屋村','','',[131,128],'중구 퇴계로34길 28','https://maps.google.com/?q=남산골한옥마을+서울'],
+      ['4','曼格德蘭大使酒店','','',[168,134],'중구 동호로 287','https://maps.google.com/?q=그랜드앰배서더서울어소시에이트호텔'],
+      ['5','新羅飯店／獎忠壇公園','','',[179,117],'중구 동호로 249','https://maps.google.com/?q=서울신라호텔'],
+      ['6','N首爾塔','🗼 必訪','',[116,128],'용산구 남산공원길 105','https://maps.google.com/?q=N서울타워'],
+      ['7','首爾君悅酒店','','',[120,148],'용산구 소월로 322','https://maps.google.com/?q=그랜드하얏트서울'],
+      ['8','東大門DDP','🛍 購物','',[193,88],'중구 을지로 281','https://maps.google.com/?q=동대문디자인플라자+DDP'],
+      ['9','惠化大學路','','',[160,39],'종로구 혜화동 로터리 (혜화역 1번 출구)','https://maps.google.com/?q=혜화역+서울'],
+      ['10','昌慶宮','','',[138,53],'종로구 창경궁로 185','https://maps.google.com/?q=창경궁'],
+      ['11','昌德宮','🏯 世界遺產','',[123,53],'종로구 율곡로 99','https://maps.google.com/?q=창덕궁'],
+      ['12','仁寺洞／北村','','',[97,50],'종로구 인사동길 (안국역 6번 출구)','https://maps.google.com/?q=인사동+서울'],
+      ['13','青瓦台前','','',[60,34],'종로구 효자로 12 (경복궁역 3번 출구)','https://maps.google.com/?q=청와대+앞+서울'],
+      ['14','景福宮／現代美術館','🏯 必訪','',[72,52],'종로구 사직로 161','https://maps.google.com/?q=경복궁'],
+      ['15','世宗文化會館／光化門前','','',[64,72],'종로구 세종대로 175','https://maps.google.com/?q=세종문화회관'],
     ];
     const times = ['9:30','10:10','10:50','11:30','12:10','12:50','13:30','14:10','14:50','15:30','16:10','16:50'];
     const keyStops = [['明洞','9:39'],['N首爾塔','10:00'],['東大門DDP','10:22'],['昌德宮','10:41'],['景福宮','10:51'],['光化門（回）','11:00']];
@@ -2753,19 +2761,23 @@ const modalContents={
       <div class="flex-1 min-w-0">
         <div class="relative">
           <div class="absolute top-3 bottom-3 w-0.5 rounded-full" style="left:0.9rem;background:linear-gradient(to bottom,${oc},${oc}55,${oc})"></div>
-          <div>${stops.map(([no,name,tag,first])=>`
-          <div class="flex items-center gap-2 py-[3px] pl-0.5">
-            <div class="w-[1.2rem] h-[1.2rem] rounded-full flex items-center justify-center flex-shrink-0 z-10" style="${first?`background:${oc}`:`background:#ebeef0;border:1.5px solid ${oc}66`}">
+          <div>${stops.map(([no,name,tag,first,xy,addr,mapsUrl])=>`
+          <div class="flex items-start gap-2 py-[3px] pl-0.5">
+            <div class="w-[1.2rem] h-[1.2rem] rounded-full flex items-center justify-center flex-shrink-0 z-10 mt-[2px]" style="${first?`background:${oc}`:`background:#ebeef0;border:1.5px solid ${oc}66`}">
               <span style="font-size:0.42rem;font-weight:700;color:${first?'#fff':oc}">${no}</span>
             </div>
-            <div class="flex items-center gap-1 flex-1 min-w-0">
-              <p class="font-bold truncate" style="font-size:0.6rem">${name}</p>
-              ${tag?`<span style="font-size:0.45rem;background:${oc}18;color:${oc};padding:1px 4px;border-radius:999px;font-weight:700;flex-shrink:0">${tag}</span>`:''}
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-1">
+                <p class="font-bold" style="font-size:0.6rem;word-break:keep-all">${name}</p>
+                ${tag?`<span style="font-size:0.45rem;background:${oc}18;color:${oc};padding:1px 4px;border-radius:999px;font-weight:700;flex-shrink:0">${tag}</span>`:''}
+                <a href="${mapsUrl}" target="_blank" onclick="event.stopPropagation()" style="flex-shrink:0;margin-left:auto;display:flex;align-items:center;line-height:1"><span class="material-symbols-outlined fill-icon" style="font-size:0.9rem;color:#bbb">location_on</span></a>
+              </div>
+              <p style="font-size:0.46rem;color:#bbb;line-height:1.3;margin-top:1px">${addr}</p>
             </div>
           </div>`).join('')}</div>
         </div>
       </div>
-      <div style="width:128px;flex-shrink:0">
+      <div style="width:128px;flex-shrink:0;position:relative;cursor:pointer" onclick="showBusMap()">
         <svg viewBox="0 0 240 210" width="128" height="112" style="border-radius:10px;display:block">
           <rect width="240" height="210" fill="#eef2ee"/>
           <ellipse cx="128" cy="136" rx="36" ry="24" fill="#c5d9c0" opacity="0.8"/>
@@ -2788,7 +2800,8 @@ const modalContents={
           </g>
           <text x="4" y="208" font-size="5" font-family="sans-serif" fill="#999">示意圖·非等比</text>
         </svg>
-        <p style="font-size:0.48rem;text-align:center;color:#888;margin-top:2px">圖中數字對應左側站號</p>
+        <div style="position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.38);border-radius:4px;padding:1px 3px;pointer-events:none;display:flex;align-items:center"><span class="material-symbols-outlined" style="font-size:0.85rem;color:white;line-height:1">zoom_in</span></div>
+        <p style="font-size:0.48rem;text-align:center;color:#888;margin-top:2px">點擊放大 · 數字對應站號</p>
       </div>
     </div>
     <p class="font-label text-[0.6rem] uppercase tracking-[0.12em] font-bold mb-2" style="color:${oc}">🕐 發車時刻表（光化門站出發）</p>
@@ -2943,6 +2956,21 @@ function initTouristBus() {
   }
   el.innerHTML = html;
 }
+function showBusMap(){
+  const svg=document.querySelector('#modal-content svg');
+  if(!svg)return;
+  const lb=document.getElementById('bus-map-lb');
+  const ct=document.getElementById('bus-map-lb-svg');
+  ct.innerHTML='';
+  const clone=svg.cloneNode(true);
+  const vw=Math.min(320,Math.round(window.innerWidth*0.86));
+  clone.setAttribute('width',vw);
+  clone.setAttribute('height',Math.round(vw*210/240));
+  clone.style.borderRadius='12px';
+  ct.appendChild(clone);
+  lb.style.display='flex';
+}
+function closeBusMap(){document.getElementById('bus-map-lb').style.display='none';}
 function closeModal(){document.getElementById('modal-overlay').classList.remove('open');}
 
 // ── Image Lightbox ──
